@@ -22,6 +22,7 @@ h1 {
 body,
 .header,
 .search,
+.filters,
 .tile {
   transition:
     background 0.2s,
