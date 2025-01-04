@@ -415,18 +415,16 @@ const ColumnLeft = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
     !!releases?.length &&
     !!platforms?.length &&
     Object.entries(
-      releases.reduce((acc, item) => {
-        //@ts-expect-error bug
-        let date = acc[item.human];
-        if (!date) {
-          date = [];
+      releases.reduce<Record<string, string[]>>((acc, item) => {
+        if (!acc[item.human]) {
+          acc[item.human] = [];
         }
         // Find the matching platform name
         const platformName = platforms.find(
           (platform) => platform.id === item.platform
         )?.name;
         if (platformName) {
-          date.push(platformName);
+          acc[item.human].push(platformName);
         }
         return acc;
       }, {})
@@ -452,6 +450,8 @@ const ColumnLeft = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
   const publishers =
     game?.involved_companies?.filter((company) => company.publisher === true) ||
     [];
+
+  console.log("releaseDates", releaseDates);
 
   return isLoaded ? (
     <>
@@ -755,37 +755,43 @@ const websites = [
   { id: 18, name: "discord", icon: <FaDiscord /> },
 ];
 const WebsiteLinks = ({ links }: { links: Website[] }) => {
+  console.log(links);
+
   return (
     !!links?.length &&
-    links?.map((link) => {
-      const website = websites.find((website) => website.id === link.category);
+    links
+      ?.sort((a, b) => a.category - b.category)
+      .map((link) => {
+        const website = websites.find(
+          (website) => website.id === link.category
+        );
 
-      return (
-        !!website && (
-          <Link
-            key={link.id}
-            href={link.url}
-            className={css({
-              display: "flex",
-              py: 1,
-              alignItems: "center",
-              color: "var(--colors-primary)",
-              gap: 2.5,
-            })}
-          >
-            {!!website.icon && (
-              <span className={css({ fontSize: 19 })}>{website.icon}</span>
-            )}
-            <span
+        return (
+          !!website && (
+            <Link
+              key={link.id}
+              href={link.url}
               className={css({
-                textTransform: "capitalize",
+                display: "flex",
+                py: 1,
+                alignItems: "center",
+                color: "var(--colors-primary)",
+                gap: 2.5,
               })}
             >
-              {website.name}
-            </span>
-          </Link>
-        )
-      );
-    })
+              {!!website.icon && (
+                <span className={css({ fontSize: 19 })}>{website.icon}</span>
+              )}
+              <span
+                className={css({
+                  textTransform: "capitalize",
+                })}
+              >
+                {website.name}
+              </span>
+            </Link>
+          )
+        );
+      })
   );
 };
