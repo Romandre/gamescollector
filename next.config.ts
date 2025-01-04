@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
         hostname: "images.igdb.com",
       },
     ],
+    domains: ["localhost", "images.igdb.com"],
   },
 };
 
