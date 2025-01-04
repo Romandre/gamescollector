@@ -10,8 +10,6 @@ import { useGamesContext } from "@/context";
 import { css } from "../../styled-system/css";
 
 export function GameFilters() {
-  const { hintsEnabled, handleHintsToggle } = useGamesContext();
-
   return (
     <div
       className={css({

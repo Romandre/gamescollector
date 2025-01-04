@@ -2,7 +2,6 @@
 import { SearchInput } from "../design";
 import { HeaderActions } from "./HeaderActions";
 import Link from "next/link";
-import Image from "next/image";
 
 // Styles
 import { css } from "../../../styled-system/css";
