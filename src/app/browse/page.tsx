@@ -16,16 +16,9 @@ export default function BrowseRoute() {
             },
           })}
         >
-          <div
-            className={css({
-              position: "relative",
-            })}
-          >
-            <GameFilters />
-          </div>
-          <div className={css({})}>
-            <GamesGrid />
-          </div>
+          <GameFilters />
+
+          <GamesGrid />
         </div>
       </Container>
     </>

@@ -27,7 +27,7 @@ export function GamesGrid() {
   if (!!isError) return <div>Error fetching games: {error?.message}</div>;
 
   return (
-    <>
+    <div>
       <GameSorting />
       {view === "grid" && <GridView />}
       {view === "list" && <ListView />}
@@ -45,7 +45,7 @@ export function GamesGrid() {
         </div>
       )}
       {emptyData && <p>No games found</p>}
-    </>
+    </div>
   );
 }
 

@@ -45,7 +45,7 @@ export function Dropdown({
       className={css({
         position: "relative",
         display: "flex",
-        alignItems: "end",
+        alignItems: "baseline",
       })}
     >
       <p
@@ -65,9 +65,13 @@ export function Dropdown({
         <span
           className={css({
             display: "inline-block",
-            w: "110px",
+            verticalAlign: "bottom",
+            w: "120px",
             px: 2,
             color: "var(--colors-primary)",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
           })}
         >
           {value ? options[value].toUpperCase() : options[0].toUpperCase()}

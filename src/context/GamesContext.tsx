@@ -134,8 +134,10 @@ export const GamesProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleSorting = (index: number) => {
-    setGames([]);
-    setSorting(index);
+    if (sorting !== index) {
+      setGames([]);
+      setSorting(index);
+    }
   };
 
   const contextValue = {

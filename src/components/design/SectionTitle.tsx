@@ -2,14 +2,14 @@ import { ReactNode } from "react";
 import { css } from "../../../styled-system/css";
 
 export function SectionTitle({
-  titleStyle,
+  className,
   children,
 }: {
-  titleStyle?: string;
+  className?: string;
   children: ReactNode;
 }) {
   return (
-    <div className={titleStyle}>
+    <div className={className}>
       <h1>{children}</h1>
       <Divider />
     </div>

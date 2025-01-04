@@ -22,12 +22,19 @@ export function HeaderActions() {
         alignItems: "center",
       })}
     >
-      <Switch
-        variant={"theme"}
-        checked={theme === "dark"}
-        onChange={toggleTheme}
-        isVisible={!!theme}
-      />
+      <div
+        className={css({
+          flexBasis: "58px",
+          flexShrink: 0,
+        })}
+      >
+        <Switch
+          variant={"theme"}
+          checked={theme === "dark"}
+          onChange={toggleTheme}
+          isVisible={!!theme}
+        />
+      </div>
       <Link href="/browse">Browse</Link>
       <Link href="/signin">Sign In</Link>
     </div>

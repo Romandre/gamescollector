@@ -15,18 +15,12 @@ export function Switch({
   isVisible?: boolean;
 }) {
   return (
-    <div
-      className={css({
-        flexBasis: "58px",
-        flexShrink: 0,
-      })}
-    >
+    <>
       {!!isVisible && (
         <div
           className={css({
             display: "flex",
-            h: "full",
-            alignItems: "end",
+            alignItems: "center",
           })}
         >
           <p className={css({ pr: 2, opacity: 0.8, whiteSpace: "nowrap" })}>
@@ -38,6 +32,6 @@ export function Switch({
           </label>
         </div>
       )}
-    </div>
+    </>
   );
 }

@@ -8,3 +8,4 @@ export * from "./SectionTitle";
 export * from "./Tiles";
 export * from "./PlatformIcons";
 export * from "./StarsRating";
+export * from "./Overlay";

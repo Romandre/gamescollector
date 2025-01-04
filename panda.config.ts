@@ -85,8 +85,8 @@ export default defineConfig({
         backgroundColor: "{colors.background.search.light}",
         color: "#555555",
       },
+      ".filters": { backgroundColor: "{colors.background.light}" },
       ".tile": { backgroundColor: "#FFFFFF" },
-      ".item": { backgroundColor: "#FFFFFF" },
       "& p": {
         color: "{colors.paragraph.light}",
       },
@@ -105,12 +105,9 @@ export default defineConfig({
         backgroundColor: "{colors.background.search.dark}",
         color: "#AAAAAA",
       },
+      ".filters": { backgroundColor: "{colors.background.dark}" },
       ".tile": {
         backgroundColor: "{colors.background.search.dark}",
-      },
-      ".item": {
-        backgroundColor: "{colors.background.search.dark}",
-        opacity: 1,
       },
       "& p": {
         color: "{colors.paragraph.dark}",
