@@ -8,6 +8,9 @@ import {
 } from "react-icons/fa";
 import { BsNintendoSwitch } from "react-icons/bs";
 
+// Types
+import { Platform } from "@/types";
+
 // Styles
 import { css } from "../../../styled-system/css";
 
@@ -15,7 +18,7 @@ export const PlatformsIcons = ({
   platforms,
   className,
 }: {
-  platforms: string[];
+  platforms: Platform[] | undefined;
   className?: string;
 }) => {
   return (

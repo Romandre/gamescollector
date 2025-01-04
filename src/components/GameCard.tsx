@@ -6,6 +6,9 @@ import { PlatformsIcons, StarsRating } from "./design";
 // Contexts
 import { useGamesContext } from "@/context";
 
+// Types
+import { Game } from "@/types";
+
 // Styles
 import { css } from "../../styled-system/css";
 
@@ -13,7 +16,7 @@ export function GameCard({
   game,
   showHints = true,
 }: {
-  game: object;
+  game: Game;
   showHints?: boolean;
 }) {
   const { hintsEnabled } = useGamesContext();

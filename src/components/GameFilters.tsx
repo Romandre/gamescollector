@@ -3,9 +3,6 @@
 // Components
 import { SectionTitle } from "./design";
 
-// Contexts
-import { useGamesContext } from "@/context";
-
 // Styles
 import { css } from "../../styled-system/css";
 

@@ -14,11 +14,14 @@ import axios from "axios";
 import { useSorting } from "@/hooks";
 import { useQuery } from "@tanstack/react-query";
 
+// Types
+import { Game } from "@/types";
+
 type View = "grid" | "list" | "list-min";
 
 type GamesContextType = {
-  games: unknown[];
-  setGames: Dispatch<SetStateAction<unknown[]>>;
+  games: Game[];
+  setGames: Dispatch<SetStateAction<Game[]>>;
   view: View;
   toggleView: (view: View) => void;
   hintsEnabled: boolean | undefined;
@@ -75,7 +78,7 @@ export const GamesProvider = ({ children }: { children: ReactNode }) => {
   const [hintsEnabled, toggleHints] = useSorting("on-hover-hints", false);
   const [showDlcs, toggleDlcs] = useSorting("show-dlc", true);
 
-  const [games, setGames] = useState<unknown[]>([]);
+  const [games, setGames] = useState<Game[]>([]);
   const [view, setView] = useState<View>("grid");
   const [search, setSearch] = useState("");
   const [offset, setOffset] = useState(0);

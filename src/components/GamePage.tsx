@@ -32,6 +32,7 @@ import { BsTwitterX } from "react-icons/bs";
 import { CgWebsite } from "react-icons/cg";
 import { SiEpicgames, SiWikibooks } from "react-icons/si";
 import { IoLogoGameControllerB } from "react-icons/io";
+import type { Cover, Game, Platform, Screenshot, Website } from "@/types";
 
 const fields =
   "fields *, screenshots.*, cover.url, release_dates.*, platforms.*, genres.*, age_ratings.*, dlcs.*, dlcs.cover.*, expansions.*, expansions.cover.*, ports.*, ports.cover.*, remakes.*, remakes.cover.*, involved_companies.*, involved_companies.company.*, parent_game.*, parent_game.cover.*, websites.*;";
@@ -55,11 +56,9 @@ export function GamePage({ id }: { id: string }) {
     queryKey: ["fetchGames", gameId],
     queryFn: () => getGames(query),
   });
-  const game = data?.games?.[0];
-  const isGameLoaded = !isLoading && game?.id;
-  const noGameFound = !isLoading && !game?.id;
-
-  console.log(game);
+  const game = data?.games?.[0] as Game;
+  const isGameLoaded = !!(!isLoading && game?.id);
+  const noGameFound = !!(!isLoading && !game?.id);
 
   return !noGameFound ? (
     <div
@@ -68,7 +67,7 @@ export function GamePage({ id }: { id: string }) {
       })}
     >
       {isGameLoaded && Object.hasOwn(game, "screenshots") && (
-        <PageBackground images={game.screenshots} />
+        <PageBackground images={game.screenshots!} />
       )}
 
       <div
@@ -163,7 +162,7 @@ export function GamePage({ id }: { id: string }) {
   );
 }
 
-const PageBackground = ({ images }: { images: object }) => {
+const PageBackground = ({ images }: { images: Screenshot[] }) => {
   const [loading, setLoading] = useState(true);
   const randomImg = useMemo(
     () => images[Math.floor(Math.random() * images.length)],
@@ -210,7 +209,7 @@ const Cover = ({
   bage,
   isLoaded,
 }: {
-  cover: string[];
+  cover: Cover | undefined;
   bage?: number;
   isLoaded: boolean;
 }) => {
@@ -302,7 +301,7 @@ const Cover = ({
   );
 };
 
-const Title = ({ game, isLoaded }: { game: string[]; isLoaded: boolean }) => {
+const Title = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
   return isLoaded ? (
     <div
       className={css({
@@ -325,7 +324,7 @@ const Title = ({ game, isLoaded }: { game: string[]; isLoaded: boolean }) => {
       >
         {game.name}
       </div>
-      {game.total_rating_count > 5 && (
+      {game.total_rating_count && game.total_rating_count > 5 && (
         <div
           className={css({
             display: "flex",
@@ -355,7 +354,7 @@ const Title = ({ game, isLoaded }: { game: string[]; isLoaded: boolean }) => {
                 fontWeight: 500,
               })}
             >
-              {Math.floor(game.total_rating) / 10}/10
+              {Math.floor(game.total_rating!) / 10}/10
             </span>
             <span className={css({ fontStyle: "italic", opacity: 0.8 })}>
               ({game.total_rating_count})
@@ -382,13 +381,13 @@ const Platforms = ({
   platforms,
   isLoaded,
 }: {
-  platforms: string[];
+  platforms: Platform[] | undefined;
   isLoaded: boolean;
 }) => {
+  if (!platforms) return;
+
   const platformNames =
     platforms?.map((platform) => platform.name).sort() || [];
-
-  if (!platformNames.length) return;
 
   return isLoaded ? (
     <Section
@@ -409,33 +408,32 @@ const Platforms = ({
   );
 };
 
-const ColumnLeft = ({
-  game,
-  isLoaded,
-}: {
-  game: string[];
-  isLoaded: boolean;
-}) => {
+const ColumnLeft = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
   const releases = game?.release_dates;
   const platforms = game?.platforms;
   const releaseDates =
-    releases?.length &&
-    platforms?.length &&
+    !!releases?.length &&
+    !!platforms?.length &&
     Object.entries(
       releases.reduce((acc, item) => {
-        if (!acc[item.human]) {
-          acc[item.human] = [];
+        //@ts-expect-error bug
+        let date = acc[item.human];
+        if (!date) {
+          date = [];
         }
         // Find the matching platform name
         const platformName = platforms.find(
           (platform) => platform.id === item.platform
         )?.name;
         if (platformName) {
-          acc[item.human].push(platformName);
+          date.push(platformName);
         }
         return acc;
       }, {})
-    ).map(([date, platforms]) => ({ date, platforms }));
+    ).map(([date, platforms]) => ({
+      date,
+      platforms,
+    }));
   const genres = game?.genres?.map((genre) => genre.name);
   const ageRatingValue = game?.age_ratings?.find(
     (rating) => rating.category === 2
@@ -482,14 +480,20 @@ const ColumnLeft = ({
       )}
       {!!releaseDates && (
         <Section title="Releases">
-          {releaseDates?.reverse().map((date) => (
-            <div key={date.date} className={css({ mb: 2 })}>
-              - {date.date}
-              <p className={css({ fontStyle: "italic", fontSize: 13 })}>
-                {date.platforms.join(", ")}
-              </p>
-            </div>
-          ))}
+          {releaseDates
+            ?.slice()
+            .reverse()
+            .map(
+              (date) =>
+                date && ( // Ensure date is not undefined
+                  <div key={date.date} className={css({ mb: 2 })}>
+                    - {date.date}
+                    <p className={css({ fontStyle: "italic", fontSize: 13 })}>
+                      {(date.platforms as string[]).join(", ")}
+                    </p>
+                  </div>
+                )
+            )}
         </Section>
       )}
       {ageRating() !== 0 && (
@@ -516,13 +520,7 @@ const ColumnLeft = ({
   );
 };
 
-const ColumnMain = ({
-  game,
-  isLoaded,
-}: {
-  game: string[];
-  isLoaded: boolean;
-}) => {
+const ColumnMain = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
   const gridClass = grid({
     w: "100%",
     columns: { base: 2, sm: 3, md: 4, lg: 5, xl: 4, "2xl": 5 },
@@ -644,13 +642,7 @@ const ColumnMain = ({
   );
 };
 
-const ColumnRight = ({
-  game,
-  isLoaded,
-}: {
-  game: string[];
-  isLoaded: boolean;
-}) => {
+const ColumnRight = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
   const links = game?.websites || [];
 
   return isLoaded ? (
@@ -762,7 +754,7 @@ const websites = [
   { id: 17, name: "gog", icon: <IoLogoGameControllerB /> },
   { id: 18, name: "discord", icon: <FaDiscord /> },
 ];
-const WebsiteLinks = ({ links }: { links: string[] }) => {
+const WebsiteLinks = ({ links }: { links: Website[] }) => {
   return (
     !!links?.length &&
     links?.map((link) => {

@@ -18,12 +18,13 @@ import Skeleton from "react-loading-skeleton";
 // Styles
 import { css } from "../../styled-system/css";
 import "react-loading-skeleton/dist/skeleton.css";
+import router from "next/router";
 
 export function GamesGrid() {
   const { games, view, loadMore, isError, emptyData, error, isLoading } =
     useGamesContext();
 
-  if (!!isError) return <div>Error fetching games: {error.message}</div>;
+  if (!!isError) return <div>Error fetching games: {error?.message}</div>;
 
   return (
     <>
@@ -115,7 +116,7 @@ const ListView = () => {
             <div
               className={css({
                 display: "inline-grid",
-                gridTemplateRows: isNaN(game.total_rating)
+                gridTemplateRows: !game.total_rating
                   ? "auto auto 1fr"
                   : "auto auto auto 1fr",
                 verticalAlign: "top",
@@ -131,9 +132,13 @@ const ListView = () => {
                 platforms={game.platforms}
                 className={css({ my: 4 })}
               />
-              <div className={css({ alignSelf: "end" })}>
-                <Tiles array={game.genres?.map((genre) => genre.name).sort()} />
-              </div>
+              {!!game.genres && (
+                <div className={css({ alignSelf: "end" })}>
+                  <Tiles
+                    array={game.genres.map((genre) => genre.name).sort()}
+                  />
+                </div>
+              )}
             </div>
           </li>
         ))}

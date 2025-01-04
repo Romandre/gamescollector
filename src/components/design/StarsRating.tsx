@@ -2,9 +2,11 @@ export const StarsRating = ({
   rating,
   className,
 }: {
-  rating: number;
+  rating: number | undefined;
   className?: string;
 }) => {
+  if (!rating) return;
+
   const style: React.CSSProperties = {
     ["--rating" as string]: Math.round((rating / 20) * 10) / 10,
   };
