@@ -52,7 +52,6 @@ export function GameCard({
               className={css({
                 height: "100vh",
               })}
-              loading="lazy"
             />
           ) : (
             <Image
