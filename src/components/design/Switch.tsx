@@ -27,7 +27,6 @@ export function Switch({
             display: "flex",
             h: "full",
             alignItems: "end",
-            animation: "fade-in 0.8s",
           })}
         >
           <p className={css({ pr: 2, opacity: 0.8, whiteSpace: "nowrap" })}>
