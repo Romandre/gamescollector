@@ -707,7 +707,7 @@ const Section = ({
 }) => {
   return (
     <>
-      {title && <SectionTitle classname={titleStyle}>{title}</SectionTitle>}
+      {title && <SectionTitle className={titleStyle}>{title}</SectionTitle>}
       <SectionText type={type}>{children}</SectionText>
     </>
   );
