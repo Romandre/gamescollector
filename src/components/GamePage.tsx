@@ -227,7 +227,6 @@ const Cover = ({
     <div
       className={css({
         w: "100%",
-        // @ts-expect-error xs do not exist in styles
         maxW: { base: "270px", xs: "300px", sm: "none" },
         mx: "auto",
         mb: { base: 4, md: 8 },
