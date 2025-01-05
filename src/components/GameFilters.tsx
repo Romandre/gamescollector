@@ -18,6 +18,7 @@ export function GameFilters() {
       <div
         className={css({
           position: "relative",
+          transform: { sm: "translate3d(0,0,0)" },
         })}
       >
         <Overlay isOpen={isFiltersOpen} setIsOpen={setIsFiltersOpen} />

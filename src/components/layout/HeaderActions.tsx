@@ -45,6 +45,7 @@ export function HeaderActions() {
           flexDirection: { base: "column", sm: "row" },
           justifyContent: { base: "flex-start", sm: "space-evenly" },
           alignItems: "center",
+          animation: { base: "fade-in 0.4s", sm: "none" },
           zIndex: 998,
         })}`}
       >
