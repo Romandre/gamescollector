@@ -161,7 +161,7 @@ const ListMinView = () => {
   const { games, offset, limit, isLoading, isFetching } = useGamesContext();
 
   return (
-    <ul className={css({ display: "inline-block" })}>
+    <ul className={css({ display: "inline-block", w: "full" })}>
       {!!games.length &&
         games?.map((game) => (
           <li

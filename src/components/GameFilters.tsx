@@ -18,7 +18,6 @@ export function GameFilters() {
       <div
         className={css({
           position: "relative",
-          animation: "fade-in 0.4s",
         })}
       >
         <Overlay isOpen={isFiltersOpen} setIsOpen={setIsFiltersOpen} />
@@ -35,12 +34,13 @@ export function GameFilters() {
         <div
           className={`filters ${css({
             position: "fixed",
+            display: { base: isFiltersOpen ? "block" : "none", lg: "block" },
             left: 0,
             h: "full",
             top: { base: 0, lg: "unset" },
             py: { base: "72px", lg: 0 },
             px: { base: 4, lg: 2 },
-            display: { base: isFiltersOpen ? "block" : "none", lg: "block" },
+            animation: "fade-in 0.4s",
             zIndex: { base: 998, lg: "unset" },
           })}`}
         >

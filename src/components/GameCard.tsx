@@ -51,6 +51,10 @@ export function GameCard({
               sizes="(max-width: 700px) 100vw, 700px"
               className={css({
                 height: "100vh",
+                transition: "opacity 0.2s",
+                _active: {
+                  opacity: 0.8,
+                },
               })}
             />
           ) : (

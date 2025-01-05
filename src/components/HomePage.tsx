@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useState, useMemo } from "react";
 import axios from "axios";
 
 // Components
@@ -97,9 +97,10 @@ const PageBackground = ({ images }: { images: Screenshot[] }) => {
               sm: "linear-gradient(to top, transparent 25%, white 75%)",
             },
             filter: "blur(1px)",
-            opacity: loading ? 0 : 1,
             transition: "opacity 1.2s",
+            opacity: loading ? 0 : 1,
             scale: "1.01",
+            animation: "fade-in 0.4s",
           })}
           onLoad={() => setLoading(false)}
           priority

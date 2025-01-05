@@ -312,7 +312,7 @@ const Title = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
     <div
       className={css({
         position: "relative",
-        mt: { base: 0, md: 20, lg: 24, "2xl": 28 },
+        mt: { base: 2, md: 20, lg: 24, "2xl": 28 },
         mb: { base: 2, md: 8 },
       })}
     >
@@ -321,6 +321,7 @@ const Title = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
           position: "relative",
           fontFamily: "var(--font-outfit-sans)",
           color: "{colors.text.dark}",
+          textAlign: { base: "center", sm: "left" },
           fontSize: { base: 38, sm: 46, lg: 52, "2xl": 58 },
           textWrap: "balance",
           lineHeight: 1.2,
@@ -334,7 +335,7 @@ const Title = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
         <div
           className={css({
             display: "flex",
-            my: 2,
+            my: { base: 6, sm: 2 },
             alignItems: "center",
             textShadow: "2px 2px 2px rgba(0,0,0,0.8)",
           })}
@@ -458,8 +459,6 @@ const ColumnLeft = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
   const publishers =
     game?.involved_companies?.filter((company) => company.publisher === true) ||
     [];
-
-  console.log("releaseDates", releaseDates);
 
   return isLoaded ? (
     <>
@@ -763,8 +762,6 @@ const websites = [
   { id: 18, name: "discord", icon: <FaDiscord /> },
 ];
 const WebsiteLinks = ({ links }: { links: Website[] }) => {
-  console.log(links);
-
   return (
     !!links?.length &&
     links

@@ -64,3 +64,10 @@ input:focus-visible {
     opacity: 100;
   }
 }
+
+@keyframes lightblink {
+  from {
+  }
+  to {
+  }
+}
