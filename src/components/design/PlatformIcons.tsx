@@ -29,7 +29,6 @@ export const PlatformsIcons = ({
             display: "inline-flex",
             fontSize: 19,
             gap: 2,
-            color: "#FFFFFF",
           })}
         >
           {!!platforms.some((platform) =>

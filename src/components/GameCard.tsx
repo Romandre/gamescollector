@@ -72,6 +72,7 @@ export function GameCard({
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
+              justifyContent: "center",
               bottom: 0,
               w: "full",
               h: "auto",
@@ -88,7 +89,7 @@ export function GameCard({
                   display: "none",
                 },
                 maxHeight: "32%",
-                pt: 8,
+                pt: 10,
                 pb: 4,
               },
             })}
@@ -111,7 +112,7 @@ export function GameCard({
             </div> */}
             <PlatformsIcons
               platforms={game.platforms}
-              className={css({ display: "flex" })}
+              className={css({ display: "flex", color: "#FFFFFF" })}
             />
             <StarsRating rating={game.total_rating} />
           </div>

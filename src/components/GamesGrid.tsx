@@ -71,7 +71,7 @@ const ListView = () => {
   const router = useRouter();
 
   return (
-    <ul className={css({ display: "inline-block" })}>
+    <ul className={css({ display: "inline-block", w: "full" })}>
       {!!games.length &&
         games?.map((game) => (
           <li
@@ -130,10 +130,15 @@ const ListView = () => {
               />
               <PlatformsIcons
                 platforms={game.platforms}
-                className={css({ my: 4 })}
+                className={css({ mt: 4 })}
               />
               {!!game.genres && (
-                <div className={css({ alignSelf: "end" })}>
+                <div
+                  className={css({
+                    display: { base: "none", sm: "block" },
+                    alignSelf: "end",
+                  })}
+                >
                   <Tiles
                     array={game.genres.map((genre) => genre.name).sort()}
                   />
