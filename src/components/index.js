@@ -1,3 +1,4 @@
+export * from "./HomePage";
 export * from "./GameCard";
 export * from "./GamePage";
 export * from "./GamesGrid";

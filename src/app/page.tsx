@@ -1,11 +1,11 @@
-import { Header, Container, GamesGrid } from "@/components";
+import { Header, Container, HomePage } from "@/components";
 
 export default function Home() {
   return (
     <>
       <Header />
       <Container>
-        <GamesGrid />
+        <HomePage />
       </Container>
     </>
   );

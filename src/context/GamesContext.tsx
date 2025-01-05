@@ -101,7 +101,6 @@ export const GamesProvider = ({ children }: { children: ReactNode }) => {
     queryKey: ["games", [gamesQuery]],
     queryFn: () => getGames(gamesQuery),
     enabled: showDlcs !== undefined,
-    staleTime: 10_000,
   });
   const gamesCount = data?.count || 0;
   const emptyData = !data?.games?.length && isFetched;

@@ -1,13 +1,13 @@
 "use client";
 import { ReactNode, useMemo, useState } from "react";
 import axios from "axios";
-import Link from "next/link";
-import Image from "next/image";
 
 // Components
 import { GameCard } from "./GameCard";
 import { Grid, SectionTitle, Tiles } from "./design";
 import Skeleton from "react-loading-skeleton";
+import Link from "next/link";
+import Image from "next/image";
 
 // Hooks
 import { useQuery } from "@tanstack/react-query";
@@ -46,7 +46,7 @@ const bages = [
   { id: 11, name: "Port" },
 ];
 
-const getGames = async (query: string) => {
+const getGame = async (query: string) => {
   const response = await axios.get("/api/games", { params: { query } });
   return response.data;
 };
@@ -55,8 +55,8 @@ export function GamePage({ id }: { id: string }) {
   const gameId = id;
   const query = `${fields} where id = ${gameId};`;
   const { data, isLoading /* isError, error */ } = useQuery({
-    queryKey: ["fetchGames", gameId],
-    queryFn: () => getGames(query),
+    queryKey: ["game", gameId],
+    queryFn: () => getGame(query),
   });
   const game = data?.games?.[0] as Game;
   const isGameLoaded = !!(!isLoading && game?.id);
