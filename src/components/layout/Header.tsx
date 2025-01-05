@@ -14,49 +14,62 @@ export function Header() {
         "header",
         css({
           position: "fixed",
-          display: "flex",
           w: "100%",
-          h: "54px",
-          justifyContent: "center",
-          alignItems: "center",
-          overflow: "hidden",
           zIndex: 999,
         }),
       ].join(" ")}
     >
       <div
         className={css({
+          position: "relative",
           display: "flex",
+          maxW: "1800px",
+          w: "100%",
+          h: "54px",
+          mx: "auto",
           justifyContent: "center",
-          flexBasis: { base: "90px", sm: "140px" },
-          flexShrink: 0,
+          alignItems: "center",
+          overflow: "hidden",
         })}
       >
-        <Link
-          href="/"
-          className={css({ position: "relative", display: "block", h: "full" })}
+        <div
+          className={css({
+            display: "flex",
+            justifyContent: "center",
+            flexBasis: { base: "90px", sm: "140px" },
+            flexShrink: 0,
+          })}
         >
-          <Image
-            src="/logo.png"
-            alt="logo"
-            width="76"
-            height="44"
-            blurDataURL="/logo.png"
+          <Link
+            href="/"
+            className={css({
+              position: "relative",
+              display: "block",
+              h: "full",
+            })}
+          >
+            <Image
+              src="/logo.png"
+              alt="logo"
+              width="76"
+              height="44"
+              blurDataURL="/logo.png"
+            />
+            {/* <h1 className="logo">GC</h1> */}
+          </Link>
+        </div>
+
+        <div className={css({ w: "full", h: "full" })}>
+          <SearchInput
+            className={`search ${css({
+              h: "100%",
+              w: "100%",
+            })}`}
           />
-          {/* <h1 className="logo">GC</h1> */}
-        </Link>
-      </div>
+        </div>
 
-      <div className={css({ w: "full", h: "full" })}>
-        <SearchInput
-          className={`search ${css({
-            h: "100%",
-            w: "100%",
-          })}`}
-        />
+        <HeaderActions />
       </div>
-
-      <HeaderActions />
     </div>
   );
 }

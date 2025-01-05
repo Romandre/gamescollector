@@ -32,6 +32,10 @@ export function GameCard({
             borderRadius: "8px",
             overflow: "hidden",
             animation: "fade-in 0.8s",
+            transition: "opacity 0.2s",
+            _focus: {
+              opacity: 0.7,
+            },
           }),
         ].join(" ")}
       >
@@ -51,10 +55,6 @@ export function GameCard({
               sizes="(max-width: 700px) 100vw, 700px"
               className={css({
                 height: "100vh",
-                transition: "opacity 0.2s",
-                _active: {
-                  opacity: 0.8,
-                },
               })}
             />
           ) : (
