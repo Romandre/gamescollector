@@ -2,6 +2,7 @@
 import { SearchInput } from "../design";
 import { HeaderActions } from "./HeaderActions";
 import Link from "next/link";
+import Image from "next/image";
 
 // Styles
 import { css } from "../../../styled-system/css";
@@ -35,14 +36,14 @@ export function Header() {
           href="/"
           className={css({ position: "relative", display: "block", h: "full" })}
         >
-          {/*  <Image
+          <Image
             src="/logo.png"
             alt="logo"
             width="76"
             height="44"
             blurDataURL="/logo.png"
-          /> */}
-          <h1 className="logo">GC</h1>
+          />
+          {/* <h1 className="logo">GC</h1> */}
         </Link>
       </div>
 

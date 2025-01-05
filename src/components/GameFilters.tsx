@@ -18,8 +18,10 @@ export function GameFilters() {
       <div
         className={css({
           position: "relative",
+          animation: "fade-in 0.4s",
         })}
       >
+        <Overlay isOpen={isFiltersOpen} setIsOpen={setIsFiltersOpen} />
         <IoFilter
           onClick={() => setIsFiltersOpen(true)}
           className={css({
@@ -29,7 +31,7 @@ export function GameFilters() {
             fontSize: 26,
           })}
         />
-        <Overlay isOpen={isFiltersOpen} setIsOpen={setIsFiltersOpen} />
+
         <div
           className={`filters ${css({
             position: "fixed",
@@ -40,7 +42,6 @@ export function GameFilters() {
             px: { base: 4, lg: 2 },
             display: { base: isFiltersOpen ? "block" : "none", lg: "block" },
             zIndex: { base: 998, lg: "unset" },
-            animation: { base: "fade-in 0.4s", lg: "none" },
           })}`}
         >
           <SectionTitle

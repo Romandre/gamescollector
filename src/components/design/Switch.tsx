@@ -23,7 +23,14 @@ export function Switch({
             alignItems: "center",
           })}
         >
-          <p className={css({ pr: 2, opacity: 0.8, whiteSpace: "nowrap" })}>
+          <p
+            className={css({
+              display: label ? "block" : "none",
+              pr: 2,
+              opacity: 0.8,
+              whiteSpace: "nowrap",
+            })}
+          >
             {label}
           </p>
           <label className={`switch ${variant}`}>

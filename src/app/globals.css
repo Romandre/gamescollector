@@ -51,7 +51,7 @@ input:focus-visible {
   top: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.5);
   z-index: 997;
   animation: fade-in 0.4s;
 }

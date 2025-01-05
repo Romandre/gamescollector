@@ -32,6 +32,8 @@ import { BsTwitterX } from "react-icons/bs";
 import { CgWebsite } from "react-icons/cg";
 import { SiEpicgames, SiWikibooks } from "react-icons/si";
 import { IoLogoGameControllerB } from "react-icons/io";
+
+// Types
 import type { Cover, Game, Platform, Screenshot, Website } from "@/types";
 
 const fields =
@@ -178,7 +180,7 @@ const PageBackground = ({ images }: { images: Screenshot[] }) => {
           left: 0,
           w: "100%",
           height: "700px",
-          scale: "1.01",
+          overflow: "hidden",
         })}
       >
         <Image
@@ -195,6 +197,7 @@ const PageBackground = ({ images }: { images: Screenshot[] }) => {
             filter: "blur(2px)",
             opacity: loading ? 0 : 1,
             transition: "opacity 1.2s",
+            scale: "1.01",
           })}
           onLoad={() => setLoading(false)}
           priority
@@ -294,8 +297,11 @@ const Cover = ({
   ) : (
     <Skeleton
       className={css({
-        h: { base: "420px", md: "430px", xl: "480px" },
-        mb: 8,
+        display: "block !important",
+        h: { base: "480px", sm: "420px", md: "430px", xl: "480px" },
+        maxW: { base: "300px", sm: "full" },
+        mx: "auto",
+        mb: 2,
       })}
     />
   );
@@ -369,10 +375,14 @@ const Title = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
         height="44px"
         className={css({
           mt: { base: 0, md: 24, lg: 28, "2xl": 32 },
-          mb: { base: 2, md: 8 },
+          mb: { base: 2, md: 4, lg: 8 },
         })}
       />
-      <Skeleton height="30px" width="200px" className={css({ mb: 12 })} />
+      <Skeleton
+        height="30px"
+        width="200px"
+        className={css({ mb: { base: 6, sm: 8, lg: 12 } })}
+      />
     </>
   );
 };
@@ -384,8 +394,6 @@ const Platforms = ({
   platforms: Platform[] | undefined;
   isLoaded: boolean;
 }) => {
-  if (!platforms) return;
-
   const platformNames =
     platforms?.map((platform) => platform.name).sort() || [];
 
@@ -504,7 +512,7 @@ const ColumnLeft = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
               alt="pegi"
               width={86}
               height={100}
-            ></Image>
+            />
           </div>
         </Section>
       )}

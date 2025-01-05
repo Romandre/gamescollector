@@ -71,7 +71,7 @@ const ListView = () => {
   const router = useRouter();
 
   return (
-    <ul>
+    <ul className={css({ display: "inline-block" })}>
       {!!games.length &&
         games?.map((game) => (
           <li
@@ -156,7 +156,7 @@ const ListMinView = () => {
   const { games, offset, limit, isLoading, isFetching } = useGamesContext();
 
   return (
-    <ul>
+    <ul className={css({ display: "inline-block" })}>
       {!!games.length &&
         games?.map((game) => (
           <li
