@@ -179,7 +179,14 @@ const PageBackground = ({ images }: { images: Screenshot[] }) => {
           top: 0,
           left: 0,
           w: "100%",
-          height: "700px",
+          h: {
+            base: "820px",
+            sm: "800px",
+            md: "720px",
+            lg: "760px",
+            xl: "720px",
+            "2xl": "800px",
+          },
           overflow: "hidden",
         })}
       >
@@ -191,8 +198,8 @@ const PageBackground = ({ images }: { images: Screenshot[] }) => {
           className={css({
             height: "100vh",
             maskImage: {
-              base: "linear-gradient(to top, transparent 2%, white 75%)",
-              sm: "linear-gradient(to top, transparent 25%, white 75%)",
+              base: "linear-gradient(to top, transparent 2%, 26%, white 50%)",
+              sm: "linear-gradient(to top, transparent 6%, 45%, white 56%)",
             },
             filter: "blur(2px)",
             opacity: loading ? 0 : 1,
@@ -220,7 +227,8 @@ const Cover = ({
     <div
       className={css({
         w: "100%",
-        maxW: { base: "300px", sm: "none" },
+        // @ts-expect-error xs do not exist in styles
+        maxW: { base: "270px", xs: "300px", sm: "none" },
         mx: "auto",
         mb: { base: 4, md: 8 },
         boxShadow: "4px -2px 8px rgba(0,0,0,0.3) ",
@@ -312,7 +320,7 @@ const Title = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
     <div
       className={css({
         position: "relative",
-        mt: { base: 2, md: 20, lg: 24, "2xl": 28 },
+        mt: { base: 1, md: 20, lg: 24, "2xl": 28 },
         mb: { base: 2, md: 8 },
       })}
     >
@@ -322,7 +330,7 @@ const Title = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
           fontFamily: "var(--font-outfit-sans)",
           color: "{colors.text.dark}",
           textAlign: { base: "center", sm: "left" },
-          fontSize: { base: 38, sm: 46, lg: 52, "2xl": 58 },
+          fontSize: { base: 46, lg: 52, "2xl": 58 },
           textWrap: "balance",
           lineHeight: 1.2,
           letterSpacing: 1,

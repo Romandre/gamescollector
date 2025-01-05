@@ -4,6 +4,7 @@ import axios from "axios";
 
 // Components
 import Image from "next/image";
+import Link from "next/link";
 
 // Hooks
 import { useQuery } from "@tanstack/react-query";
@@ -42,7 +43,7 @@ export function HomePage() {
       <div
         className={css({
           position: "relative",
-          mt: 100,
+          mt: 140,
           zIndex: 1,
           textAlign: "center",
         })}
@@ -50,16 +51,45 @@ export function HomePage() {
         <div
           className={css({
             position: "relative",
-            fontFamily: "var(--font-outfit-sans)",
+            fontFamily: "var(--font-zen-tokyo)",
             color: "{colors.text.dark}",
-            fontSize: { base: 38, sm: 46, lg: 52, "2xl": 58 },
+            fontSize: { base: 38, sm: 46, lg: 70, "2xl": 74 },
             textWrap: "balance",
             lineHeight: 1.2,
             letterSpacing: 1,
-            textShadow: "4px 4px 2px rgba(0,0,0,0.6)",
+            textShadow: "4px 6px 4px rgba(0,0,0,0.7)",
           })}
         >
           Welcome to Games Collector
+        </div>
+        <div
+          className={css({
+            position: "relative",
+            fontFamily: "var(--font-outfit-sans)",
+            color: "{colors.text.dark}",
+            fontSize: { base: 38, sm: 46, lg: 24, "2xl": 26 },
+            textWrap: "balance",
+            lineHeight: 1.2,
+            letterSpacing: 1,
+            textShadow: "4px 6px 4px rgba(0,0,0,0.8)",
+          })}
+        >
+          <div className={css({ mt: 12 })}>
+            Browse, find, track, share, like, save and comment games!
+          </div>
+          <div className={css({ mt: 12 })}>
+            Check the{" "}
+            <Link
+              href="/browse"
+              className={css({
+                color: "var(--colors-primary)",
+                fontWeight: 500,
+              })}
+            >
+              games list
+            </Link>{" "}
+            right now!
+          </div>
         </div>
       </div>
     </div>
@@ -81,7 +111,8 @@ const PageBackground = ({ images }: { images: Screenshot[] }) => {
           top: 0,
           left: 0,
           w: "100%",
-          height: "100%",
+          h: "84%",
+          minHeight: "600px",
           overflow: "hidden",
         })}
       >
@@ -91,12 +122,11 @@ const PageBackground = ({ images }: { images: Screenshot[] }) => {
           fill
           style={{ objectFit: "cover" }}
           className={css({
-            height: "100vh",
             maskImage: {
-              base: "linear-gradient(to top, transparent 2%, white 75%)",
-              sm: "linear-gradient(to top, transparent 25%, white 75%)",
+              base: "linear-gradient(to top, transparent 8%, white 50%)",
+              sm: "linear-gradient(to top, transparent 2%, 35%, white 55%)",
             },
-            filter: "blur(1px)",
+            filter: "blur(3px)",
             transition: "opacity 1.2s",
             opacity: loading ? 0 : 1,
             scale: "1.01",
