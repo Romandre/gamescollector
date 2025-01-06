@@ -34,7 +34,10 @@ export function GameCard({
             animation: "fade-in 0.8s",
             transition: "opacity 0.2s",
             _focus: {
-              opacity: 0.7,
+              opacity: 0.55,
+            },
+            _active: {
+              opacity: 0.55,
             },
           }),
         ].join(" ")}
