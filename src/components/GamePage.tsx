@@ -77,7 +77,7 @@ export function GamePage({ id }: { id: string }) {
           position: "relative",
           px: { base: 2, lg: 3 },
           display: "grid",
-          mt: { base: 2, sm: 8, lg: "90px", xl: "120px" },
+          mt: { base: 6, lg: "90px", xl: "120px" },
           gridTemplateAreas: {
             base: `
             "cover"
@@ -201,7 +201,7 @@ const PageBackground = ({ images }: { images: Screenshot[] }) => {
               base: "linear-gradient(to top, transparent 2%, 26%, white 50%)",
               sm: "linear-gradient(to top, transparent 6%, 45%, white 56%)",
             },
-            filter: "blur(2px)",
+            filter: "blur(1.5px)",
             opacity: loading ? 0 : 1,
             transition: "opacity 1.2s",
             scale: "1.01",
@@ -227,7 +227,7 @@ const Cover = ({
     <div
       className={css({
         w: "100%",
-        maxW: { base: "270px", xs: "300px", sm: "none" },
+        maxW: { base: "280px", xs: "300px", sm: "none" },
         mx: "auto",
         mb: { base: 4, md: 8 },
         boxShadow: "4px -2px 8px rgba(0,0,0,0.3) ",
@@ -305,7 +305,7 @@ const Cover = ({
     <Skeleton
       className={css({
         display: "block !important",
-        h: { base: "480px", sm: "420px", md: "430px", xl: "480px" },
+        h: { base: "420px", md: "430px", xl: "480px" },
         maxW: { base: "300px", sm: "full" },
         mx: "auto",
         mb: 2,
