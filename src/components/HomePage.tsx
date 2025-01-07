@@ -1,5 +1,5 @@
 "use client";
-import { useState, useMemo } from "react";
+import { useState, useMemo, memo } from "react";
 import axios from "axios";
 
 // Components
@@ -22,14 +22,14 @@ const getGames = async (query: string) => {
   return response.data;
 };
 
-export function HomePage() {
+export function HomePage({ randomImgNumber }: { randomImgNumber: number }) {
   const query = `${fields} where total_rating > 80; sort hypes desc; limit 30;`;
   const { data /* isLoading, isError, error */ } = useQuery({
     queryKey: ["hypes", [query]],
     queryFn: () => getGames(query),
   });
   const games = data?.games || [];
-  const randomGame = games[Math.floor(Math.random() * games.length)];
+  //const randomGame = games[Math.floor(Math.random() * games.length)];
 
   return (
     <div
@@ -37,9 +37,10 @@ export function HomePage() {
         animation: "fade-in 0.8s",
       })}
     >
-      {randomGame?.screenshots && (
+      {/* {randomGame?.screenshots && (
         <PageBackground images={randomGame.screenshots!} />
-      )}
+      )} */}
+      <PageBackground randomImgNumber={randomImgNumber} />
       <div
         className={css({
           position: "relative",
@@ -51,16 +52,16 @@ export function HomePage() {
         <div
           className={css({
             position: "relative",
-            fontFamily: "var(--font-zen-tokyo)",
             color: "{colors.text.dark}",
             fontSize: { base: 60, lg: 70, "2xl": 74 },
+            fontWeight: 700,
             textWrap: "balance",
             lineHeight: 1.2,
             letterSpacing: 1,
             textShadow: "4px 6px 4px rgba(0,0,0,0.7)",
           })}
         >
-          Welcome to Games Collector
+          Build Your Ultimate Game Collection
         </div>
         <div
           className={css({
@@ -96,29 +97,35 @@ export function HomePage() {
   );
 }
 
-const PageBackground = ({ images }: { images: Screenshot[] }) => {
-  const [loading, setLoading] = useState(true);
-  const randomImg = useMemo(
+const PageBackground = memo(function PageBackground({
+  images,
+  randomImgNumber,
+}: {
+  images?: Screenshot[];
+  randomImgNumber?: number;
+}) {
+  /* const randomImg = useMemo(
     () => images[Math.floor(Math.random() * images.length)],
     [images]
-  );
+  ); */
 
   return (
-    randomImg && (
+    randomImgNumber && (
       <div
         className={css({
           position: "absolute",
           top: 0,
           left: 0,
           w: "100%",
-          h: "84%",
-          minHeight: "600px",
+          h: "1000px",
           overflow: "hidden",
         })}
       >
         <Image
-          src={`https:${randomImg.url.replace("t_thumb", "t_screenshot_huge_2x")}`}
-          alt={randomImg.id}
+          //src={`https:${randomImg.url.replace("t_thumb", "t_screenshot_huge_2x")}`}
+          src={`/wp/${randomImgNumber}.jpg`}
+          //alt={randomImg.id}
+          alt={`img-${randomImgNumber}`}
           fill
           style={{ objectFit: "cover" }}
           className={css({
@@ -126,16 +133,13 @@ const PageBackground = ({ images }: { images: Screenshot[] }) => {
               base: "linear-gradient(to top, transparent 8%, white 50%)",
               sm: "linear-gradient(to top, transparent 2%, 35%, white 55%)",
             },
-            filter: "blur(3px)",
+            filter: "blur(2px)",
             transition: "opacity 1.2s",
-            opacity: loading ? 0 : 1,
             scale: "1.01",
             animation: "fade-in 0.4s",
           })}
-          onLoad={() => setLoading(false)}
-          priority
         />
       </div>
     )
   );
-};
+});

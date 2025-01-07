@@ -79,7 +79,7 @@ export default defineConfig({
       ".header": {
         backgroundColor: "{colors.background.header.light}",
         borderBottom: "2px solid rgba(200, 200, 200, .6)",
-        boxShadow: "0px 1px 12px 0px rgba(50,50,50,0.15)",
+        boxShadow: "0px 2px 16px 4px rgba(50,50,50,0.15)",
       },
       ".search": {
         backgroundColor: "{colors.background.search.light}",
