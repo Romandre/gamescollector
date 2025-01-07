@@ -59,14 +59,13 @@ export function Header() {
           </Link>
         </div>
 
-        <div className={css({ w: "full", h: "full" })}>
-          <SearchInput
-            className={`search ${css({
-              h: "100%",
-              w: "100%",
-            })}`}
-          />
-        </div>
+        <SearchInput
+          className={`search ${css({
+            h: "100%",
+            w: "100%",
+            px: 10,
+          })}`}
+        />
 
         <HeaderActions />
       </div>

@@ -36,7 +36,7 @@ export function Input({
       )}
       <input
         value={value}
-        className={`${className} ${css({ pl: 10 })}`}
+        className={className}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
         onKeyUp={(e) => onKeyUp && onKeyUp(e)}

@@ -117,6 +117,7 @@ export const GamesProvider = ({ children }: { children: ReactNode }) => {
 
   const handleSearch = (value: string) => {
     const searchFilter = `name ~ *"${value}"*`;
+    setGames([]);
     setOffset(0);
     setSearch(value);
     setFilters((prev) => {
