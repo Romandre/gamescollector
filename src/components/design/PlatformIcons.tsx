@@ -7,6 +7,7 @@ import {
   FaXbox,
 } from "react-icons/fa";
 import { BsNintendoSwitch } from "react-icons/bs";
+import { DiAndroid } from "react-icons/di";
 
 // Types
 import { Platform } from "@/types";
@@ -34,9 +35,14 @@ export const PlatformsIcons = ({
           {!!platforms.some((platform) =>
             platform.name.toLowerCase().includes("windows")
           ) && <FaWindows />}
-          {!!platforms.some((platform) =>
-            platform.name.toLowerCase().includes("mac")
+          {!!platforms.some(
+            (platform) =>
+              platform.name.toLowerCase().includes("mac") ||
+              platform.name.toLowerCase().includes("ios")
           ) && <FaApple />}
+          {!!platforms.some((platform) =>
+            platform.name.toLowerCase().includes("android")
+          ) && <DiAndroid />}
           {!!platforms.some((platform) =>
             platform.name.toLowerCase().includes("linux")
           ) && <FaLinux />}

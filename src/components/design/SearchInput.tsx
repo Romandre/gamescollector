@@ -17,7 +17,7 @@ import { RxCross2 } from "react-icons/rx";
 import { css } from "../../../styled-system/css";
 
 export function SearchInput({ className }: { className: string }) {
-  const { search, handleSearch, setGames } = useGamesContext();
+  const { search, handleSearch } = useGamesContext();
   const [value, setValue] = useState(search);
   const pathname = usePathname();
 
@@ -28,7 +28,6 @@ export function SearchInput({ className }: { className: string }) {
   const searchGames = (e: KeyboardEvent) => {
     const trimmedValue = value.trim();
     if (e.key === "Enter" && search !== trimmedValue) {
-      setGames([]);
       window.scrollTo(0, 0);
       handleSearch(trimmedValue);
       if (pathname !== "/browse") redirect("/browse");

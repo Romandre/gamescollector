@@ -124,9 +124,8 @@ const PageBackground = ({ randomImgNumber }: { randomImgNumber?: number }) => {
               sm: "linear-gradient(to top, transparent 2%, 35%, white 55%)",
             },
             filter: "blur(2px)",
-            transition: "opacity 1.2s",
             scale: "1.01",
-            animation: "fade-in 0.4s",
+            animation: "fade-in 2s",
             objectPosition: "center 38%",
           })}
         />

@@ -27,11 +27,14 @@ import {
   FaInstagram,
   FaDiscord,
   FaReddit,
+  FaAppStoreIos,
+  FaItchIo,
 } from "react-icons/fa";
 import { BsTwitterX } from "react-icons/bs";
 import { CgWebsite } from "react-icons/cg";
 import { SiEpicgames, SiWikibooks } from "react-icons/si";
 import { IoLogoGameControllerB } from "react-icons/io";
+import { IoLogoGooglePlaystore } from "react-icons/io5";
 
 // Types
 import type { Cover, Game, Platform, Screenshot, Website } from "@/types";
@@ -683,14 +686,22 @@ const ColumnRight = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
             />
           </Link>
         </div>
-        <div
-          className={css({ mt: 4, fontSize: 18, textTransform: "uppercase" })}
-        >
-          Related Links
-        </div>
-        <div className={css({ fontSize: 16 })}>
-          <WebsiteLinks links={links} />
-        </div>
+        {links.length && (
+          <>
+            <div
+              className={css({
+                mt: 4,
+                fontSize: 18,
+                textTransform: "uppercase",
+              })}
+            >
+              Related Links
+            </div>
+            <div className={css({ fontSize: 16 })}>
+              <WebsiteLinks links={links} />
+            </div>
+          </>
+        )}
       </Section>
     </>
   ) : (
@@ -758,12 +769,12 @@ const websites = [
   { id: 6, name: "twitch", icon: <FaTwitch /> },
   { id: 8, name: "instagram", icon: <FaInstagram /> },
   { id: 9, name: "youtube", icon: <FaYoutube /> },
-  { id: 10, name: "iphone" },
-  { id: 11, name: "ipad" },
-  { id: 12, name: "android" },
+  { id: 10, name: "iphone", icon: <FaAppStoreIos /> },
+  { id: 11, name: "ipad", icon: <FaAppStoreIos /> },
+  { id: 12, name: "android", icon: <IoLogoGooglePlaystore /> },
   { id: 13, name: "steam", icon: <FaSteam /> },
   { id: 14, name: "reddit", icon: <FaReddit /> },
-  { id: 15, name: "itch" },
+  { id: 15, name: "itch", icon: <FaItchIo /> },
   { id: 16, name: "epicgames", icon: <SiEpicgames /> },
   { id: 17, name: "gog", icon: <IoLogoGameControllerB /> },
   { id: 18, name: "discord", icon: <FaDiscord /> },
