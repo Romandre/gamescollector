@@ -1,5 +1,5 @@
 "use client";
-import { useState, useMemo, memo } from "react";
+import { memo } from "react";
 import axios from "axios";
 
 // Components
@@ -10,7 +10,7 @@ import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 
 // Types
-import { Screenshot } from "@/types";
+import { Game } from "@/types";
 
 // Styles
 import { css } from "../../styled-system/css";
@@ -29,7 +29,6 @@ export function HomePage({ randomImgNumber }: { randomImgNumber: number }) {
     queryFn: () => getGames(query),
   });
   const games = data?.games || [];
-  //const randomGame = games[Math.floor(Math.random() * games.length)];
 
   return (
     <div
@@ -37,9 +36,6 @@ export function HomePage({ randomImgNumber }: { randomImgNumber: number }) {
         animation: "fade-in 0.8s",
       })}
     >
-      {/* {randomGame?.screenshots && (
-        <PageBackground images={randomGame.screenshots!} />
-      )} */}
       <PageBackground randomImgNumber={randomImgNumber} />
       <div
         className={css({
@@ -58,7 +54,7 @@ export function HomePage({ randomImgNumber }: { randomImgNumber: number }) {
             textWrap: "balance",
             lineHeight: 1.2,
             letterSpacing: 1,
-            textShadow: "4px 6px 4px rgba(0,0,0,0.7)",
+            textShadow: "4px 6px 4px rgba(0,0,0,0.55)",
           })}
         >
           Build Your Ultimate Game Collection
@@ -93,17 +89,12 @@ export function HomePage({ randomImgNumber }: { randomImgNumber: number }) {
           </div>
         </div>
       </div>
+      {false && <GamesCarousel games={games} />}
     </div>
   );
 }
 
-const PageBackground = memo(function PageBackground({
-  images,
-  randomImgNumber,
-}: {
-  images?: Screenshot[];
-  randomImgNumber?: number;
-}) {
+const PageBackground = ({ randomImgNumber }: { randomImgNumber?: number }) => {
   /* const randomImg = useMemo(
     () => images[Math.floor(Math.random() * images.length)],
     [images]
@@ -117,7 +108,7 @@ const PageBackground = memo(function PageBackground({
           top: 0,
           left: 0,
           w: "100%",
-          h: "1000px",
+          h: "800px",
           overflow: "hidden",
         })}
       >
@@ -137,9 +128,15 @@ const PageBackground = memo(function PageBackground({
             transition: "opacity 1.2s",
             scale: "1.01",
             animation: "fade-in 0.4s",
+            objectPosition: "center 38%",
           })}
         />
       </div>
     )
   );
-});
+};
+
+const GamesCarousel = ({ games }: { games: Game[] }) => {
+  console.log(games);
+  return <div></div>;
+};
