@@ -14,20 +14,19 @@ import { Game } from "@/types";
 // Styles
 import { css } from "../../styled-system/css";
 
-const fields = "fields screenshots, screenshots.*;";
-
 const getGames = async (query: string) => {
   const response = await axios.get("/api/games", { params: { query } });
   return response.data;
 };
 
 export function HomePage({ randomImgNumber }: { randomImgNumber: number }) {
-  const query = `${fields} where total_rating > 80; sort hypes desc; limit 30;`;
-  const { data /* isLoading, isError, error */ } = useQuery({
-    queryKey: ["hypes", [query]],
+  //const query = `${fields} where total_rating > 80 & release_dates.date > ${releaseDate}; sort hypes desc; limit 30;`;
+  const query = `fields *; where popularity_type = 2; sort value desc; limit 10;`;
+  const { data: mostAnticipated /* isLoading, isError, error */ } = useQuery({
+    queryKey: ["anticipated", [query]],
     queryFn: () => getGames(query),
   });
-  const games = data?.games || [];
+  const games = mostAnticipated?.games || [];
 
   return (
     <div
@@ -47,6 +46,7 @@ export function HomePage({ randomImgNumber }: { randomImgNumber: number }) {
         <div
           className={css({
             position: "relative",
+            display: "inline-block",
             color: "{colors.text.dark}",
             fontSize: { base: 60, lg: 70, "2xl": 74 },
             fontWeight: 700,
@@ -109,24 +109,25 @@ const PageBackground = ({ randomImgNumber }: { randomImgNumber?: number }) => {
           w: "100%",
           h: "800px",
           overflow: "hidden",
+          maskImage: {
+            base: "linear-gradient(to top, transparent 8%, white 50%)",
+            sm: "linear-gradient(to top, transparent 2%, 35%, white 55%)",
+          },
         })}
       >
         <Image
           //src={`https:${randomImg.url.replace("t_thumb", "t_screenshot_huge_2x")}`}
-          src={`/wp/${randomImgNumber}.jpg`}
+          src={`/banner/${randomImgNumber}.png`}
           //alt={randomImg.id}
           alt={`img-${randomImgNumber}`}
-          fill
-          style={{ objectFit: "cover" }}
+          width="200"
+          height="200"
+          style={{ objectFit: "cover", width: "100%", height: "100%" }}
           className={css({
-            maskImage: {
-              base: "linear-gradient(to top, transparent 8%, white 50%)",
-              sm: "linear-gradient(to top, transparent 2%, 35%, white 55%)",
-            },
             filter: "blur(2px)",
             scale: "1.01",
+            objectPosition: "center 15%",
             animation: "fade-in 2s",
-            objectPosition: "center 38%",
           })}
         />
       </div>

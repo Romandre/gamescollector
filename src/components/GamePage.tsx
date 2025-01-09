@@ -341,7 +341,7 @@ const Title = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
       >
         {game.name}
       </div>
-      {game.total_rating_count && game.total_rating_count > 5 && (
+      {!!game.total_rating_count && game.total_rating_count > 5 && (
         <div
           className={css({
             display: "flex",

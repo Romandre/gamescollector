@@ -52,7 +52,7 @@ const fields =
 const sortingOptions = [
   "sort hypes desc;",
   "sort release_dates desc;",
-  "sort rating desc;",
+  "sort total_rating desc;",
   "sort name desc;",
 ];
 
