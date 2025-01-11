@@ -4,38 +4,26 @@ import { getTwitchToken } from "@/utils/twitchToken";
 
 const getGames = async (query: string | null) => {
   const token = await getTwitchToken();
-  const url = `${process.env.NEXT_PUBLIC_IGDB_GAMES_URL!}`;
+  const url = `${process.env.NEXT_PUBLIC_IGDB_GAMES_URL!}/games`;
 
   try {
-    if (query?.includes("popularity_type")) {
-      const games = await axios.post(`${url}/popularity_primitives`, query, {
-        headers: {
-          "Client-ID": `${process.env.IGDB_CLIENT_ID}`,
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "text/plain",
-        },
-      });
+    const games = await axios.post(url, query, {
+      headers: {
+        "Client-ID": `${process.env.IGDB_CLIENT_ID}`,
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "text/plain",
+      },
+    });
 
-      return { games: games.data };
-    } else {
-      const games = await axios.post(`${url}/games`, query, {
-        headers: {
-          "Client-ID": `${process.env.IGDB_CLIENT_ID}`,
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "text/plain",
-        },
-      });
+    const count = await axios.post(`${url}/count`, query, {
+      headers: {
+        "Client-ID": `${process.env.IGDB_CLIENT_ID}`,
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "text/plain",
+      },
+    });
 
-      const count = await axios.post(`${url}/games/count`, query, {
-        headers: {
-          "Client-ID": `${process.env.IGDB_CLIENT_ID}`,
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "text/plain",
-        },
-      });
-
-      return { games: games.data, ...count.data };
-    }
+    return { games: games.data, ...count.data };
   } catch (error) {
     if (error instanceof AxiosError) {
       console.error(error);

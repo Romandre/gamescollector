@@ -19,14 +19,36 @@ const getGames = async (query: string) => {
   return response.data;
 };
 
+const getTimestampTwoMonthsAgo = () => {
+  const now = new Date();
+  now.setMonth(now.getMonth() - 2);
+  return Math.floor(now.getTime() / 1000);
+};
+
+const timeNow = Math.floor(Date.now() / 1000);
+const twoMonthsAgo = getTimestampTwoMonthsAgo();
+
 export function HomePage({ randomImgNumber }: { randomImgNumber: number }) {
-  //const query = `${fields} where total_rating > 80 & release_dates.date > ${releaseDate}; sort hypes desc; limit 30;`;
-  const query = `fields *; where popularity_type = 2; sort value desc; limit 10;`;
+  const mostAnticipatedQuery = `fields name, first_release_date, cover, cover.*, platforms, platforms.*; where first_release_date > ${timeNow}; sort hypes desc; limit 4;`;
+  const comingSoonQuery = `fields name, first_release_date, cover, cover.*; where first_release_date > ${timeNow} & hypes > 50; sort first_release_date asc; limit 4;`;
+  const popularNowQuery = `fields name, first_release_date, cover, cover.*; where first_release_date > ${twoMonthsAgo} & first_release_date < ${timeNow}; sort hypes desc; limit 4;`;
+
   const { data: mostAnticipated /* isLoading, isError, error */ } = useQuery({
-    queryKey: ["anticipated", [query]],
-    queryFn: () => getGames(query),
+    queryKey: ["anticipated", [mostAnticipatedQuery]],
+    queryFn: () => getGames(mostAnticipatedQuery),
   });
-  const games = mostAnticipated?.games || [];
+  const { data: comingSoon /* isLoading, isError, error */ } = useQuery({
+    queryKey: ["comingSoon", [comingSoonQuery]],
+    queryFn: () => getGames(comingSoonQuery),
+  });
+  const { data: popularNow /* isLoading, isError, error */ } = useQuery({
+    queryKey: ["popular", [popularNowQuery]],
+    queryFn: () => getGames(popularNowQuery),
+  });
+  const mostAnticipatedGames = mostAnticipated?.games || [];
+  const comingSoonGames = comingSoon?.games || [];
+  const popularNowGames = popularNow?.games || [];
+  console.log(twoMonthsAgo);
 
   return (
     <div
@@ -87,8 +109,40 @@ export function HomePage({ randomImgNumber }: { randomImgNumber: number }) {
             right now!
           </div>
         </div>
+        {!!mostAnticipatedGames.length && (
+          <>
+            <h1>Most Anticipated</h1>
+            <div
+              className={css({
+                display: "grid",
+                gridAutoFlow: "column",
+                overflowX: "scroll",
+                gap: 8,
+              })}
+            >
+              {mostAnticipatedGames.map((game: Game) => (
+                <GamePannel key={game.id} game={game} />
+              ))}
+            </div>
+          </>
+        )}
+        {!!comingSoonGames.length && (
+          <>
+            <h1>Coming soon</h1>
+            {comingSoonGames.map((game: Game) => (
+              <GamePannel key={game.id} game={game} />
+            ))}
+          </>
+        )}
+        {!!popularNowGames.length && (
+          <>
+            <h1>Popular now</h1>
+            {popularNowGames.map((game: Game) => (
+              <GamePannel key={game.id} game={game} />
+            ))}
+          </>
+        )}
       </div>
-      {false && <GamesCarousel games={games} />}
     </div>
   );
 }
@@ -124,7 +178,7 @@ const PageBackground = ({ randomImgNumber }: { randomImgNumber?: number }) => {
           height="200"
           style={{ objectFit: "cover", width: "100%", height: "100%" }}
           className={css({
-            filter: "blur(2px)",
+            filter: "blur(3px)",
             scale: "1.01",
             objectPosition: "center 15%",
             animation: "fade-in 2s",
@@ -135,7 +189,74 @@ const PageBackground = ({ randomImgNumber }: { randomImgNumber?: number }) => {
   );
 };
 
-const GamesCarousel = ({ games }: { games: Game[] }) => {
+const GamePannel = ({ game }: { game: Game }) => {
+  return (
+    <div
+      className={css({
+        position: "relative",
+        display: "flex",
+        w: "800px",
+        h: "500px",
+        my: 4,
+        mx: "auto",
+        overflow: "hidden",
+        borderRadius: "10px",
+        boxShadow: "2px 2px 8px rgba(0,0,0,.8)",
+      })}
+    >
+      <div
+        className={css({
+          position: "relative",
+          h: "full",
+          aspectRatio: "3 / 4",
+          backgroundSize: "auto 100%",
+          backgroundRepeat: "no-repeat",
+          backgroundPositionX: "left",
+        })}
+        style={{
+          backgroundImage: `url("https:${game.cover?.url.replace("t_thumb", "t_cover_big_2x")}")`,
+        }}
+      />
+      <div
+        className={css({
+          position: "relative",
+          w: "full",
+        })}
+      >
+        <div
+          className={css({
+            position: "absolute",
+            w: "full",
+            h: "full",
+            backgroundRepeat: "no-repeat",
+            backgroundPosition: "center center",
+            filter: "blur(50px)",
+            transform: "scale(3)",
+            maskImage:
+              "linear-gradient(to right, transparent 0%, 30%, white 33%)",
+          })}
+          style={{
+            backgroundImage: `url("https:${game.cover?.url.replace("t_thumb", "t_cover_big_2x")}")`,
+          }}
+        />
+      </div>
+
+      <div
+        className={css({
+          position: "absolute",
+          w: "50%",
+          right: 0,
+          zIndex: 1,
+        })}
+      >
+        <div>{game.name}</div>
+      </div>
+    </div>
+  );
+};
+
+/* const GamesCarousel = ({ games }: { games: Game[] }) => {
   console.log(games);
   return <div></div>;
 };
+ */
