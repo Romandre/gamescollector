@@ -35,20 +35,20 @@ export function HomePage({ randomImgNumber }: { randomImgNumber: number }) {
   const comingSoonQuery = `fields name, first_release_date, cover, cover.*; where first_release_date > ${timeNow} & hypes > 50; sort first_release_date asc; limit 4;`;
   const popularNowQuery = `fields name, first_release_date, cover, cover.*; where first_release_date > ${twoMonthsAgo} & first_release_date < ${timeNow}; sort hypes desc; limit 4;`;
 
-  const { data: mostAnticipated /* isLoading, isError, error */ } = useQuery({
-    queryKey: ["anticipated", [mostAnticipatedQuery]],
-    queryFn: () => getGames(mostAnticipatedQuery),
-  });
   const { data: comingSoon /* isLoading, isError, error */ } = useQuery({
     queryKey: ["comingSoon", [comingSoonQuery]],
     queryFn: () => getGames(comingSoonQuery),
+  });
+  const { data: mostAnticipated /* isLoading, isError, error */ } = useQuery({
+    queryKey: ["anticipated", [mostAnticipatedQuery]],
+    queryFn: () => getGames(mostAnticipatedQuery),
   });
   const { data: popularNow /* isLoading, isError, error */ } = useQuery({
     queryKey: ["popular", [popularNowQuery]],
     queryFn: () => getGames(popularNowQuery),
   });
-  const mostAnticipatedGames = mostAnticipated?.games || [];
   const comingSoonGames = comingSoon?.games || [];
+  const mostAnticipatedGames = mostAnticipated?.games || [];
   const popularNowGames = popularNow?.games || [];
 
   return (
