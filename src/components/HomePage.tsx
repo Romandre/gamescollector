@@ -13,6 +13,8 @@ import { Game } from "@/types";
 
 // Styles
 import { css } from "../../styled-system/css";
+import { ReactNode } from "react";
+import { SectionTitle } from "./design";
 
 const getGames = async (query: string) => {
   const response = await axios.get("/api/games", { params: { query } });
@@ -48,7 +50,6 @@ export function HomePage({ randomImgNumber }: { randomImgNumber: number }) {
   const mostAnticipatedGames = mostAnticipated?.games || [];
   const comingSoonGames = comingSoon?.games || [];
   const popularNowGames = popularNow?.games || [];
-  console.log(twoMonthsAgo);
 
   return (
     <div
@@ -60,7 +61,7 @@ export function HomePage({ randomImgNumber }: { randomImgNumber: number }) {
       <div
         className={css({
           position: "relative",
-          mt: 140,
+          mt: { base: "30px", md: "80px", "2xl": "100px" },
           zIndex: 1,
           textAlign: "center",
         })}
@@ -88,7 +89,6 @@ export function HomePage({ randomImgNumber }: { randomImgNumber: number }) {
             fontSize: { base: 20, lg: 24, "2xl": 26 },
             textWrap: "balance",
             lineHeight: 1.2,
-            letterSpacing: 1,
             textShadow: "4px 6px 4px rgba(0,0,0,0.8)",
           })}
         >
@@ -109,37 +109,40 @@ export function HomePage({ randomImgNumber }: { randomImgNumber: number }) {
             right now!
           </div>
         </div>
+      </div>
+      <div
+        className={css({
+          display: "block",
+          w: "full",
+          maxW: "1200px",
+          mx: "auto",
+        })}
+      >
+        {!!comingSoonGames.length && (
+          <>
+            <PannelGrid title="What's coming soon">
+              {comingSoonGames.map((game: Game) => (
+                <GamePannel key={game.id} game={game} />
+              ))}
+            </PannelGrid>
+          </>
+        )}
         {!!mostAnticipatedGames.length && (
           <>
-            <h1>Most Anticipated</h1>
-            <div
-              className={css({
-                display: "grid",
-                gridAutoFlow: "column",
-                overflowX: "scroll",
-                gap: 8,
-              })}
-            >
+            <PannelGrid title="Most anticipated">
               {mostAnticipatedGames.map((game: Game) => (
                 <GamePannel key={game.id} game={game} />
               ))}
-            </div>
-          </>
-        )}
-        {!!comingSoonGames.length && (
-          <>
-            <h1>Coming soon</h1>
-            {comingSoonGames.map((game: Game) => (
-              <GamePannel key={game.id} game={game} />
-            ))}
+            </PannelGrid>
           </>
         )}
         {!!popularNowGames.length && (
           <>
-            <h1>Popular now</h1>
-            {popularNowGames.map((game: Game) => (
-              <GamePannel key={game.id} game={game} />
-            ))}
+            <PannelGrid title="Popular now">
+              {popularNowGames.map((game: Game) => (
+                <GamePannel key={game.id} game={game} />
+              ))}
+            </PannelGrid>
           </>
         )}
       </div>
@@ -161,7 +164,7 @@ const PageBackground = ({ randomImgNumber }: { randomImgNumber?: number }) => {
           top: 0,
           left: 0,
           w: "100%",
-          h: "800px",
+          h: "500px",
           overflow: "hidden",
           maskImage: {
             base: "linear-gradient(to top, transparent 8%, white 50%)",
@@ -189,19 +192,44 @@ const PageBackground = ({ randomImgNumber }: { randomImgNumber?: number }) => {
   );
 };
 
+const PannelGrid = ({
+  title,
+  children,
+}: {
+  title: string;
+  children: ReactNode;
+}) => {
+  return (
+    <>
+      <SectionTitle className={css({ mt: 12, mb: 5 })}>{title}</SectionTitle>
+      <div
+        className={css({
+          display: "grid",
+          gridTemplateColumns: { base: "1fr", md: "1fr 1fr" },
+          justifyContent: "center",
+          gap: { base: 4, xl: 6 },
+        })}
+      >
+        {children}
+      </div>
+    </>
+  );
+};
+
 const GamePannel = ({ game }: { game: Game }) => {
   return (
-    <div
+    <Link
+      href={`/game/${game.id}`}
       className={css({
         position: "relative",
         display: "flex",
-        w: "800px",
-        h: "500px",
-        my: 4,
+        w: "100%",
+        aspectRatio: "5/3",
         mx: "auto",
         overflow: "hidden",
         borderRadius: "10px",
         boxShadow: "2px 2px 8px rgba(0,0,0,.8)",
+        cursor: "pointer",
       })}
     >
       <div
@@ -212,6 +240,8 @@ const GamePannel = ({ game }: { game: Game }) => {
           backgroundSize: "auto 100%",
           backgroundRepeat: "no-repeat",
           backgroundPositionX: "left",
+          zIndex: 1,
+          maskImage: "linear-gradient(to left, transparent 0%, 10%, white 20%)",
         })}
         style={{
           backgroundImage: `url("https:${game.cover?.url.replace("t_thumb", "t_cover_big_2x")}")`,
@@ -229,11 +259,10 @@ const GamePannel = ({ game }: { game: Game }) => {
             w: "full",
             h: "full",
             backgroundRepeat: "no-repeat",
-            backgroundPosition: "center center",
+            backgroundPosition: "40% 0%",
             filter: "blur(50px)",
             transform: "scale(3)",
-            maskImage:
-              "linear-gradient(to right, transparent 0%, 30%, white 33%)",
+            zIndex: 0,
           })}
           style={{
             backgroundImage: `url("https:${game.cover?.url.replace("t_thumb", "t_cover_big_2x")}")`,
@@ -244,14 +273,29 @@ const GamePannel = ({ game }: { game: Game }) => {
       <div
         className={css({
           position: "absolute",
-          w: "50%",
+          w: "55%",
           right: 0,
+          py: 2,
+          px: 4,
           zIndex: 1,
         })}
       >
-        <div>{game.name}</div>
+        <div
+          className={css({
+            textAlign: "center",
+            fontFamily: "var(--font-outfit-sans)",
+            color: "{colors.text.dark}",
+            fontSize: 20,
+            textWrap: "balance",
+            lineHeight: 1.2,
+            letterSpacing: 1,
+            textShadow: "2px 2px 2px rgba(0,0,0,0.6)",
+          })}
+        >
+          {game.name}
+        </div>
       </div>
-    </div>
+    </Link>
   );
 };
 
