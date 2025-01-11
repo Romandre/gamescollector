@@ -13,7 +13,7 @@ import { Game } from "@/types";
 
 // Styles
 import { css } from "../../styled-system/css";
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { SectionTitle } from "./design";
 
 const getGames = async (query: string) => {
@@ -25,6 +25,27 @@ const getTimestampTwoMonthsAgo = () => {
   const now = new Date();
   now.setMonth(now.getMonth() - 2);
   return Math.floor(now.getTime() / 1000);
+};
+
+const timeLeftUntil = (now: number, unixTimestamp: number) => {
+  const targetTime = unixTimestamp * 1000;
+  const timeDifference = targetTime - now;
+
+  if (timeDifference <= 0) {
+    return;
+  }
+
+  // const seconds = Math.floor(timeDifference / 1000) % 60;
+  const minutes = Math.floor(timeDifference / (1000 * 60)) % 60;
+  const hours = Math.floor(timeDifference / (1000 * 60 * 60)) % 24;
+  const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+
+  return (
+    <>
+      <div>Coming in:</div>
+      <div>{`${days} days, ${hours} hours, ${minutes} minutes.`}</div>
+    </>
+  );
 };
 
 const timeNow = Math.floor(Date.now() / 1000);
@@ -114,7 +135,7 @@ export function HomePage({ randomImgNumber }: { randomImgNumber: number }) {
         className={css({
           display: "block",
           w: "full",
-          maxW: "1200px",
+          maxW: { base: "536px", md: "1200px" },
           mx: "auto",
         })}
       >
@@ -151,11 +172,6 @@ export function HomePage({ randomImgNumber }: { randomImgNumber: number }) {
 }
 
 const PageBackground = ({ randomImgNumber }: { randomImgNumber?: number }) => {
-  /* const randomImg = useMemo(
-    () => images[Math.floor(Math.random() * images.length)],
-    [images]
-  ); */
-
   return (
     randomImgNumber && (
       <div
@@ -173,9 +189,7 @@ const PageBackground = ({ randomImgNumber }: { randomImgNumber?: number }) => {
         })}
       >
         <Image
-          //src={`https:${randomImg.url.replace("t_thumb", "t_screenshot_huge_2x")}`}
           src={`/banner/${randomImgNumber}.png`}
-          //alt={randomImg.id}
           alt={`img-${randomImgNumber}`}
           width="200"
           height="200"
@@ -217,6 +231,21 @@ const PannelGrid = ({
 };
 
 const GamePannel = ({ game }: { game: Game }) => {
+  const [currentTime, setCurrentTime] = useState(Date.now());
+  const timeLeft = game.first_release_date
+    ? timeLeftUntil(currentTime, game.first_release_date)
+    : 0;
+
+  useEffect(() => {
+    // Set up a timer to update the time every 1000 milliseconds (1 second)
+    const timerId = setInterval(() => {
+      setCurrentTime(Date.now());
+    }, 1000);
+
+    // Cleanup the interval on component unmount
+    return () => clearInterval(timerId);
+  }, []); // Empty dependency array ensures this runs once on mount
+
   return (
     <Link
       href={`/game/${game.id}`}
@@ -294,6 +323,7 @@ const GamePannel = ({ game }: { game: Game }) => {
         >
           {game.name}
         </div>
+        {timeLeft}
       </div>
     </Link>
   );

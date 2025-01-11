@@ -10,6 +10,7 @@ export type Game = {
   genres?: Genre[];
   age_ratings?: AgeRating[];
   involved_companies?: InvolvedCompany[];
+  first_release_date?: number;
   release_dates?: ReleaseDate[];
   screenshots?: Screenshot[];
   websites?: Website[];
