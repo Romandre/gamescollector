@@ -298,8 +298,20 @@ const PannelGrid = ({
 }) => {
   return (
     <>
-      <SectionTitle className={css({ mt: 12, mb: 5, fontSize: 30 })}>
+      <SectionTitle className={css({ mt: 14, mb: 5, fontSize: 30 })}>
         {title}
+        <span
+          className={css({
+            pt: 2,
+            float: "right",
+            textTransform: "capitalize",
+            fontSize: 16,
+            color: "var(--colors-primary)",
+            cursor: "pointer",
+          })}
+        >
+          See more
+        </span>
       </SectionTitle>
       <div
         className={css({
