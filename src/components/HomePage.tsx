@@ -54,71 +54,106 @@ const timeLeftUntil = (now: number, unixTimestamp: number) => {
       </div>
       <div
         className={css({
-          display: "grid",
-          gridTemplateColumns: "repeat(3, 0fr)",
-          columnGap: 2,
-          textAlign: "center",
+          display: "flex",
+          alignItems: "center",
+          gap: 1,
         })}
       >
-        {formattedTime(days)}
-        {formattedTime(hours)}
-        {formattedTime(minutes)}
-        <div>days</div>
-        <div>hours</div>
-        <div>minutes</div>
+        {formattedTime(days, "days")}
+        <b>
+          <span>:</span>
+        </b>
+        {formattedTime(hours, "hours")}
+        <b>
+          <span>:</span>
+        </b>
+        {formattedTime(minutes, "minutes")}
       </div>
     </>
   );
 };
 
-const formattedTime = (number: number) => {
+const formattedTime = (number: number, time: string) => {
   const numberDigits = number.toString().split("");
   if (numberDigits.length < 2) numberDigits.unshift("0");
 
   return (
-    <div className={css({ display: "flex", gap: 1 })}>
-      {numberDigits.map((num, i) => (
-        <span key={i} className={css({ p: 2, bg: "rgba(0,0,0,.4)" })}>
-          {num}
-        </span>
-      ))}
+    <div>
+      <div className={css({ display: "flex", gap: 1 })}>
+        {numberDigits.map((num, i) => (
+          <span
+            key={i}
+            className={css({
+              w: { base: "24px", xs: "26px" },
+              py: 2,
+              bg: "rgba(0,0,0,.4)",
+              fontSize: { base: 16, lg: 17 },
+              textAlign: "center",
+            })}
+          >
+            {num}
+          </span>
+        ))}
+      </div>
+      <div
+        className={css({
+          h: 0,
+          fontSize: 13,
+          textTransform: "uppercase",
+          textAlign: "center",
+        })}
+      >
+        {time}
+      </div>
     </div>
   );
 };
 
 function formatTimestamp(timestamp: number) {
   const date = new Date(timestamp);
-
   const day = date.getDate();
   const month = date.toLocaleString("default", { month: "long" });
   const year = date.getFullYear();
-
   return `${day} ${month} ${year}`;
 }
 
 const timeNow = Math.floor(Date.now() / 1000);
 const twoMonthsAgo = getTimestampTwoMonthsAgo();
 
+// ----------------------- //
+// - HomePage Component - //
+// --------------------- //
 export function HomePage({ randomImgNumber }: { randomImgNumber: number }) {
   const mostAnticipatedQuery = `fields name, first_release_date, cover.*, platforms.*; where first_release_date > ${timeNow}; sort hypes desc; limit 4;`;
   const comingSoonQuery = `fields name, first_release_date, cover.*, platforms.*; where first_release_date > ${timeNow} & hypes > 50; sort first_release_date asc; limit 4;`;
   const popularNowQuery = `fields name, first_release_date, cover.*, platforms.*; where first_release_date > ${twoMonthsAgo} & first_release_date < ${timeNow}; sort hypes desc; limit 4;`;
 
-  const { data: comingSoon /* isLoading, isError, error */ } = useQuery({
+  const {
+    data: comingSoon,
+    isLoading: isComingSoonLoading /*  isError, error */,
+  } = useQuery({
     queryKey: ["comingSoon", [comingSoonQuery]],
     queryFn: () => getGames(comingSoonQuery),
   });
-  const { data: mostAnticipated /* isLoading, isError, error */ } = useQuery({
+  const {
+    data: mostAnticipated,
+    isLoading: isMostAnticipatedLoading /*  isError, error */,
+  } = useQuery({
     queryKey: ["anticipated", [mostAnticipatedQuery]],
     queryFn: () => getGames(mostAnticipatedQuery),
   });
-  const { data: popularNow /* isLoading, isError, error */ } = useQuery({
+  const {
+    data: popularNow,
+    isLoading: isPopularNowLoading /* isError, error */,
+  } = useQuery({
     queryKey: ["popular", [popularNowQuery]],
     queryFn: () => getGames(popularNowQuery),
   });
   const comingSoonGames = comingSoon?.games || [];
   const mostAnticipatedGames = mostAnticipated?.games || [];
   const popularNowGames = popularNow?.games || [];
+  const areGamesLoading =
+    isComingSoonLoading || isMostAnticipatedLoading || isPopularNowLoading;
 
   return (
     <div
@@ -179,42 +214,45 @@ export function HomePage({ randomImgNumber }: { randomImgNumber: number }) {
           </div>
         </div>
       </div>
-      <div
-        className={css({
-          display: "block",
-          w: "full",
-          maxW: { base: "536px", md: "1200px" },
-          mx: "auto",
-        })}
-      >
-        {!!comingSoonGames.length && (
-          <>
-            <PannelGrid title="What's coming soon">
-              {comingSoonGames.map((game: Game) => (
-                <GamePannel key={game.id} game={game} />
-              ))}
-            </PannelGrid>
-          </>
-        )}
-        {!!mostAnticipatedGames.length && (
-          <>
-            <PannelGrid title="Most anticipated">
-              {mostAnticipatedGames.map((game: Game) => (
-                <GamePannel key={game.id} game={game} />
-              ))}
-            </PannelGrid>
-          </>
-        )}
-        {!!popularNowGames.length && (
-          <>
-            <PannelGrid title="Popular now">
-              {popularNowGames.map((game: Game) => (
-                <GamePannel key={game.id} game={game} />
-              ))}
-            </PannelGrid>
-          </>
-        )}
-      </div>
+      {!areGamesLoading && (
+        <div
+          className={css({
+            display: "block",
+            w: "full",
+            maxW: { base: "536px", md: "1200px" },
+            mx: "auto",
+            animation: "fade-in 0.4s",
+          })}
+        >
+          {!!comingSoonGames.length && (
+            <>
+              <PannelGrid title="What's coming soon">
+                {comingSoonGames.map((game: Game) => (
+                  <GamePannel key={game.id} game={game} />
+                ))}
+              </PannelGrid>
+            </>
+          )}
+          {!!mostAnticipatedGames.length && (
+            <>
+              <PannelGrid title="Most anticipated">
+                {mostAnticipatedGames.map((game: Game) => (
+                  <GamePannel key={game.id} game={game} />
+                ))}
+              </PannelGrid>
+            </>
+          )}
+          {!!popularNowGames.length && (
+            <>
+              <PannelGrid title="Popular now">
+                {popularNowGames.map((game: Game) => (
+                  <GamePannel key={game.id} game={game} />
+                ))}
+              </PannelGrid>
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -230,10 +268,7 @@ const PageBackground = ({ randomImgNumber }: { randomImgNumber?: number }) => {
           w: "100%",
           h: "500px",
           overflow: "hidden",
-          maskImage: {
-            base: "linear-gradient(to top, transparent 8%, white 50%)",
-            sm: "linear-gradient(to top, transparent 2%, 35%, white 55%)",
-          },
+          maskImage: "linear-gradient(to top, transparent 2%, 35%, white 55%)",
         })}
       >
         <Image
@@ -360,7 +395,7 @@ const GamePannel = ({ game }: { game: Game }) => {
       <div
         className={css({
           position: "absolute",
-          w: "55%",
+          w: { base: "57%", sm: "55%" },
           right: 0,
           py: 3,
           px: 4,

@@ -51,9 +51,9 @@ const fields =
   "fields *, genres.name, platforms.name, release_dates.*, cover.url;";
 const sortingOptions = [
   "sort hypes desc;",
-  "sort release_dates desc;",
+  "sort first_release_date desc;",
   "sort total_rating desc;",
-  "sort name desc;",
+  "sort name asc;",
 ];
 
 const getGames = async (query: string) => {

@@ -78,7 +78,6 @@ export function GamePage({ id }: { id: string }) {
       <div
         className={css({
           position: "relative",
-          px: { base: 2, lg: 3 },
           display: "grid",
           mt: { base: 6, lg: "90px", xl: "120px" },
           gridTemplateAreas: {
@@ -111,7 +110,7 @@ export function GamePage({ id }: { id: string }) {
               "left main right"
               `,
           },
-          gridTemplateColumns: { sm: "264px 1fr", xl: "300px 1fr 280px" },
+          gridTemplateColumns: { sm: "264px 1fr", xl: "300px 1fr 240px" },
           gridTemplateRows: {
             md: "auto auto auto 0fr 1fr",
             xl: "auto auto auto 1fr",
@@ -690,7 +689,7 @@ const ColumnRight = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
           <>
             <div
               className={css({
-                mt: 4,
+                mt: 8,
                 fontSize: 18,
                 textTransform: "uppercase",
               })}
