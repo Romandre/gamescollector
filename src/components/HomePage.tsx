@@ -1,7 +1,9 @@
 "use client";
+import { ReactNode, useEffect, useState } from "react";
 import axios from "axios";
 
 // Components
+import { PlatformsIcons, SectionTitle } from "./design";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -13,8 +15,6 @@ import { Game } from "@/types";
 
 // Styles
 import { css } from "../../styled-system/css";
-import { ReactNode, useEffect, useState } from "react";
-import { SectionTitle } from "./design";
 
 const getGames = async (query: string) => {
   const response = await axios.get("/api/games", { params: { query } });
@@ -42,19 +42,67 @@ const timeLeftUntil = (now: number, unixTimestamp: number) => {
 
   return (
     <>
-      <div>Coming in:</div>
-      <div>{`${days} days, ${hours} hours, ${minutes} minutes.`}</div>
+      <div
+        className={css({
+          mt: 4,
+          mb: 1,
+          letterSpacing: 1,
+          textDecoration: "underline",
+        })}
+      >
+        {formatTimestamp(targetTime)}
+      </div>
+      <div
+        className={css({
+          display: "grid",
+          gridTemplateColumns: "repeat(3, 0fr)",
+          columnGap: 2,
+          textAlign: "center",
+        })}
+      >
+        {formattedTime(days)}
+        {formattedTime(hours)}
+        {formattedTime(minutes)}
+        <div>days</div>
+        <div>hours</div>
+        <div>minutes</div>
+      </div>
     </>
   );
 };
+
+const formattedTime = (number: number) => {
+  const numberDigits = number.toString().split("");
+  if (numberDigits.length < 2) numberDigits.unshift("0");
+
+  return (
+    <div className={css({ display: "flex", gap: 1 })}>
+      {numberDigits.map((num, i) => (
+        <span key={i} className={css({ p: 2, bg: "rgba(0,0,0,.4)" })}>
+          {num}
+        </span>
+      ))}
+    </div>
+  );
+};
+
+function formatTimestamp(timestamp: number) {
+  const date = new Date(timestamp);
+
+  const day = date.getDate();
+  const month = date.toLocaleString("default", { month: "long" });
+  const year = date.getFullYear();
+
+  return `${day} ${month} ${year}`;
+}
 
 const timeNow = Math.floor(Date.now() / 1000);
 const twoMonthsAgo = getTimestampTwoMonthsAgo();
 
 export function HomePage({ randomImgNumber }: { randomImgNumber: number }) {
-  const mostAnticipatedQuery = `fields name, first_release_date, cover, cover.*, platforms, platforms.*; where first_release_date > ${timeNow}; sort hypes desc; limit 4;`;
-  const comingSoonQuery = `fields name, first_release_date, cover, cover.*; where first_release_date > ${timeNow} & hypes > 50; sort first_release_date asc; limit 4;`;
-  const popularNowQuery = `fields name, first_release_date, cover, cover.*; where first_release_date > ${twoMonthsAgo} & first_release_date < ${timeNow}; sort hypes desc; limit 4;`;
+  const mostAnticipatedQuery = `fields name, first_release_date, cover.*, platforms.*; where first_release_date > ${timeNow}; sort hypes desc; limit 4;`;
+  const comingSoonQuery = `fields name, first_release_date, cover.*, platforms.*; where first_release_date > ${timeNow} & hypes > 50; sort first_release_date asc; limit 4;`;
+  const popularNowQuery = `fields name, first_release_date, cover.*, platforms.*; where first_release_date > ${twoMonthsAgo} & first_release_date < ${timeNow}; sort hypes desc; limit 4;`;
 
   const { data: comingSoon /* isLoading, isError, error */ } = useQuery({
     queryKey: ["comingSoon", [comingSoonQuery]],
@@ -215,13 +263,15 @@ const PannelGrid = ({
 }) => {
   return (
     <>
-      <SectionTitle className={css({ mt: 12, mb: 5 })}>{title}</SectionTitle>
+      <SectionTitle className={css({ mt: 12, mb: 5, fontSize: 30 })}>
+        {title}
+      </SectionTitle>
       <div
         className={css({
           display: "grid",
           gridTemplateColumns: { base: "1fr", md: "1fr 1fr" },
           justifyContent: "center",
-          gap: { base: 4, xl: 6 },
+          gap: { base: 5, md: 4, xl: 6 },
         })}
       >
         {children}
@@ -232,7 +282,7 @@ const PannelGrid = ({
 
 const GamePannel = ({ game }: { game: Game }) => {
   const [currentTime, setCurrentTime] = useState(Date.now());
-  const timeLeft = game.first_release_date
+  const timeLeftGrid = game.first_release_date
     ? timeLeftUntil(currentTime, game.first_release_date)
     : 0;
 
@@ -253,12 +303,21 @@ const GamePannel = ({ game }: { game: Game }) => {
         position: "relative",
         display: "flex",
         w: "100%",
-        aspectRatio: "5/3",
         mx: "auto",
-        overflow: "hidden",
+        aspectRatio: "5/3",
+        fontFamily: "var(--font-outfit-sans)",
         borderRadius: "10px",
         boxShadow: "2px 2px 8px rgba(0,0,0,.8)",
+        textShadow: "2px 2px 2px rgba(0,0,0,0.6)",
+        overflow: "hidden",
         cursor: "pointer",
+        transition: "opacity .3s",
+        _focus: {
+          opacity: 0.55,
+        },
+        _active: {
+          opacity: 0.55,
+        },
       })}
     >
       <div
@@ -298,32 +357,30 @@ const GamePannel = ({ game }: { game: Game }) => {
           }}
         />
       </div>
-
       <div
         className={css({
           position: "absolute",
           w: "55%",
           right: 0,
-          py: 2,
+          py: 3,
           px: 4,
+          color: "{colors.text.dark}",
           zIndex: 1,
         })}
       >
         <div
           className={css({
-            textAlign: "center",
-            fontFamily: "var(--font-outfit-sans)",
-            color: "{colors.text.dark}",
-            fontSize: 20,
+            fontSize: { base: 18, lg: 20 },
+            fontWeight: 500,
             textWrap: "balance",
-            lineHeight: 1.2,
+            lineHeight: 1.3,
             letterSpacing: 1,
-            textShadow: "2px 2px 2px rgba(0,0,0,0.6)",
           })}
         >
           {game.name}
         </div>
-        {timeLeft}
+        <PlatformsIcons platforms={game.platforms} className={css({ mt: 5 })} />
+        {timeLeftGrid}
       </div>
     </Link>
   );

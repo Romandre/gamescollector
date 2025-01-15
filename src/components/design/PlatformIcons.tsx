@@ -29,6 +29,7 @@ export const PlatformsIcons = ({
           className={css({
             display: "inline-flex",
             fontSize: 19,
+            filter: "drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.5))",
             gap: 2,
           })}
         >
