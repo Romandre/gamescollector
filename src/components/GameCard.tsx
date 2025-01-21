@@ -31,8 +31,8 @@ export function GameCard({
             position: "relative",
             borderRadius: "8px",
             overflow: "hidden",
-            animation: "fade-in 0.8s",
-            transition: "opacity 0.2s",
+            animation: "fade-in .8s",
+            transition: "opacity .2s",
             _focus: {
               opacity: 0.55,
             },

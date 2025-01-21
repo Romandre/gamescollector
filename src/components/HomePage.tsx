@@ -3,9 +3,10 @@ import { ReactNode, useEffect, useState } from "react";
 import axios from "axios";
 
 // Components
-import { PlatformsIcons, SectionTitle } from "./design";
+import { PlatformsIcons, SectionTitle, StarsRating } from "./design";
 import Image from "next/image";
 import Link from "next/link";
+import Skeleton from "react-loading-skeleton";
 
 // Hooks
 import { useQuery } from "@tanstack/react-query";
@@ -35,23 +36,14 @@ const timeLeftUntil = (now: number, unixTimestamp: number) => {
     return;
   }
 
-  // const seconds = Math.floor(timeDifference / 1000) % 60;
+  //const seconds = Math.floor(timeDifference / 1000) % 60;
   const minutes = Math.floor(timeDifference / (1000 * 60)) % 60;
   const hours = Math.floor(timeDifference / (1000 * 60 * 60)) % 24;
   const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
 
   return (
     <>
-      <div
-        className={css({
-          mt: 4,
-          mb: 1,
-          letterSpacing: 1,
-          textDecoration: "underline",
-        })}
-      >
-        {formatTimestamp(targetTime)}
-      </div>
+      {formatTimestamp(targetTime)}
       <div
         className={css({
           display: "flex",
@@ -60,13 +52,7 @@ const timeLeftUntil = (now: number, unixTimestamp: number) => {
         })}
       >
         {formattedTime(days, "days")}
-        <b>
-          <span>:</span>
-        </b>
         {formattedTime(hours, "hours")}
-        <b>
-          <span>:</span>
-        </b>
         {formattedTime(minutes, "minutes")}
       </div>
     </>
@@ -78,34 +64,48 @@ const formattedTime = (number: number, time: string) => {
   if (numberDigits.length < 2) numberDigits.unshift("0");
 
   return (
-    <div>
-      <div className={css({ display: "flex", gap: 1 })}>
-        {numberDigits.map((num, i) => (
+    <>
+      <div>
+        <div className={css({ display: "flex", gap: 1 })}>
+          {numberDigits.map((num, i) => (
+            <span
+              key={i}
+              className={css({
+                w: { base: "24px", xs: "26px", md: "24px", lg: "26px" },
+                py: 2,
+                bg: "rgba(0,0,0,.4)",
+                fontSize: { base: 16, lg: 17 },
+                textAlign: "center",
+              })}
+            >
+              {num}
+            </span>
+          ))}
+        </div>
+        <div
+          className={css({
+            h: 0,
+            fontSize: 12,
+            textTransform: "uppercase",
+            textAlign: "center",
+          })}
+        >
+          {time}
+        </div>
+      </div>
+      {time !== "minutes" && (
+        <b>
           <span
-            key={i}
             className={css({
-              w: { base: "24px", xs: "26px" },
-              py: 2,
-              bg: "rgba(0,0,0,.4)",
-              fontSize: { base: 16, lg: 17 },
-              textAlign: "center",
+              fontSize: 18,
+              animation: "release-countdown 1.8s infinite",
             })}
           >
-            {num}
+            :
           </span>
-        ))}
-      </div>
-      <div
-        className={css({
-          h: 0,
-          fontSize: 13,
-          textTransform: "uppercase",
-          textAlign: "center",
-        })}
-      >
-        {time}
-      </div>
-    </div>
+        </b>
+      )}
+    </>
   );
 };
 
@@ -114,7 +114,19 @@ function formatTimestamp(timestamp: number) {
   const day = date.getDate();
   const month = date.toLocaleString("default", { month: "long" });
   const year = date.getFullYear();
-  return `${day} ${month} ${year}`;
+
+  return (
+    <div
+      className={css({
+        mt: 4,
+        mb: 1,
+        letterSpacing: 1,
+        textDecoration: "underline",
+      })}
+    >
+      {day} {month} {year}
+    </div>
+  );
 }
 
 const timeNow = Math.floor(Date.now() / 1000);
@@ -124,9 +136,9 @@ const twoMonthsAgo = getTimestampTwoMonthsAgo();
 // - HomePage Component - //
 // --------------------- //
 export function HomePage({ randomImgNumber }: { randomImgNumber: number }) {
-  const mostAnticipatedQuery = `fields name, first_release_date, cover.*, platforms.*; where first_release_date > ${timeNow}; sort hypes desc; limit 4;`;
   const comingSoonQuery = `fields name, first_release_date, cover.*, platforms.*; where first_release_date > ${timeNow} & hypes > 50; sort first_release_date asc; limit 4;`;
-  const popularNowQuery = `fields name, first_release_date, cover.*, platforms.*; where first_release_date > ${twoMonthsAgo} & first_release_date < ${timeNow}; sort hypes desc; limit 4;`;
+  const mostAnticipatedQuery = `fields name, release_dates.*, cover.*, platforms.*, summary; where first_release_date > ${timeNow}; sort hypes desc; limit 4;`;
+  const popularNowQuery = `fields name, cover.*, platforms.*, total_rating; where first_release_date > ${twoMonthsAgo} & first_release_date < ${timeNow}; sort hypes desc; limit 4;`;
 
   const {
     data: comingSoon,
@@ -152,8 +164,6 @@ export function HomePage({ randomImgNumber }: { randomImgNumber: number }) {
   const comingSoonGames = comingSoon?.games || [];
   const mostAnticipatedGames = mostAnticipated?.games || [];
   const popularNowGames = popularNow?.games || [];
-  const areGamesLoading =
-    isComingSoonLoading || isMostAnticipatedLoading || isPopularNowLoading;
 
   return (
     <div
@@ -214,45 +224,56 @@ export function HomePage({ randomImgNumber }: { randomImgNumber: number }) {
           </div>
         </div>
       </div>
-      {!areGamesLoading && (
-        <div
-          className={css({
-            display: "block",
-            w: "full",
-            maxW: { base: "536px", md: "1200px" },
-            mx: "auto",
-            animation: "fade-in 0.4s",
-          })}
-        >
-          {!!comingSoonGames.length && (
-            <>
-              <PannelGrid title="What's coming soon">
-                {comingSoonGames.map((game: Game) => (
-                  <GamePannel key={game.id} game={game} />
-                ))}
-              </PannelGrid>
-            </>
+
+      <div
+        className={css({
+          display: "block",
+          w: "full",
+          maxW: { base: "536px", md: "1200px" },
+          mx: "auto",
+          animation: "fade-in 0.4s",
+        })}
+      >
+        <PannelGrid title="Coming soon">
+          {!isComingSoonLoading ? (
+            !!comingSoonGames.length ? (
+              comingSoonGames.map((game: Game) => (
+                <GamePannel key={game.id} game={game} />
+              ))
+            ) : (
+              "Something went wrong"
+            )
+          ) : (
+            <PannelLoader />
           )}
-          {!!mostAnticipatedGames.length && (
-            <>
-              <PannelGrid title="Most anticipated">
-                {mostAnticipatedGames.map((game: Game) => (
-                  <GamePannel key={game.id} game={game} />
-                ))}
-              </PannelGrid>
-            </>
+        </PannelGrid>
+        <PannelGrid title="Most anticipated">
+          {!isMostAnticipatedLoading ? (
+            !!mostAnticipatedGames.length ? (
+              mostAnticipatedGames.map((game: Game) => (
+                <GamePannel key={game.id} game={game} />
+              ))
+            ) : (
+              "Something went wrong"
+            )
+          ) : (
+            <PannelLoader />
           )}
-          {!!popularNowGames.length && (
-            <>
-              <PannelGrid title="Popular now">
-                {popularNowGames.map((game: Game) => (
-                  <GamePannel key={game.id} game={game} />
-                ))}
-              </PannelGrid>
-            </>
+        </PannelGrid>
+        <PannelGrid title="Popular now">
+          {!isPopularNowLoading ? (
+            !!popularNowGames.length ? (
+              popularNowGames.map((game: Game) => (
+                <GamePannel key={game.id} game={game} />
+              ))
+            ) : (
+              "Something went wrong"
+            )
+          ) : (
+            <PannelLoader />
           )}
-        </div>
-      )}
+        </PannelGrid>
+      </div>
     </div>
   );
 }
@@ -298,9 +319,15 @@ const PannelGrid = ({
 }) => {
   return (
     <>
-      <SectionTitle className={css({ mt: 14, mb: 5, fontSize: 30 })}>
+      <SectionTitle
+        className={css({
+          mt: 14,
+          mb: 5,
+          fontSize: 30,
+        })}
+      >
         {title}
-        <span
+        {/* <span
           className={css({
             pt: 2,
             float: "right",
@@ -311,7 +338,7 @@ const PannelGrid = ({
           })}
         >
           See more
-        </span>
+        </span> */}
       </SectionTitle>
       <div
         className={css({
@@ -327,21 +354,26 @@ const PannelGrid = ({
   );
 };
 
-const GamePannel = ({ game }: { game: Game }) => {
+const GamePannel = ({ game }: { game: Game; timer?: boolean }) => {
   const [currentTime, setCurrentTime] = useState(Date.now());
-  const timeLeftGrid = game.first_release_date
-    ? timeLeftUntil(currentTime, game.first_release_date)
-    : 0;
+  const timeLeftGrid = game.first_release_date ? (
+    timeLeftUntil(currentTime, game.first_release_date)
+  ) : game.release_dates ? (
+    <div className={css({ my: 4 })}>
+      Planned release: <b>{game.release_dates?.[0].human}</b>
+    </div>
+  ) : (
+    ""
+  );
 
   useEffect(() => {
-    // Set up a timer to update the time every 1000 milliseconds (1 second)
-    const timerId = setInterval(() => {
-      setCurrentTime(Date.now());
-    }, 1000);
-
-    // Cleanup the interval on component unmount
-    return () => clearInterval(timerId);
-  }, []); // Empty dependency array ensures this runs once on mount
+    if (game.first_release_date) {
+      const timerId = setInterval(() => {
+        setCurrentTime(Date.now());
+      }, 1000);
+      return () => clearInterval(timerId);
+    }
+  }, [game.first_release_date]);
 
   return (
     <Link
@@ -358,6 +390,7 @@ const GamePannel = ({ game }: { game: Game }) => {
         textShadow: "2px 2px 2px rgba(0,0,0,0.6)",
         overflow: "hidden",
         cursor: "pointer",
+        animation: "fade-in 0.6s",
         transition: "opacity .3s",
         _focus: {
           opacity: 0.55,
@@ -407,17 +440,21 @@ const GamePannel = ({ game }: { game: Game }) => {
       <div
         className={css({
           position: "absolute",
+          h: "full",
           w: { base: "57%", sm: "55%" },
           right: 0,
           py: 3,
           px: 4,
           color: "{colors.text.dark}",
+          maskImage: !game.first_release_date
+            ? "linear-gradient(to top, transparent 0%, 26%, white 30%)"
+            : "",
           zIndex: 1,
         })}
       >
         <div
           className={css({
-            fontSize: { base: 18, lg: 20 },
+            fontSize: { base: 18, lg: 21 },
             fontWeight: 500,
             textWrap: "balance",
             lineHeight: 1.3,
@@ -428,8 +465,35 @@ const GamePannel = ({ game }: { game: Game }) => {
         </div>
         <PlatformsIcons platforms={game.platforms} className={css({ mt: 5 })} />
         {timeLeftGrid}
+        {!!game.summary && (
+          <div
+            className={css({
+              fontFamily: "var(--font-exo-2)",
+              fontSize: 14,
+            })}
+          >
+            {game.summary}
+          </div>
+        )}
+        {!!game.total_rating && (
+          <StarsRating
+            rating={game.total_rating}
+            className={css({ my: 4, textShadow: "none" })}
+          />
+        )}
       </div>
     </Link>
+  );
+};
+
+const PannelLoader = () => {
+  return (
+    <>
+      <Skeleton className={css({ aspectRatio: 5 / 3 })} />
+      <Skeleton className={css({ aspectRatio: 5 / 3 })} />
+      <Skeleton className={css({ aspectRatio: 5 / 3 })} />
+      <Skeleton className={css({ aspectRatio: 5 / 3 })} />
+    </>
   );
 };
 
