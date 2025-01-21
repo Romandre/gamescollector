@@ -64,6 +64,7 @@ export type ReleaseDate = {
   id: number;
   human: string; // e.g., "2024-12-01"
   platform: number;
+  status: GameStatus;
 };
 
 export type Screenshot = {
@@ -75,4 +76,14 @@ export type Website = {
   id: number;
   category: number; // Category of the website (e.g., official, social)
   url: string;
+};
+
+export type GameStatus = {
+  status: number;
+  checksum: string;
+  created_at: number;
+  description: string;
+  id: number;
+  name: string;
+  updated_at: number;
 };

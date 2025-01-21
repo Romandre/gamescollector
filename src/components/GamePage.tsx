@@ -37,10 +37,17 @@ import { IoLogoGameControllerB } from "react-icons/io";
 import { IoLogoGooglePlaystore } from "react-icons/io5";
 
 // Types
-import type { Cover, Game, Platform, Screenshot, Website } from "@/types";
+import type {
+  Cover,
+  Game,
+  GameStatus,
+  Platform,
+  Screenshot,
+  Website,
+} from "@/types";
 
 const fields =
-  "fields *, screenshots.*, cover.url, release_dates.*, platforms.*, genres.*, age_ratings.*, dlcs.*, dlcs.cover.*, expansions.*, expansions.cover.*, ports.*, ports.cover.*, remakes.*, remakes.cover.*, involved_companies.*, involved_companies.company.*, parent_game.*, parent_game.cover.*, websites.*;";
+  "fields *, screenshots.*, cover.url, release_dates.*, release_dates.status.*, platforms.*, genres.*, age_ratings.*, dlcs.*, dlcs.cover.*, expansions.*, expansions.cover.*, ports.*, ports.cover.*, remakes.*, remakes.cover.*, involved_companies.*, involved_companies.company.*, parent_game.*, parent_game.cover.*, websites.*;";
 
 const bages = [
   { id: 1, name: "DLC" },
@@ -430,26 +437,43 @@ const ColumnLeft = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
   const releases = game?.release_dates;
   const platforms = game?.platforms;
   const releaseDates =
-    !!releases?.length &&
-    !!platforms?.length &&
-    Object.entries(
-      releases.reduce<Record<string, string[]>>((acc, item) => {
-        if (!acc[item.human]) {
-          acc[item.human] = [];
-        }
-        // Find the matching platform name
-        const platformName = platforms.find(
-          (platform) => platform.id === item.platform
-        )?.name;
-        if (platformName) {
-          acc[item.human].push(platformName);
-        }
-        return acc;
-      }, {})
-    ).map(([date, platforms]) => ({
-      date,
-      platforms,
-    }));
+    releases?.length && platforms?.length
+      ? releases
+          .reduce<{ date: string; platforms: string[]; status: GameStatus }[]>(
+            (acc, release) => {
+              // Find existing entry for this date
+              const existingEntry = acc.find(
+                (entry) => entry.date === release.human
+              );
+
+              // Find platform name
+              const platform = platforms.find(
+                (p) => p.id === release.platform
+              )?.name;
+              if (!platform) return acc;
+
+              if (existingEntry) {
+                // Add platform to existing date entry
+                existingEntry.platforms.push(platform);
+              } else {
+                // Create new entry for this date
+                acc.push({
+                  date: release.human,
+                  platforms: [platform],
+                  status: release.status,
+                });
+              }
+
+              return acc;
+            },
+            []
+          )
+          .sort((a, b) => {
+            const dateA = new Date(a.date);
+            const dateB = new Date(b.date);
+            return dateA.getTime() - dateB.getTime();
+          })
+      : [];
   const genres = game?.genres?.map((genre) => genre.name);
   const ageRatingValue = game?.age_ratings?.find(
     (rating) => rating.category === 2
@@ -468,6 +492,8 @@ const ColumnLeft = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
   const publishers =
     game?.involved_companies?.filter((company) => company.publisher === true) ||
     [];
+
+  console.log(releases);
 
   return isLoaded ? (
     <>
@@ -503,9 +529,19 @@ const ColumnLeft = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
               (date) =>
                 date && ( // Ensure date is not undefined
                   <div key={date.date} className={css({ mb: 2 })}>
-                    - {date.date}
-                    <p className={css({ fontStyle: "italic", fontSize: 13 })}>
-                      {(date.platforms as string[]).join(", ")}
+                    - {date.date}{" "}
+                    {(date.status?.id === 34 || date.status?.id === 3) && (
+                      <span
+                        className={css({
+                          fontSize: 13,
+                          fontWeight: 600,
+                        })}
+                      >
+                        | <i>{date.status.name}</i>
+                      </span>
+                    )}
+                    <p className={css({ fontSize: 13 })}>
+                      <i>{(date.platforms as string[]).join(", ")}</i>
                     </p>
                   </div>
                 )

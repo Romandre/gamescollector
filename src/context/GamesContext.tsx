@@ -107,7 +107,6 @@ export const GamesProvider = ({ children }: { children: ReactNode }) => {
   const isLoading = showDlcs === undefined || isQueryLoading;
 
   const loadMore = () => {
-    console.log("in view", offset);
     if (gamesCount > offset + limit) setOffset((prev) => prev + limit);
   };
 
