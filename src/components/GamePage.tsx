@@ -493,8 +493,6 @@ const ColumnLeft = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
     game?.involved_companies?.filter((company) => company.publisher === true) ||
     [];
 
-  console.log(releases);
-
   return isLoaded ? (
     <>
       {!!genres?.length && (
@@ -721,7 +719,7 @@ const ColumnRight = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
             />
           </Link>
         </div>
-        {links.length && (
+        {!!links.length && (
           <>
             <div
               className={css({
