@@ -35,6 +35,8 @@ import { CgWebsite } from "react-icons/cg";
 import { SiEpicgames, SiWikibooks } from "react-icons/si";
 import { IoLogoGameControllerB } from "react-icons/io";
 import { IoLogoGooglePlaystore } from "react-icons/io5";
+import { FaChevronLeft } from "react-icons/fa";
+import { FaChevronRight } from "react-icons/fa";
 
 // Types
 import type {
@@ -884,14 +886,33 @@ const ImagesFullView = ({
   screenshots: Screenshot[];
   onClose: () => void;
 }) => {
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const [index, setIndex] = useState<number | undefined>();
   const viewedImage = index !== undefined && screenshots[index];
-  /* const prevIndex =
-    index && (index - 1 < 0 ? screenshots.length - 1 : screenshots[index - 1]);
-  const nextIndex =
-    index && (index + 1 > screenshots.length ? 0 : screenshots[index + 1]);
-  const prevImage = screenshots[prevIndex];
-  const nextImage = screenshots[nextIndex]; */
+
+  const preloadImage = (url: string) => {
+    const img = document.createElement("img");
+    img.src = url;
+  };
+
+  const handleImageClick = (direction: "prev" | "next") => {
+    if (index !== undefined) {
+      const nextIndex = index < screenshots.length - 1 ? index + 1 : 0;
+      const prevIndex = index === 0 ? screenshots.length - 1 : index - 1;
+      const nextActiveIndex = direction === "next" ? nextIndex : prevIndex;
+
+      preloadImage(
+        `https:${screenshots[nextActiveIndex].url.replace("t_thumb", "t_screenshot_huge_2x")}`
+      );
+
+      // Smooth transition
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setIndex(nextActiveIndex);
+        setIsTransitioning(false);
+      }, 200); // Match the transition duration in CSS
+    }
+  };
 
   useEffect(() => {
     setIndex(imageIndex!);
@@ -905,24 +926,76 @@ const ImagesFullView = ({
           className={css({
             position: "fixed",
             display: "block",
-            w: { base: "full", md: "70%" },
+            w: { base: "full", md: "75%" },
             top: "50%",
             left: "50%",
-            transform: "translate(-50%, -50%)",
+            transform: "translate(-50%, -48%)",
+            opacity: isTransitioning ? 0 : 1, // For fading effect
+            transition: "opacity 0.2s ease-in-out",
+            animation: "fade-in .2s",
             zIndex: 998,
           })}
         >
+          <GalleryChevron
+            direction="back"
+            onClick={() => handleImageClick("prev")}
+          />
           <Image
             src={`https:${viewedImage.url.replace("t_thumb", "t_screenshot_huge_2x")}`}
             alt={viewedImage.id}
             width={500}
             height={500}
             className={css({ w: "full", h: "full" })}
-            onClick={() => setIndex(index + 1)}
+            onClick={() => handleImageClick("next")}
+          />
+          <GalleryChevron
+            direction="forth"
+            onClick={() => handleImageClick("next")}
           />
         </div>
         <Overlay isOpen={isOpen} setIsOpen={() => onClose()} />
       </>
     )
+  );
+};
+
+const GalleryChevron = ({
+  direction,
+  onClick,
+}: {
+  direction: "back" | "forth";
+  onClick: () => void;
+}) => {
+  const isLeftChevron = direction === "back";
+
+  return (
+    <div
+      className={css({
+        position: "absolute",
+        w: "50%",
+        h: "full",
+        top: 0,
+        left: isLeftChevron ? 0 : "unset",
+        right: !isLeftChevron ? 0 : "unset",
+        cursor: "pointer",
+      })}
+      onClick={onClick}
+    >
+      <div
+        className={css({
+          position: "absolute",
+          display: "flex",
+          w: 12,
+          h: "full",
+          left: isLeftChevron ? { base: 0, md: -12 } : "unset",
+          right: !isLeftChevron ? { base: 0, md: -12 } : "unset",
+          alignItems: "center",
+          justifyContent: "center",
+          bg: "rgba(255,255,255,.2)",
+        })}
+      >
+        {isLeftChevron ? <FaChevronLeft /> : <FaChevronRight />}
+      </div>
+    </div>
   );
 };
