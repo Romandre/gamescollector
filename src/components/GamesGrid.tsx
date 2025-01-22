@@ -1,5 +1,4 @@
 "use client";
-import { useRouter } from "next/navigation";
 
 // Components
 import { GameSorting } from "./GameSorting";
@@ -8,6 +7,7 @@ import { Grid } from "./design/Grid";
 import { InView } from "react-intersection-observer";
 import { Tiles, PlatformsIcons, StarsRating } from "./design";
 import Image from "next/image";
+import Link from "next/link";
 
 // Context
 import { useGamesContext } from "@/context";
@@ -18,7 +18,6 @@ import Skeleton from "react-loading-skeleton";
 // Styles
 import { css } from "../../styled-system/css";
 import "react-loading-skeleton/dist/skeleton.css";
-import router from "next/router";
 
 export function GamesGrid() {
   const { games, view, loadMore, isError, emptyData, error, isLoading } =
@@ -68,7 +67,6 @@ const GridView = () => {
 
 const ListView = () => {
   const { games, offset, limit, isLoading, isFetching } = useGamesContext();
-  const router = useRouter();
 
   return (
     <ul className={css({ display: "inline-block", w: "full" })}>
@@ -76,75 +74,100 @@ const ListView = () => {
         games?.map((game) => (
           <li
             key={game.id}
-            onClick={() => router.push(`/game/${game.id}`)}
-            className={`tile ${css({ display: "flex", mb: 2, p: 2, h: "190px", cursor: "pointer" })}`}
+            className={`tile ${css({
+              mb: 2,
+              cursor: "pointer",
+              userSelect: "none",
+            })}`}
           >
-            <div
+            <Link
               className={css({
-                position: "relative",
-                display: "inline-block",
-                h: "100%",
-                aspectRatio: "3/4",
+                display: "flex",
+                w: "full",
+                h: "190px",
+                p: 2,
+                transition: "opacity .2s",
+                _focus: {
+                  opacity: 0.55,
+                },
+                _active: {
+                  opacity: 0.55,
+                },
+                animation: "fade-in .6s",
               })}
+              href={`/game/${game.id}`}
             >
-              {!!game?.cover?.url ? (
-                <Image
-                  src={`https:${game?.cover?.url?.replace("t_thumb", "t_cover_big_2x")}`}
-                  alt={game.cover?.id}
-                  fill
-                  style={{ objectFit: "cover", animation: "fade-in 0.8s" }}
-                  sizes="(max-width: 700px) 100vw, 700px"
-                  className={css({
-                    height: "100vh",
-                  })}
-                  loading="lazy"
-                />
-              ) : (
-                <Image
-                  src="/no-image.jpg"
-                  alt="no-image"
-                  fill
-                  style={{ objectFit: "cover", animation: "fade-in 0.8s" }}
-                  sizes="(max-width: 700px) 100vw, 700px"
-                  className={css({
-                    height: "100vh",
-                  })}
-                  loading="lazy"
-                />
-              )}
-            </div>
-            <div
-              className={css({
-                display: "inline-grid",
-                gridTemplateRows: !game.total_rating
-                  ? "auto auto 1fr"
-                  : "auto auto auto 1fr",
-                verticalAlign: "top",
-                mx: 3,
-              })}
-            >
-              <div className={css({ fontSize: 20, mb: 2 })}>{game.name}</div>
-              <StarsRating
-                rating={game.total_rating}
-                className={css({ ml: 1, scale: 1.1, justifySelf: "baseline" })}
-              />
-              <PlatformsIcons
-                platforms={game.platforms}
-                className={css({ mt: 4 })}
-              />
-              {!!game.genres && (
-                <div
-                  className={css({
-                    display: { base: "none", sm: "block" },
-                    alignSelf: "end",
-                  })}
-                >
-                  <Tiles
-                    array={game.genres.map((genre) => genre.name).sort()}
+              <div
+                className={css({
+                  position: "relative",
+                  display: "inline-block",
+                  h: "100%",
+                  aspectRatio: "3/4",
+                })}
+              >
+                {!!game?.cover?.url ? (
+                  <Image
+                    src={`https:${game?.cover?.url?.replace("t_thumb", "t_cover_big_2x")}`}
+                    alt={game.cover?.id}
+                    fill
+                    style={{ objectFit: "cover", animation: "fade-in 0.8s" }}
+                    sizes="(max-width: 700px) 100vw, 700px"
+                    className={css({
+                      height: "100vh",
+                    })}
+                    loading="lazy"
                   />
-                </div>
-              )}
-            </div>
+                ) : (
+                  <Image
+                    src="/no-image.jpg"
+                    alt="no-image"
+                    fill
+                    style={{ objectFit: "cover", animation: "fade-in 0.8s" }}
+                    sizes="(max-width: 700px) 100vw, 700px"
+                    className={css({
+                      height: "100vh",
+                    })}
+                    loading="lazy"
+                  />
+                )}
+              </div>
+              <div
+                className={css({
+                  display: "inline-grid",
+                  gridTemplateRows: !game.total_rating
+                    ? "auto auto 1fr"
+                    : "auto auto auto 1fr",
+                  verticalAlign: "top",
+                  mx: 3,
+                })}
+              >
+                <div className={css({ fontSize: 20, mb: 2 })}>{game.name}</div>
+                <StarsRating
+                  rating={game.total_rating}
+                  className={css({
+                    ml: 1,
+                    scale: 1.1,
+                    justifySelf: "baseline",
+                  })}
+                />
+                <PlatformsIcons
+                  platforms={game.platforms}
+                  className={css({ mt: 4 })}
+                />
+                {!!game.genres && (
+                  <div
+                    className={css({
+                      display: { base: "none", sm: "block" },
+                      alignSelf: "end",
+                    })}
+                  >
+                    <Tiles
+                      array={game.genres.map((genre) => genre.name).sort()}
+                    />
+                  </div>
+                )}
+              </div>
+            </Link>
           </li>
         ))}
       {(isLoading ||
@@ -166,10 +189,27 @@ const ListMinView = () => {
         games?.map((game) => (
           <li
             key={game.id}
-            onClick={() => router.push(`/game/${game.id}`)}
-            className={`tile ${css({ mb: 2, py: 2, px: 4, cursor: "pointer" })}`}
+            className={`tile ${css({ mb: 2, cursor: "pointer", userSelect: "none" })}`}
           >
-            {game.name}
+            <Link
+              href={`/game/${game.id}`}
+              className={css({
+                display: "block",
+                w: "full",
+                py: 2,
+                px: 4,
+                transition: "opacity .2s",
+                _focus: {
+                  opacity: 0.55,
+                },
+                _active: {
+                  opacity: 0.55,
+                },
+                animation: "fade-in .6s",
+              })}
+            >
+              {game.name}
+            </Link>
           </li>
         ))}
       {(isLoading ||
