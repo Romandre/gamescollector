@@ -1,10 +1,10 @@
 "use client";
-import { ReactNode, useMemo, useState } from "react";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 import axios from "axios";
 
 // Components
 import { GameCard } from "./GameCard";
-import { Grid, SectionTitle, Tiles } from "./design";
+import { Grid, Overlay, SectionTitle, Tiles } from "./design";
 import Skeleton from "react-loading-skeleton";
 import Link from "next/link";
 import Image from "next/image";
@@ -47,7 +47,7 @@ import type {
 } from "@/types";
 
 const fields =
-  "fields *, screenshots.*, cover.url, release_dates.*, release_dates.status.*, platforms.*, genres.*, age_ratings.*, dlcs.*, dlcs.cover.*, expansions.*, expansions.cover.*, ports.*, ports.cover.*, remakes.*, remakes.cover.*, involved_companies.*, involved_companies.company.*, parent_game.*, parent_game.cover.*, websites.*;";
+  "fields *, screenshots.*, cover.url, release_dates.*, release_dates.status.*, platforms.*, genres.*, age_ratings.*, dlcs.*, dlcs.cover.*, expansions.*, expansions.cover.*, ports.*, ports.cover.*, remakes.*, remakes.cover.*, involved_companies.*, involved_companies.company.*, parent_game.*, parent_game.cover.*, websites.*, videos.*;";
 
 const bages = [
   { id: 1, name: "DLC" },
@@ -71,6 +71,8 @@ export function GamePage({ id }: { id: string }) {
   const game = data?.games?.[0] as Game;
   const isGameLoaded = !!(!isLoading && game?.id);
   const noGameFound = !!(!isLoading && !game?.id);
+
+  console.log(game);
 
   return !noGameFound ? (
     <div
@@ -642,38 +644,7 @@ const ColumnMain = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
       )}
       {!!game?.screenshots?.length && (
         <Section title="Screenshots">
-          <div
-            className={css({
-              display: "grid",
-              mb: 4,
-              gridTemplateColumns: {
-                base: "1fr 1fr",
-                md: "1fr 1fr",
-                lg: "1fr 1fr 1fr",
-                xl: "1fr 1fr",
-                "2xl": "1fr 1fr 1fr",
-              },
-              gap: 1.5,
-            })}
-          >
-            {game?.screenshots.map((screenshot) => (
-              <div
-                key={screenshot.id}
-                className={css({
-                  position: "relative",
-                  display: "block",
-                  flexBasis: "50%",
-                })}
-              >
-                <Image
-                  src={`https:${screenshot.url.replace("t_thumb", "t_screenshot_big")}`}
-                  alt={screenshot.id}
-                  width={500}
-                  height={500}
-                ></Image>
-              </div>
-            ))}
-          </div>
+          <Screenshots screenshots={game.screenshots} />
         </Section>
       )}
     </>
@@ -849,5 +820,109 @@ const WebsiteLinks = ({ links }: { links: Website[] }) => {
           )
         );
       })
+  );
+};
+
+const Screenshots = ({ screenshots }: { screenshots: Screenshot[] }) => {
+  const [gallery, setGallery] = useState<{
+    imgIndex: number | null;
+    isOpen: boolean;
+  }>({ imgIndex: null, isOpen: false });
+
+  return (
+    <div
+      className={css({
+        display: "grid",
+        mb: 4,
+        gridTemplateColumns: {
+          base: "1fr 1fr",
+          md: "1fr 1fr",
+          lg: "1fr 1fr 1fr",
+          xl: "1fr 1fr",
+          "2xl": "1fr 1fr 1fr",
+        },
+        gap: 1.5,
+      })}
+    >
+      {screenshots.map((screenshot, index) => (
+        <div
+          key={screenshot.id}
+          className={css({
+            position: "relative",
+            display: "block",
+            flexBasis: "50%",
+            cursor: "pointer",
+          })}
+        >
+          <Image
+            src={`https:${screenshot.url.replace("t_thumb", "t_screenshot_big")}`}
+            alt={screenshot.id}
+            width={500}
+            height={500}
+            onClick={() => setGallery({ imgIndex: index, isOpen: true })}
+          ></Image>
+        </div>
+      ))}
+      <ImagesFullView
+        imageIndex={gallery.imgIndex}
+        isOpen={gallery.isOpen}
+        screenshots={screenshots}
+        onClose={() => setGallery({ imgIndex: null, isOpen: false })}
+      />
+    </div>
+  );
+};
+
+const ImagesFullView = ({
+  imageIndex,
+  isOpen,
+  screenshots,
+  onClose,
+}: {
+  imageIndex: number | null;
+  isOpen: boolean;
+  screenshots: Screenshot[];
+  onClose: () => void;
+}) => {
+  const [index, setIndex] = useState<number | undefined>();
+  const viewedImage = index !== undefined && screenshots[index];
+  /* const prevIndex =
+    index && (index - 1 < 0 ? screenshots.length - 1 : screenshots[index - 1]);
+  const nextIndex =
+    index && (index + 1 > screenshots.length ? 0 : screenshots[index + 1]);
+  const prevImage = screenshots[prevIndex];
+  const nextImage = screenshots[nextIndex]; */
+
+  useEffect(() => {
+    setIndex(imageIndex!);
+  }, [imageIndex]);
+
+  return (
+    !!(isOpen && viewedImage) && (
+      <>
+        <div
+          key={viewedImage.id}
+          className={css({
+            position: "fixed",
+            display: "block",
+            w: { base: "full", md: "70%" },
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            zIndex: 998,
+          })}
+        >
+          <Image
+            src={`https:${viewedImage.url.replace("t_thumb", "t_screenshot_huge_2x")}`}
+            alt={viewedImage.id}
+            width={500}
+            height={500}
+            className={css({ w: "full", h: "full" })}
+            onClick={() => setIndex(index + 1)}
+          />
+        </div>
+        <Overlay isOpen={isOpen} setIsOpen={() => onClose()} />
+      </>
+    )
   );
 };

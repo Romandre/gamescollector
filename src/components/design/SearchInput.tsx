@@ -27,9 +27,11 @@ export function SearchInput({ className }: { className: string }) {
 
   const searchGames = (e: KeyboardEvent) => {
     const trimmedValue = value.trim();
-    if (e.key === "Enter" && search !== trimmedValue) {
-      window.scrollTo(0, 0);
-      handleSearch(trimmedValue);
+    if (e.key === "Enter") {
+      if (search !== trimmedValue) {
+        window.scrollTo(0, 0);
+        handleSearch(trimmedValue);
+      }
       if (pathname !== "/browse") redirect("/browse");
     }
   };
