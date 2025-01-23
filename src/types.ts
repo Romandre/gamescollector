@@ -65,6 +65,7 @@ export type ReleaseDate = {
   human: string; // e.g., "2024-12-01"
   platform: number;
   status: GameStatus;
+  region: number;
 };
 
 export type Screenshot = {

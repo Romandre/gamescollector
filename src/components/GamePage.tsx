@@ -58,6 +58,19 @@ const bages = [
   { id: 11, name: "Port" },
 ];
 
+const regions = [
+  { id: 1, name: "europe" },
+  { id: 2, name: "north america" },
+  { id: 3, name: "australia" },
+  { id: 4, name: "new zealand" },
+  { id: 5, name: "japan" },
+  { id: 6, name: "china" },
+  { id: 7, name: "asia" },
+  { id: 8, name: "worldwide" },
+  { id: 9, name: "korea" },
+  { id: 10, name: "brazil" },
+];
+
 const getGame = async (query: string) => {
   const response = await axios.get("/api/games", { params: { query } });
   return response.data;
@@ -443,35 +456,40 @@ const ColumnLeft = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
   const releaseDates =
     releases?.length && platforms?.length
       ? releases
-          .reduce<{ date: string; platforms: string[]; status: GameStatus }[]>(
-            (acc, release) => {
-              // Find existing entry for this date
-              const existingEntry = acc.find(
-                (entry) => entry.date === release.human
-              );
+          .reduce<
+            {
+              date: string;
+              platforms: string[];
+              status: GameStatus;
+              region: number;
+            }[]
+          >((acc, release) => {
+            // Find existing entry for this date
+            const existingEntry = acc.find(
+              (entry) => entry.date === release.human
+            );
 
-              // Find platform name
-              const platform = platforms.find(
-                (p) => p.id === release.platform
-              )?.name;
-              if (!platform) return acc;
+            // Find platform name
+            const platform = platforms.find(
+              (p) => p.id === release.platform
+            )?.name;
+            if (!platform) return acc;
 
-              if (existingEntry) {
-                // Add platform to existing date entry
-                existingEntry.platforms.push(platform);
-              } else {
-                // Create new entry for this date
-                acc.push({
-                  date: release.human,
-                  platforms: [platform],
-                  status: release.status,
-                });
-              }
+            if (existingEntry) {
+              // Add platform to existing date entry
+              existingEntry.platforms.push(platform);
+            } else {
+              // Create new entry for this date
+              acc.push({
+                date: release.human,
+                platforms: [platform],
+                status: release.status,
+                region: release.region,
+              });
+            }
 
-              return acc;
-            },
-            []
-          )
+            return acc;
+          }, [])
           .sort((a, b) => {
             const dateA = new Date(a.date);
             const dateB = new Date(b.date);
@@ -496,6 +514,8 @@ const ColumnLeft = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
   const publishers =
     game?.involved_companies?.filter((company) => company.publisher === true) ||
     [];
+
+  console.log(releaseDates);
 
   return isLoaded ? (
     <>
@@ -522,7 +542,7 @@ const ColumnLeft = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
           ))}
         </Section>
       )}
-      {!!releaseDates && (
+      {!!releaseDates.length && (
         <Section title="Releases">
           {releaseDates
             ?.slice()
@@ -532,15 +552,30 @@ const ColumnLeft = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
                 date && ( // Ensure date is not undefined
                   <div key={date.date} className={css({ mb: 2 })}>
                     - {date.date}{" "}
-                    {(date.status?.id === 34 || date.status?.id === 3) && (
+                    {date.region !== 8 ? (
                       <span
                         className={css({
                           fontSize: 13,
                           fontWeight: 600,
+                          textTransform: "capitalize",
                         })}
                       >
-                        | <i>{date.status.name}</i>
+                        |{" "}
+                        <i>
+                          {regions.find((reg) => reg.id === date.region)?.name}
+                        </i>
                       </span>
+                    ) : (
+                      (date.status?.id === 34 || date.status?.id === 3) && (
+                        <span
+                          className={css({
+                            fontSize: 13,
+                            fontWeight: 600,
+                          })}
+                        >
+                          | <i>{date.status.name}</i>
+                        </span>
+                      )
                     )}
                     <p className={css({ fontSize: 13 })}>
                       <i>{(date.platforms as string[]).join(", ")}</i>
