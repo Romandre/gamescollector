@@ -112,7 +112,7 @@ const formattedTime = (number: number, time: string) => {
 function formatTimestamp(timestamp: number) {
   const date = new Date(timestamp);
   const day = date.getDate();
-  const month = date.toLocaleString("default", { month: "long" });
+  const month = date.toLocaleString("en-EN", { month: "long" });
   const year = date.getFullYear();
 
   return (
@@ -136,9 +136,10 @@ const twoMonthsAgo = getTimestampTwoMonthsAgo();
 // - HomePage Component - //
 // --------------------- //
 export function HomePage({ randomImgNumber }: { randomImgNumber: number }) {
-  const comingSoonQuery = `fields name, first_release_date, cover.*, platforms.*; where first_release_date > ${timeNow} & hypes > 50; sort first_release_date asc; limit 4;`;
-  const mostAnticipatedQuery = `fields name, release_dates.*, cover.*, platforms.*, summary; where first_release_date > ${timeNow}; sort hypes desc; limit 4;`;
-  const popularNowQuery = `fields name, cover.*, platforms.*, total_rating; where first_release_date > ${twoMonthsAgo} & first_release_date < ${timeNow}; sort hypes desc; limit 4;`;
+  const gamePannelsLimit = 4;
+  const comingSoonQuery = `fields name, first_release_date, cover.*, platforms.*; where first_release_date > ${timeNow} & hypes > 50; sort first_release_date asc; limit ${gamePannelsLimit};`;
+  const mostAnticipatedQuery = `fields name, release_dates.*, cover.*, platforms.*, summary; where first_release_date > ${timeNow}; sort hypes desc; limit ${gamePannelsLimit};`;
+  const popularNowQuery = `fields name, cover.*, platforms.*, total_rating; where first_release_date > ${twoMonthsAgo} & first_release_date < ${timeNow}; sort hypes desc; limit ${gamePannelsLimit};`;
 
   const {
     data: comingSoon,
@@ -203,7 +204,7 @@ export function HomePage({ randomImgNumber }: { randomImgNumber: number }) {
             fontSize: { base: 20, lg: 24, "2xl": 26 },
             textWrap: "balance",
             lineHeight: 1.2,
-            textShadow: "4px 6px 4px rgba(0,0,0,0.8)",
+            textShadow: "2px 3px 4px rgba(0,0,0,0.5)",
           })}
         >
           <div className={css({ mt: 12 })}>
@@ -244,7 +245,7 @@ export function HomePage({ randomImgNumber }: { randomImgNumber: number }) {
               "Something went wrong"
             )
           ) : (
-            <PannelLoader />
+            <PannelLoader count={gamePannelsLimit} />
           )}
         </PannelGrid>
         <PannelGrid title="Most anticipated">
@@ -257,7 +258,7 @@ export function HomePage({ randomImgNumber }: { randomImgNumber: number }) {
               "Something went wrong"
             )
           ) : (
-            <PannelLoader />
+            <PannelLoader count={gamePannelsLimit} />
           )}
         </PannelGrid>
         <PannelGrid title="Popular now">
@@ -270,7 +271,7 @@ export function HomePage({ randomImgNumber }: { randomImgNumber: number }) {
               "Something went wrong"
             )
           ) : (
-            <PannelLoader />
+            <PannelLoader count={gamePannelsLimit} />
           )}
         </PannelGrid>
       </div>
@@ -486,13 +487,12 @@ const GamePannel = ({ game }: { game: Game; timer?: boolean }) => {
   );
 };
 
-const PannelLoader = () => {
+const PannelLoader = ({ count }: { count: number }) => {
   return (
     <>
-      <Skeleton className={css({ aspectRatio: 5 / 3 })} />
-      <Skeleton className={css({ aspectRatio: 5 / 3 })} />
-      <Skeleton className={css({ aspectRatio: 5 / 3 })} />
-      <Skeleton className={css({ aspectRatio: 5 / 3 })} />
+      {Array.from({ length: count }).map((_, index) => (
+        <Skeleton key={index} className={css({ aspectRatio: 5 / 3 })} />
+      ))}
     </>
   );
 };
