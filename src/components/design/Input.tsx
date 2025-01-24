@@ -16,7 +16,7 @@ export function Input({
   onKeyUp?: (e: React.KeyboardEvent<Element>) => void;
   className?: string;
   placeholder?: string;
-  children: ReactNode;
+  children?: ReactNode;
 }) {
   return (
     <div className={css({ position: "relative", w: "full", h: "full" })}>

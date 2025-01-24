@@ -56,6 +56,7 @@ export function SearchInput({ className }: { className: string }) {
             right: 2,
             color: "#AAAAAA",
             fontSize: 22,
+            cursor: "pointer",
           })}
           onClick={() => {
             handleChange("");

@@ -88,3 +88,5 @@ export type GameStatus = {
   name: string;
   updated_at: number;
 };
+
+export type FilterOptions = string[];
