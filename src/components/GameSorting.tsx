@@ -23,7 +23,6 @@ const sortingOptions = ["popularity", "release date", "rating", "alphabet"];
 
 export function GameSorting() {
   const {
-    games,
     view,
     toggleView,
     hintsEnabled,
@@ -32,45 +31,55 @@ export function GameSorting() {
     toggleHints,
     sorting,
     handleSorting,
+    isSortingLoading,
   } = useGamesContext();
   const [isSortingOpen, setIsSortingOpen] = useState(false);
-  const isLoading = hintsEnabled === undefined && !games?.length;
 
   return (
     <>
       <Overlay isOpen={isSortingOpen} setIsOpen={setIsSortingOpen} />
-      <IoOptions
+      <div
         className={css({
-          display: { base: "block", sm: "none" },
+          display: { base: "block", md: "none" },
           float: "right",
-          mx: 2,
           mb: 2,
-          fontSize: 28,
         })}
-        onClick={() => setIsSortingOpen(true)}
-      />
+      >
+        {isSortingLoading ? (
+          <Skeleton width={50} />
+        ) : (
+          <IoOptions
+            className={css({
+              mx: 2,
+              fontSize: 28,
+            })}
+            onClick={() => setIsSortingOpen(true)}
+          />
+        )}
+      </div>
 
       <div
         className={`filters ${css({
-          position: { base: "fixed", sm: "relative" },
+          position: { base: "fixed", md: "relative" },
           top: 0,
           right: 0,
           display: {
             base: isSortingOpen ? "flex" : "none",
-            sm: !isLoading ? "flex" : "block",
+            md: !isSortingLoading ? "flex" : "block",
           },
-          flexDirection: { base: "column", sm: "row" },
-          alignItems: { base: "end", sm: "center" },
-          h: { base: "full", sm: 10 },
+          flexDirection: { base: "column", md: "row" },
+          alignItems: { base: "end", md: "center" },
+          h: { base: "full", md: 10 },
+          ml: { md: "13%", lg: 0 },
           pb: 3,
-          px: { base: 4, sm: 2 },
-          pt: { base: "72px", sm: 0 },
-          gap: { base: 6, sm: 8, lg: 14, xl: 20 },
-          zIndex: { base: 998, sm: "unset" },
+          px: { base: 4, md: 2 },
+          pt: { base: "72px", md: 0 },
+          gap: { base: 6, md: 8, lg: 14, xl: 20 },
+          zIndex: { base: 998, md: "unset" },
           animation: "fade-in 0.4s",
         })}`}
       >
-        {!isLoading ? (
+        {!isSortingLoading ? (
           <>
             <Dropdown
               value={sorting}
@@ -106,7 +115,7 @@ export function GameSorting() {
                 display: "flex",
                 ml: "auto",
                 alignItems: "center",
-                gap: { xl: 3, base: 2 },
+                gap: { base: 2, xl: 3 },
               })}
             >
               <HiViewList

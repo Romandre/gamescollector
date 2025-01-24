@@ -1,8 +1,11 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 // Components
 import { Input, Overlay, SectionTitle } from "./design";
+
+// Context
+import { useGamesContext } from "@/context";
 
 // Utils
 import { getYearsArray } from "@/utils/yearsArray";
@@ -15,37 +18,51 @@ import { IoFilter } from "react-icons/io5";
 import { IoChevronDown } from "react-icons/io5";
 import { RxCross2 } from "react-icons/rx";
 import { FilterOptions } from "@/types";
+import Button from "./design/Button";
+import Skeleton from "react-loading-skeleton";
 
 const allYears = getYearsArray();
 
 export function GameFilters() {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+  const { isSortingLoading } = useGamesContext();
 
   return (
     <>
       <div
         className={css({
           position: "relative",
-          transform: { sm: "translate3d(0,0,0)" },
+          transform: { lg: "translate3d(0,0,0)" },
         })}
       >
         <Overlay isOpen={isFiltersOpen} setIsOpen={setIsFiltersOpen} />
-        <IoFilter
-          onClick={() => setIsFiltersOpen(true)}
+        <div
           className={css({
             position: "absolute",
-            display: { base: "display", lg: "none" },
-            mx: 1,
-            fontSize: 26,
+            display: { base: "block", lg: "none" },
+            mt: { base: 0, md: "3px" },
           })}
-        />
+        >
+          {isSortingLoading ? (
+            <Skeleton width={50} className={css({ ml: { base: 0, md: 2 } })} />
+          ) : (
+            <IoFilter
+              onClick={() => setIsFiltersOpen(true)}
+              className={css({
+                mx: 1,
+                fontSize: 26,
+              })}
+            />
+          )}
+        </div>
 
         <div
           className={`filters ${css({
             position: "fixed",
             display: { base: isFiltersOpen ? "block" : "none", lg: "block" },
             left: 0,
-            w: { base: "70%", sm: "full" },
+            w: { base: "70%", lg: "full" },
+            maxW: "400px",
             h: "full",
             top: { base: 0, lg: "unset" },
             py: { base: "72px", lg: 0 },
@@ -62,8 +79,8 @@ export function GameFilters() {
           <div
             className={css({
               display: "flex",
-              gap: 2,
-              py: 2,
+              gap: 8,
+              py: 5,
               pr: 2,
               alignItems: "start",
               flexDirection: "column",
@@ -73,6 +90,12 @@ export function GameFilters() {
             <Filter type="genre" options={allYears} />
             <Filter type="platform" options={allYears} />
             <Filter type="company" options={allYears} />
+            <Button
+              className={css({ display: { base: "block", lg: "none" } })}
+              onClick={() => setIsFiltersOpen(false)}
+            >
+              Apply
+            </Button>
           </div>
         </div>
       </div>
@@ -90,6 +113,7 @@ const Filter = ({
   const [availableOptions, setAvailableOptions] = useState<FilterOptions>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [value, setValue] = useState("");
+  const filterRef = useRef(null);
 
   const filterHeight = 50;
   const chevronClass = {
@@ -102,11 +126,7 @@ const Filter = ({
     cursor: "pointer",
   };
 
-  useEffect(() => {
-    setAvailableOptions(options);
-  }, [options]);
-
-  const handleChange = (value: string) => {
+  const handleInputChange = (value: string) => {
     const filteredOptions = options.filter((option) => option.includes(value));
     setValue(value);
 
@@ -121,13 +141,36 @@ const Filter = ({
     }
   };
 
+  const handleFiltering = (value: string) => {
+    setValue(value);
+    setIsOpen(false);
+  };
+
+  useEffect(() => {
+    setAvailableOptions(options);
+  }, [options]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      // @ts-expect-error contains can't be used for 'never'
+      if (filterRef.current && !filterRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className={css({ position: "relative", w: "full", h: "full", my: 3 })}>
+    <div className={css({ position: "relative", w: "full", h: "full" })}>
       <Input
         value={value}
         className={`search ${css({ w: "full", h: `${filterHeight}px`, pl: 2, pr: 10 })}`}
-        onChange={(val) => handleChange(val)}
-        placeholder="Enter year"
+        onChange={(val) => handleInputChange(val)}
+        placeholder={`Enter ${type}`}
       />
       <span
         className={`filters ${css({
@@ -160,24 +203,29 @@ const Filter = ({
       )}
       {isOpen && (
         <ul
+          ref={filterRef}
           className={`tile ${css({
             position: "absolute",
             top: `${filterHeight}px`,
             w: "full",
-            h: "210px",
+            maxH: "210px",
             py: 1,
-            px: 4,
             boxShadow: "0 10px 14px rgba(0,0,0,.4)",
             animation: "fade-in 0.2s",
             overflowY: "scroll",
-            cursor: "pointer",
             zIndex: 1,
           })}`}
         >
           {availableOptions.map((option, index) => (
             <li
               key={index}
-              className={`dropdown-item ${css({ py: 2, textTransform: "capitalize" })}`}
+              className={`dropdown-item ${css({
+                py: 2,
+                px: 4,
+                textTransform: "capitalize",
+                cursor: "pointer",
+              })}`}
+              onClick={() => handleFiltering(option)}
             >
               {option}
             </li>

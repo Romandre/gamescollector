@@ -85,8 +85,8 @@ export function Dropdown({
           className={`tile ${css({
             position: "absolute",
             top: 8,
-            py: 1,
-            px: 4,
+            minW: "160px",
+            py: 2,
             borderRadius: 6,
             cursor: "pointer",
             boxShadow: "0 0 6px 6px rgba(0,0,0,0.3)",
@@ -97,7 +97,7 @@ export function Dropdown({
           {options.map((option, index) => (
             <li
               key={index}
-              className={`dropdown-item ${css({ py: 1, textTransform: "capitalize" })}`}
+              className={`dropdown-item ${css({ py: 1, px: 4, textTransform: "capitalize" })}`}
               onClick={() => handleOptionClick(option)}
             >
               {option}

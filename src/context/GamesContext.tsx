@@ -41,6 +41,7 @@ type GamesContextType = {
   isLoading: boolean;
   isFetching: boolean;
   isError: boolean;
+  isSortingLoading: boolean;
   emptyData: boolean;
   error: Error | null;
 };
@@ -105,6 +106,7 @@ export const GamesProvider = ({ children }: { children: ReactNode }) => {
   const gamesCount = data?.count || 0;
   const emptyData = !data?.games?.length && isFetched;
   const isLoading = showDlcs === undefined || isQueryLoading;
+  const isSortingLoading = hintsEnabled === undefined && !games?.length;
 
   const loadMore = () => {
     if (gamesCount > offset + limit) setOffset((prev) => prev + limit);
@@ -161,6 +163,7 @@ export const GamesProvider = ({ children }: { children: ReactNode }) => {
     isLoading,
     isFetching,
     isError,
+    isSortingLoading,
     emptyData,
     error,
   };

@@ -1,13 +1,24 @@
 "use client";
 import { ReactNode } from "react";
-import { useThemeContext } from "@/context";
+import { css } from "../../../styled-system/css";
 
-export default function Button({ children }: { children: ReactNode }) {
-  const { toggleTheme } = useThemeContext();
-
+export default function Button({
+  className,
+  onClick,
+  children,
+}: {
+  className?: string;
+  onClick: () => void;
+  children: ReactNode;
+}) {
   return (
     <>
-      <button onClick={toggleTheme}>{children}</button>
+      <button
+        className={`${css({ w: "full", h: "50px", textAlign: "center", bgColor: "var(--colors-primary)", cursor: "pointer" })} ${className} `}
+        onClick={onClick}
+      >
+        {children}
+      </button>
     </>
   );
 }
