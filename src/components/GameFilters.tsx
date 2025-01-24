@@ -51,6 +51,7 @@ export function GameFilters() {
               className={css({
                 mx: 1,
                 fontSize: 26,
+                cursor: "pointer",
               })}
             />
           )}
@@ -67,7 +68,7 @@ export function GameFilters() {
             top: { base: 0, lg: "unset" },
             py: { base: "72px", lg: 0 },
             px: { base: 4, lg: 2 },
-            animation: "fade-in 0.4s",
+            animation: "fade-in 0.3s",
             zIndex: { base: 998, lg: "unset" },
           })}`}
         >
@@ -165,12 +166,16 @@ const Filter = ({
   }, []);
 
   return (
-    <div className={css({ position: "relative", w: "full", h: "full" })}>
+    <div
+      ref={filterRef}
+      className={css({ position: "relative", w: "full", h: "full" })}
+    >
       <Input
         value={value}
+        placeholder={`Enter ${type}`}
         className={`search ${css({ w: "full", h: `${filterHeight}px`, pl: 2, pr: 10 })}`}
         onChange={(val) => handleInputChange(val)}
-        placeholder={`Enter ${type}`}
+        onClick={() => setIsOpen(true)}
       />
       <span
         className={`filters ${css({
@@ -203,15 +208,14 @@ const Filter = ({
       )}
       {isOpen && (
         <ul
-          ref={filterRef}
           className={`tile ${css({
             position: "absolute",
             top: `${filterHeight}px`,
             w: "full",
             maxH: "210px",
             py: 1,
-            boxShadow: "0 10px 14px rgba(0,0,0,.4)",
-            animation: "fade-in 0.2s",
+            boxShadow: "0 14px 12px rgba(0,0,0,.4)",
+            animation: "fade-in 0.1s",
             overflowY: "scroll",
             zIndex: 1,
           })}`}

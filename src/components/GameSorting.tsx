@@ -52,6 +52,7 @@ export function GameSorting() {
             className={css({
               mx: 2,
               fontSize: 28,
+              cursor: "pointer",
             })}
             onClick={() => setIsSortingOpen(true)}
           />
@@ -76,7 +77,7 @@ export function GameSorting() {
           pt: { base: "72px", md: 0 },
           gap: { base: 6, md: 8, lg: 14, xl: 20 },
           zIndex: { base: 998, md: "unset" },
-          animation: "fade-in 0.4s",
+          animation: "fade-in 0.3s",
         })}`}
       >
         {!isSortingLoading ? (

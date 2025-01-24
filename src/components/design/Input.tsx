@@ -7,6 +7,7 @@ export function Input({
   value,
   onChange,
   onKeyUp,
+  onClick,
   className,
   placeholder,
   children,
@@ -14,6 +15,7 @@ export function Input({
   value: string;
   onChange: (value: string) => void;
   onKeyUp?: (e: React.KeyboardEvent<Element>) => void;
+  onClick?: () => void;
   className?: string;
   placeholder?: string;
   children?: ReactNode;
@@ -40,6 +42,7 @@ export function Input({
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
         onKeyUp={(e) => onKeyUp && onKeyUp(e)}
+        onClick={onClick}
       ></input>
     </div>
   );

@@ -87,8 +87,6 @@ export function GamePage({ id }: { id: string }) {
   const isGameLoaded = !!(!isLoading && game?.id);
   const noGameFound = !!(!isLoading && !game?.id);
 
-  console.log(game);
-
   return !noGameFound ? (
     <div
       className={css({
@@ -520,8 +518,6 @@ const ColumnLeft = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
   const publishers =
     game?.involved_companies?.filter((company) => company.publisher === true) ||
     [];
-
-  console.log(releaseDates);
 
   return isLoaded ? (
     <>
