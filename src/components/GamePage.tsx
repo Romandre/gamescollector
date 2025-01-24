@@ -925,32 +925,23 @@ const ImagesFullView = ({
   const [index, setIndex] = useState<number | undefined>();
   const viewedImage = index !== undefined && screenshots[index];
 
-  const preloadImage = (url: string) => {
-    const img = document.createElement("img");
-    img.src = url;
-  };
-
   const handleImageClick = (direction: "prev" | "next") => {
     if (index !== undefined) {
       const nextIndex = index < screenshots.length - 1 ? index + 1 : 0;
       const prevIndex = index === 0 ? screenshots.length - 1 : index - 1;
       const nextActiveIndex = direction === "next" ? nextIndex : prevIndex;
 
-      preloadImage(
-        `https:${screenshots[nextActiveIndex].url.replace("t_thumb", "t_screenshot_huge_2x")}`
-      );
-
       // Smooth transition
       setIsTransitioning(true);
       setTimeout(() => {
         setIndex(nextActiveIndex);
-        setIsTransitioning(false);
-      }, 200); // Match the transition duration in CSS
+      }, 150);
     }
   };
 
   useEffect(() => {
     setIndex(imageIndex!);
+    setIsTransitioning(true);
   }, [imageIndex]);
 
   return (
@@ -961,13 +952,12 @@ const ImagesFullView = ({
           className={css({
             position: "fixed",
             display: "block",
-            w: { base: "full", md: "75%" },
+            w: { base: "full", md: "80%" },
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -48%)",
             opacity: isTransitioning ? 0 : 1, // For fading effect
-            transition: "opacity 0.2s ease-in-out",
-            animation: "fade-in .2s",
+            transition: "opacity .15s ease-in-out",
             zIndex: 998,
           })}
         >
@@ -982,6 +972,8 @@ const ImagesFullView = ({
             height={500}
             className={css({ w: "full", h: "full" })}
             onClick={() => handleImageClick("next")}
+            onLoadingComplete={() => setIsTransitioning(false)}
+            priority
           />
           <GalleryChevron
             direction="forth"

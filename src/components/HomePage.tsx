@@ -204,7 +204,7 @@ export function HomePage({ randomImgNumber }: { randomImgNumber: number }) {
             fontSize: { base: 20, lg: 24, "2xl": 26 },
             textWrap: "balance",
             lineHeight: 1.2,
-            textShadow: "2px 3px 4px rgba(0,0,0,0.5)",
+            textShadow: "2px 2px 3px rgba(0,0,0,0.55)",
           })}
         >
           <div className={css({ mt: 12 })}>
