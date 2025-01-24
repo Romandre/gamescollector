@@ -103,7 +103,7 @@ export function GamePage({ id }: { id: string }) {
         className={css({
           position: "relative",
           display: "grid",
-          mt: { base: 6, lg: "90px", xl: "120px" },
+          mt: { base: 7, lg: "90px", xl: "120px" },
           gridTemplateAreas: {
             base: `
             "cover"
@@ -331,8 +331,8 @@ const Cover = ({
     <Skeleton
       className={css({
         display: "block !important",
-        h: { base: "420px", md: "430px", xl: "480px" },
-        maxW: { base: "300px", sm: "full" },
+        h: { base: "440px", xs: "480px", sm: "430px", xl: "480px" },
+        maxW: { base: "280px", xs: "300px", sm: "full" },
         mx: "auto",
         mb: 2,
       })}
@@ -409,13 +409,13 @@ const Title = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
         height="44px"
         className={css({
           mt: { base: 0, md: 24, lg: 28, "2xl": 32 },
-          mb: { base: 2, md: 4, lg: 8 },
+          mb: { base: 8, sm: 6, md: 4, lg: 8 },
         })}
       />
       <Skeleton
         height="30px"
         width="200px"
-        className={css({ mb: { base: 6, sm: 8, lg: 12 } })}
+        className={css({ mb: { base: 10, sm: 6, lg: 12 } })}
       />
     </>
   );
@@ -440,11 +440,17 @@ const Platforms = ({
     </Section>
   ) : (
     <>
-      <Skeleton width="200px" className={css({ mb: 4 })} />
+      <div className={css({ display: { base: "none", md: "block" } })}>
+        <Skeleton width="200px" className={css({ mb: 4 })} />
+      </div>
       <div className={css({ display: "flex", flexWrap: "wrap", gap: 2 })}>
         <Skeleton height="34px" width="100px" className={css({ mb: 4 })} />
         <Skeleton height="34px" width="100px" className={css({ mb: 4 })} />
-        <Skeleton height="34px" width="100px" className={css({ mb: 8 })} />
+        <Skeleton
+          height="34px"
+          width="100px"
+          className={css({ mb: { base: 10, sm: 8 } })}
+        />
       </div>
     </>
   );
@@ -695,7 +701,7 @@ const ColumnMain = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
       <Skeleton height="10px" className={css({ mb: 4 })} />
       <Skeleton height="10px" className={css({ mb: 4 })} />
       <Skeleton height="10px" className={css({ mb: 4 })} />
-      <Skeleton height="10px" className={css({ mb: 4 })} />
+      <Skeleton height="10px" className={css({ mb: 8 })} />
     </>
   );
 };
