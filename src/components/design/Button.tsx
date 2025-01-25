@@ -2,7 +2,7 @@
 import { ReactNode } from "react";
 import { css } from "../../../styled-system/css";
 
-export default function Button({
+export function Button({
   className,
   onClick,
   children,

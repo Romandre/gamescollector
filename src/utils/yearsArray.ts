@@ -1,5 +1,5 @@
 export function getYearsArray(
-  startYear: number = 1980,
+  startYear: number = 1970,
   endYear: number = new Date().getFullYear()
 ) {
   const years = [];

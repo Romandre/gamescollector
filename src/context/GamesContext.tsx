@@ -15,7 +15,7 @@ import { useSorting } from "@/hooks";
 import { useQuery } from "@tanstack/react-query";
 
 // Types
-import { Game } from "@/types";
+import { Game, Filters, FilterInputs } from "@/types";
 
 type View = "grid" | "list" | "list-min";
 
@@ -32,8 +32,10 @@ type GamesContextType = {
   handleSearch: (value: string) => void;
   offset: number;
   setOffset: (value: SetStateAction<number>) => void;
-  filters: string[];
-  handleFilter: (filter: string, action?: string) => void;
+  filters: Filters;
+  handleFilter: (name: string, filter: string) => void;
+  filterInputs: FilterInputs;
+  setFilterInputs: Dispatch<SetStateAction<FilterInputs>>;
   sorting: number;
   handleSorting: (index: number) => void;
   limit: number;
@@ -52,10 +54,12 @@ const fields =
   "fields *, genres.name, platforms.name, release_dates.*, cover.url;";
 const sortingOptions = [
   "sort hypes desc;",
-  "sort first_release_date desc;",
+  "sort first_release_date asc;",
   "sort total_rating desc;",
   "sort name asc;",
 ];
+const limit = 60;
+const dlcFilter = "category != (1,2)";
 
 const getGames = async (query: string) => {
   const response = await axios.get(`/api/games`, { params: { query } });
@@ -83,13 +87,27 @@ export const GamesProvider = ({ children }: { children: ReactNode }) => {
   const [view, setView] = useState<View>("grid");
   const [search, setSearch] = useState("");
   const [offset, setOffset] = useState(0);
-  const [filters, setFilters] = useState<string[]>([]);
+  const [filters, setFilters] = useState<Filters>({
+    search: "",
+    year: "",
+    genre: "",
+    platform: "",
+    company: "",
+    dlcs: "",
+  });
+  const [filterInputs, setFilterInputs] = useState<FilterInputs>({
+    year: "",
+    genre: "",
+    platform: "",
+    company: "",
+  });
   const [sorting, setSorting] = useState(0);
-  const limit = 60;
-  const dlcFilter = "category != (1,2)";
 
-  const activeFilter = filters.length ? `where ${filters.join("& ")};` : "";
-  const gamesQuery = `${fields} ${activeFilter} ${sortingOptions[sorting]} limit ${limit}; offset ${offset};`;
+  const activeFilters = Object.values(filters)
+    .filter((filter) => filter !== "")
+    .join(" & ");
+  const filtersQuery = activeFilters ? `where ${activeFilters};` : "";
+  const gamesQuery = `${fields} ${filtersQuery} ${sortingOptions[sorting]} limit ${limit}; offset ${offset};`;
 
   const {
     data,
@@ -117,21 +135,15 @@ export const GamesProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleSearch = (value: string) => {
-    const searchFilter = `name ~ *"${value}"*`;
-    setGames([]);
-    setOffset(0);
+    const searchFilter = value ? `name ~ *"${value}"*` : "";
+    handleFilter("search", searchFilter);
     setSearch(value);
-    setFilters((prev) => {
-      const filtered = prev.filter((item) => !item.includes("name ~"));
-      return [...filtered, searchFilter];
-    });
   };
 
-  const handleFilter = (filter: string, action?: string) => {
+  const handleFilter = (name: string, filter: string) => {
     setGames([]);
-    if (action === "remove")
-      setFilters((prev) => prev.filter((str) => str !== filter));
-    else if (!filters.includes(filter)) setFilters((prev) => [...prev, filter]);
+    setOffset(0);
+    setFilters({ ...filters, [name]: filter });
   };
 
   const handleSorting = (index: number) => {
@@ -156,6 +168,8 @@ export const GamesProvider = ({ children }: { children: ReactNode }) => {
     setOffset,
     filters,
     handleFilter,
+    filterInputs,
+    setFilterInputs,
     sorting,
     handleSorting,
     limit,
@@ -169,8 +183,8 @@ export const GamesProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    if (showDlcs) handleFilter(dlcFilter, "remove");
-    else handleFilter(dlcFilter);
+    if (showDlcs) handleFilter("dlcs", "");
+    else handleFilter("dlcs", dlcFilter);
   }, [showDlcs]);
 
   useEffect(() => {

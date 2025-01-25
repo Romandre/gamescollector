@@ -74,8 +74,8 @@ export function GameSorting() {
           ml: { md: "13%", lg: 0 },
           pb: 3,
           px: { base: 4, md: 2 },
-          pt: { base: "72px", md: 0 },
-          gap: { base: 6, md: 8, lg: 14, xl: 20 },
+          pt: { base: "80px", md: 0 },
+          gap: { base: 8, lg: 14, xl: 20 },
           zIndex: { base: 998, md: "unset" },
           animation: "fade-in 0.3s",
         })}`}

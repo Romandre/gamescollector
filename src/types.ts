@@ -89,4 +89,20 @@ export type GameStatus = {
   updated_at: number;
 };
 
-export type FilterOptions = string[];
+export type Filters = {
+  search: string;
+  year: string;
+  genre: string;
+  platform: string;
+  company: string;
+  dlcs: string;
+};
+
+export type FilterInputs = {
+  year: string;
+  genre: string;
+  platform: string;
+  company: string;
+};
+
+export type FilterOptions = { id: number; name: string };

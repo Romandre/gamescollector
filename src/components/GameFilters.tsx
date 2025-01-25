@@ -1,25 +1,38 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import axios from "axios";
 
 // Components
-import { Input, Overlay, SectionTitle } from "./design";
+import { Input, Overlay, SectionTitle, Button } from "./design";
+import Skeleton from "react-loading-skeleton";
+
+// Hooks
+import { useQuery } from "@tanstack/react-query";
 
 // Context
 import { useGamesContext } from "@/context";
 
 // Utils
 import { getYearsArray } from "@/utils/yearsArray";
+import { convertToPlural, getYearTimestamps } from "@/utils/filtersFormatter";
+
+// Types
+import { FilterOptions, FilterTypes } from "@/types";
 
 // Styles
 import { css } from "../../styled-system/css";
 
 // Icons
-import { IoFilter } from "react-icons/io5";
-import { IoChevronDown } from "react-icons/io5";
+import { IoFilter, IoChevronUp, IoChevronDown } from "react-icons/io5";
 import { RxCross2 } from "react-icons/rx";
-import { FilterOptions } from "@/types";
-import Button from "./design/Button";
-import Skeleton from "react-loading-skeleton";
+
+const fetchFilterOptions = async (type: string, input: string) => {
+  const pluralizedType = convertToPlural(type);
+  const queryFilter = input ? `where name ~ *"${input}"*;` : "";
+  const query = `query ${pluralizedType} "Options" { fields id, name; ${queryFilter} limit 500; };`;
+  const response = await axios.get("/api/filters", { params: { query } });
+  return response.data;
+};
 
 const allYears = getYearsArray();
 
@@ -67,7 +80,8 @@ export function GameFilters() {
             h: "full",
             top: { base: 0, lg: "unset" },
             py: { base: "72px", lg: 0 },
-            px: { base: 4, lg: 2 },
+            pl: { base: 4, lg: 2 },
+            px: 4,
             animation: "fade-in 0.3s",
             zIndex: { base: 998, lg: "unset" },
           })}`}
@@ -82,15 +96,14 @@ export function GameFilters() {
               display: "flex",
               gap: 8,
               py: 5,
-              pr: 2,
               alignItems: "start",
               flexDirection: "column",
             })}
           >
             <Filter type="year" options={allYears} />
-            <Filter type="genre" options={allYears} />
-            <Filter type="platform" options={allYears} />
-            <Filter type="company" options={allYears} />
+            <Filter type="genre" />
+            <Filter type="platform" />
+            <Filter type="company" />
             <Button
               className={css({ display: { base: "block", lg: "none" } })}
               onClick={() => setIsFiltersOpen(false)}
@@ -108,13 +121,15 @@ const Filter = ({
   type,
   options,
 }: {
-  type: string;
-  options: FilterOptions;
+  type: FilterTypes;
+  options?: string[];
 }) => {
-  const [availableOptions, setAvailableOptions] = useState<FilterOptions>([]);
+  const [availableOptions, setAvailableOptions] = useState<string[]>([]);
   const [isOpen, setIsOpen] = useState(false);
-  const [value, setValue] = useState("");
+  const [inputValue, setInputValue] = useState<string>("");
+  const { handleFilter, filterInputs, setFilterInputs } = useGamesContext();
   const filterRef = useRef(null);
+  const filterId = `${type}-filter`;
 
   const filterHeight = 50;
   const chevronClass = {
@@ -127,29 +142,59 @@ const Filter = ({
     cursor: "pointer",
   };
 
+  const { data /* isLoading,  isError, error */ } = useQuery({
+    queryKey: ["game", filterId, inputValue],
+    queryFn: () => fetchFilterOptions(type, inputValue),
+    enabled: !options,
+  });
+
   const handleInputChange = (value: string) => {
-    const filteredOptions = options.filter((option) => option.includes(value));
-    setValue(value);
+    setInputValue(value);
+    if (options) {
+      const filteredOptions = options.filter((option) =>
+        option.includes(value)
+      );
 
-    if (!value.trim()) setIsOpen(false);
+      if (!value.trim()) setIsOpen(false);
 
-    if (value && filteredOptions.length) {
-      setAvailableOptions(filteredOptions);
-      setIsOpen(true);
-    } else {
-      setAvailableOptions(options);
-      setIsOpen(false);
+      if (value && filteredOptions.length) {
+        setAvailableOptions(filteredOptions);
+        setIsOpen(true);
+      } else {
+        setAvailableOptions(options);
+        setIsOpen(false);
+      }
     }
   };
 
-  const handleFiltering = (value: string) => {
-    setValue(value);
+  const applyFilter = (value: string) => {
+    setInputValue(value);
+    setFilterInputs({ ...filterInputs, [type]: value });
     setIsOpen(false);
+
+    let filterQuery = "";
+    if (value) {
+      if (type === "year") {
+        const timestamps = getYearTimestamps(value);
+        filterQuery = `first_release_date > ${timestamps.startOfYear} & first_release_date < ${timestamps.endOfYear}`;
+      } else {
+        const pluralizedType =
+          type === "company"
+            ? "involved_companies.company"
+            : convertToPlural(type);
+        filterQuery = `${pluralizedType} = (${data.find((item: FilterOptions) => item.name === value).id})`;
+      }
+    }
+
+    handleFilter(type, filterQuery);
   };
 
   useEffect(() => {
-    setAvailableOptions(options);
-  }, [options]);
+    if (options) setAvailableOptions(options);
+    if (data) {
+      setAvailableOptions(data.map((filter: FilterOptions) => filter.name));
+    }
+  }, [options, data]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -167,11 +212,12 @@ const Filter = ({
 
   return (
     <div
+      id={filterId}
       ref={filterRef}
       className={css({ position: "relative", w: "full", h: "full" })}
     >
       <Input
-        value={value}
+        value={inputValue || filterInputs[type]}
         placeholder={`Enter ${type}`}
         className={`search ${css({ w: "full", h: `${filterHeight}px`, pl: 2, pr: 10 })}`}
         onChange={(val) => handleInputChange(val)}
@@ -180,7 +226,7 @@ const Filter = ({
       <span
         className={`filters ${css({
           position: "absolute",
-          top: -2,
+          top: "-10px",
           left: 0,
           px: 1,
           fontSize: 14,
@@ -191,8 +237,15 @@ const Filter = ({
       >
         {type}
       </span>
-      {isOpen ? (
+      {!!inputValue || !!filterInputs[type] ? (
         <RxCross2
+          className={css(chevronClass)}
+          onClick={() => {
+            applyFilter("");
+          }}
+        />
+      ) : isOpen ? (
+        <IoChevronUp
           className={css(chevronClass)}
           onClick={() => {
             setIsOpen(false);
@@ -229,7 +282,7 @@ const Filter = ({
                 textTransform: "capitalize",
                 cursor: "pointer",
               })}`}
-              onClick={() => handleFiltering(option)}
+              onClick={() => applyFilter(option)}
             >
               {option}
             </li>
