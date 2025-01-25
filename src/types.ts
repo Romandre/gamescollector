@@ -105,4 +105,6 @@ export type FilterInputs = {
   company: string;
 };
 
+export type FilterTypes = "year" | "platform" | "company" | "genre";
+
 export type FilterOptions = { id: number; name: string };
