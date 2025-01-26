@@ -29,7 +29,7 @@ import { RxCross2 } from "react-icons/rx";
 const fetchFilterOptions = async (type: string, input: string) => {
   const pluralizedType = convertToPlural(type);
   const queryFilter = input ? `where name ~ *"${input}"*;` : "";
-  const query = `query ${pluralizedType} "Options" { fields id, name; ${queryFilter} sort name desc; limit 500; };`;
+  const query = `query ${pluralizedType} "Options" { fields id, name; ${queryFilter} limit 500; };`;
   const response = await axios.get("/api/filters", { params: { query } });
   return response.data;
 };
@@ -287,7 +287,7 @@ const Filter = ({
                   <Skeleton className={css({ my: 2 })} />
                 </li>
               ) : (
-                availableOptions.map((option, index) => (
+                availableOptions.sort().map((option, index) => (
                   <li
                     key={index}
                     className={`dropdown-item ${css({

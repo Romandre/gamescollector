@@ -14,7 +14,7 @@ export function Button({
   return (
     <>
       <button
-        className={`${css({ w: "full", h: "50px", textAlign: "center", bgColor: "var(--colors-primary)", cursor: "pointer" })} ${className} `}
+        className={`${css({ w: "full", h: "50px" })} ${className} `}
         onClick={onClick}
       >
         {children}
