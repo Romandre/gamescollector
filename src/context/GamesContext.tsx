@@ -15,7 +15,7 @@ import { useSorting } from "@/hooks";
 import { useQuery } from "@tanstack/react-query";
 
 // Types
-import { Game, Filters, FilterInputs } from "@/types";
+import { Game, Filters, FilterInputs, FilterTypes } from "@/types";
 
 type View = "grid" | "list" | "list-min";
 
@@ -141,9 +141,11 @@ export const GamesProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleFilter = (name: string, filter: string) => {
-    setGames([]);
-    setOffset(0);
-    setFilters({ ...filters, [name]: filter });
+    if (filters[name as FilterTypes] !== filter) {
+      setOffset(0);
+      setGames([]);
+      setFilters((prev) => ({ ...prev, [name]: filter }));
+    }
   };
 
   const handleSorting = (index: number) => {

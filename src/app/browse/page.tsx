@@ -17,7 +17,6 @@ export default function BrowseRoute() {
           })}
         >
           <GameFilters />
-
           <GamesGrid />
         </div>
       </Container>

@@ -29,7 +29,7 @@ import { RxCross2 } from "react-icons/rx";
 const fetchFilterOptions = async (type: string, input: string) => {
   const pluralizedType = convertToPlural(type);
   const queryFilter = input ? `where name ~ *"${input}"*;` : "";
-  const query = `query ${pluralizedType} "Options" { fields id, name; ${queryFilter} limit 500; };`;
+  const query = `query ${pluralizedType} "Options" { fields id, name; ${queryFilter} sort name desc; limit 500; };`;
   const response = await axios.get("/api/filters", { params: { query } });
   return response.data;
 };
@@ -86,11 +86,14 @@ export function GameFilters() {
             zIndex: { base: 998, lg: "unset" },
           })}`}
         >
-          <SectionTitle
-            className={css({ display: { base: "none", lg: "block" } })}
-          >
-            Filters
-          </SectionTitle>
+          <div className={css({ display: { base: "none", lg: "block" } })}>
+            {isSortingLoading ? (
+              <Skeleton width={100} height={30} className={css({ mt: 1 })} />
+            ) : (
+              <SectionTitle>Filters</SectionTitle>
+            )}
+          </div>
+
           <div
             className={css({
               display: "flex",
@@ -117,6 +120,7 @@ export function GameFilters() {
   );
 }
 
+const filterHeight = 50;
 const Filter = ({
   type,
   options,
@@ -127,11 +131,11 @@ const Filter = ({
   const [availableOptions, setAvailableOptions] = useState<string[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState<string>("");
-  const { handleFilter, filterInputs, setFilterInputs } = useGamesContext();
+  const { handleFilter, filterInputs, setFilterInputs, isSortingLoading } =
+    useGamesContext();
   const filterRef = useRef(null);
   const filterId = `${type}-filter`;
 
-  const filterHeight = 50;
   const chevronClass = {
     position: "absolute",
     h: "full",
@@ -142,7 +146,7 @@ const Filter = ({
     cursor: "pointer",
   };
 
-  const { data /* isLoading,  isError, error */ } = useQuery({
+  const { data, isLoading /* isError, error */ } = useQuery({
     queryKey: ["game", filterId, inputValue],
     queryFn: () => fetchFilterOptions(type, inputValue),
     enabled: !options,
@@ -216,78 +220,90 @@ const Filter = ({
       ref={filterRef}
       className={css({ position: "relative", w: "full", h: "full" })}
     >
-      <Input
-        value={inputValue || filterInputs[type]}
-        placeholder={`Enter ${type}`}
-        className={`search ${css({ w: "full", h: `${filterHeight}px`, pl: 2, pr: 10 })}`}
-        onChange={(val) => handleInputChange(val)}
-        onClick={() => setIsOpen(true)}
-      />
-      <span
-        className={`filters ${css({
-          position: "absolute",
-          top: "-10px",
-          left: 0,
-          px: 1,
-          fontSize: 14,
-          textTransform: "capitalize",
-          borderRadius: "0 0 6px 0",
-          opacity: 0.8,
-        })}`}
-      >
-        {type}
-      </span>
-      {!!inputValue || !!filterInputs[type] ? (
-        <RxCross2
-          className={css(chevronClass)}
-          onClick={() => {
-            applyFilter("");
-          }}
-        />
-      ) : isOpen ? (
-        <IoChevronUp
-          className={css(chevronClass)}
-          onClick={() => {
-            setIsOpen(false);
-          }}
-        />
+      {isSortingLoading ? (
+        <Skeleton height={filterHeight} />
       ) : (
-        <IoChevronDown
-          className={css(chevronClass)}
-          onClick={() => {
-            setIsOpen(true);
-          }}
-        />
-      )}
-      {isOpen && (
-        <ul
-          className={`tile ${css({
-            position: "absolute",
-            top: `${filterHeight}px`,
-            w: "full",
-            maxH: "210px",
-            py: 1,
-            boxShadow: "0 14px 12px rgba(0,0,0,.4)",
-            animation: "fade-in 0.1s",
-            overflowY: "scroll",
-            zIndex: 1,
-          })}`}
-        >
-          {availableOptions.map((option, index) => (
-            <li
-              key={index}
-              className={`dropdown-item ${css({
-                py: 2,
+        <>
+          <Input
+            value={inputValue || filterInputs[type]}
+            placeholder={`Enter ${type}`}
+            className={`search ${css({ w: "full", h: `${filterHeight}px`, pl: 2, pr: 10 })}`}
+            onChange={(val) => handleInputChange(val)}
+            onClick={() => setIsOpen(true)}
+          />
+          <span
+            className={`filters ${css({
+              position: "absolute",
+              top: "-10px",
+              left: 0,
+              px: 1,
+              fontSize: 14,
+              textTransform: "capitalize",
+              borderRadius: "0 0 6px 0",
+              opacity: 0.8,
+            })}`}
+          >
+            {type}
+          </span>
+          {!!inputValue || !!filterInputs[type] ? (
+            <RxCross2
+              className={css(chevronClass)}
+              onClick={() => {
+                applyFilter("");
+              }}
+            />
+          ) : isOpen ? (
+            <IoChevronUp
+              className={css(chevronClass)}
+              onClick={() => {
+                setIsOpen(false);
+              }}
+            />
+          ) : (
+            <IoChevronDown
+              className={css(chevronClass)}
+              onClick={() => {
+                setIsOpen(true);
+              }}
+            />
+          )}
+          {isOpen && (
+            <ul
+              className={`tile ${css({
+                position: "absolute",
+                top: `${filterHeight}px`,
+                w: "full",
+                maxH: "210px",
+                py: 1,
                 px: 4,
-                textTransform: "capitalize",
-                cursor: "pointer",
+                boxShadow: "0 14px 12px rgba(0,0,0,.4)",
+                animation: "fade-in 0.1s",
+                overflowY: "scroll",
+                zIndex: 1,
               })}`}
-              onClick={() => applyFilter(option)}
             >
-              {option}
-            </li>
-          ))}
-        </ul>
+              {isLoading ? (
+                <li>
+                  <Skeleton className={css({ my: 2 })} />
+                </li>
+              ) : (
+                availableOptions.map((option, index) => (
+                  <li
+                    key={index}
+                    className={`dropdown-item ${css({
+                      py: 2,
+                      textTransform: "capitalize",
+                      cursor: "pointer",
+                    })}`}
+                    onClick={() => applyFilter(option)}
+                  >
+                    {option}
+                  </li>
+                ))
+              )}
+            </ul>
+          )}
+        </>
       )}
     </div>
   );
