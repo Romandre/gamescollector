@@ -150,6 +150,8 @@ export const GamesProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const resetFilters = () => {
+    setOffset(0);
+    setGames([]);
     setFilters((prev) => ({ ...prev, ...filtersInMenu }));
     setFilterInputs({ ...filtersInMenu });
   };
