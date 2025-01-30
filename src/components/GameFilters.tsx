@@ -145,6 +145,7 @@ export function GameFilters() {
                   display: "flex",
                   alignItems: "center",
                   color: "var(--colors-primary)",
+                  cursor: "pointer",
                 })}
                 onClick={resetFilters}
               >
