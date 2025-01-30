@@ -25,7 +25,6 @@ import { css } from "../../styled-system/css";
 // Icons
 import { IoFilter, IoChevronUp, IoChevronDown } from "react-icons/io5";
 import { RxCross2, RxCrossCircled } from "react-icons/rx";
-import { LuAsterisk } from "react-icons/lu";
 
 const fetchFilterOptions = async (type: FilterTypes, input: string) => {
   const pluralizedType = convertToPlural(type);
@@ -351,15 +350,5 @@ const Filter = ({
         </>
       )}
     </div>
-  );
-};
-
-const AtiveFilters = () => {
-  const { filterInputs } = useGamesContext();
-
-  return (
-    !!filterInputs && (
-      <div>{Object.values(filterInputs).map((item) => item)}</div>
-    )
   );
 };
