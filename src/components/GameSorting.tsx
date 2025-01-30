@@ -72,10 +72,11 @@ export function GameSorting() {
           alignItems: { base: "end", md: "center" },
           h: { base: "full", md: 10 },
           ml: { md: "13%", lg: 0 },
-          pb: 3,
-          px: { base: 4, md: 2 },
+          pr: { base: 4, md: 2 },
+          pl: { base: 4, md: 0 },
           pt: { base: "80px", md: 0 },
-          gap: { base: 8, lg: 14, xl: 20 },
+          pb: 3,
+          gap: { base: 8, lg: 12, xl: 16 },
           zIndex: { base: 998, md: "unset" },
           animation: "fade-in 0.3s",
         })}`}
@@ -88,6 +89,13 @@ export function GameSorting() {
               onSelect={(option) => {
                 handleSorting(sortingOptions.indexOf(option));
               }}
+            />
+            <Switch
+              checked={showDlcs}
+              onChange={() => {
+                toggleDlcs();
+              }}
+              label={"Show DLC"}
             />
             <div
               className={css({
@@ -104,13 +112,6 @@ export function GameSorting() {
                 label={"Hints on hover"}
               />
             </div>
-            <Switch
-              checked={showDlcs}
-              onChange={() => {
-                toggleDlcs();
-              }}
-              label={"Show DLC"}
-            />
             <div
               className={css({
                 display: "flex",

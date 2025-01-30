@@ -63,13 +63,14 @@ export function GameFilters() {
           {isSortingLoading ? (
             <Skeleton width={50} className={css({ ml: { base: 0, md: 2 } })} />
           ) : (
-            <div className={css({ position: "relative" })}>
+            <div
+              className={css({ position: "relative", cursor: "pointer" })}
+              onClick={() => setIsFiltersOpen(true)}
+            >
               <IoFilter
-                onClick={() => setIsFiltersOpen(true)}
                 className={css({
                   mx: 1,
                   fontSize: 26,
-                  cursor: "pointer",
                 })}
               />
               {!!activeFiltersNum && (
@@ -85,6 +86,7 @@ export function GameFilters() {
                     justifyContent: "center",
                     bg: "{colors.primary}",
                     borderRadius: "10px",
+                    userSelect: "none",
                   })}
                 >
                   {activeFiltersNum}

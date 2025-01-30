@@ -89,6 +89,7 @@ export function Dropdown({
           className={`tile ${css({
             position: "absolute",
             top: 8,
+            right: { base: 0, md: "unset" },
             minW: "160px",
             py: 2,
             borderRadius: 6,
