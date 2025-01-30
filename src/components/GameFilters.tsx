@@ -24,12 +24,14 @@ import { css } from "../../styled-system/css";
 
 // Icons
 import { IoFilter, IoChevronUp, IoChevronDown } from "react-icons/io5";
-import { RxCross2 } from "react-icons/rx";
+import { RxCross2, RxCrossCircled } from "react-icons/rx";
+import { LuAsterisk } from "react-icons/lu";
 
-const fetchFilterOptions = async (type: string, input: string) => {
+const fetchFilterOptions = async (type: FilterTypes, input: string) => {
   const pluralizedType = convertToPlural(type);
-  const queryFilter = input ? `where name ~ *"${input}"*;` : "";
-  const query = `query ${pluralizedType} "Options" { fields id, name; ${queryFilter} limit 500; };`;
+  const filterCondition = input ? `& name ~ *"${input}"*` : "";
+  const queryCondition = `where name !~ *"archive"* ${filterCondition};`;
+  const query = `query ${pluralizedType} "Options" { fields id, name; ${queryCondition} limit 500; };`;
   const response = await axios.get("/api/filters", { params: { query } });
   return response.data;
 };
@@ -38,7 +40,10 @@ const allYears = getYearsArray();
 
 export function GameFilters() {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
-  const { isSortingLoading } = useGamesContext();
+  const { isSortingLoading, filterInputs, resetFilters } = useGamesContext();
+  const activeFiltersNum = Object.values(filterInputs).filter(
+    (value) => value !== ""
+  ).length;
 
   return (
     <>
@@ -59,14 +64,34 @@ export function GameFilters() {
           {isSortingLoading ? (
             <Skeleton width={50} className={css({ ml: { base: 0, md: 2 } })} />
           ) : (
-            <IoFilter
-              onClick={() => setIsFiltersOpen(true)}
-              className={css({
-                mx: 1,
-                fontSize: 26,
-                cursor: "pointer",
-              })}
-            />
+            <div className={css({ position: "relative" })}>
+              <IoFilter
+                onClick={() => setIsFiltersOpen(true)}
+                className={css({
+                  mx: 1,
+                  fontSize: 26,
+                  cursor: "pointer",
+                })}
+              />
+              {!!activeFiltersNum && (
+                <span
+                  className={css({
+                    position: "absolute",
+                    display: "flex",
+                    top: 0,
+                    right: 0,
+                    w: 4,
+                    h: 4,
+                    fontSize: 10,
+                    justifyContent: "center",
+                    bg: "{colors.primary}",
+                    borderRadius: "10px",
+                  })}
+                >
+                  {activeFiltersNum}
+                </span>
+              )}
+            </div>
           )}
         </div>
 
@@ -113,6 +138,19 @@ export function GameFilters() {
             >
               Apply
             </Button>
+            {!!Object.values(filterInputs).some((item) => !!item) && (
+              <span
+                className={css({
+                  display: "flex",
+                  alignItems: "center",
+                  color: "var(--colors-primary)",
+                })}
+                onClick={resetFilters}
+              >
+                <RxCrossCircled className={css({ mr: 2, fontSize: 24 })} />{" "}
+                Clear all filters
+              </span>
+            )}
           </div>
         </div>
       </div>
@@ -128,12 +166,14 @@ const Filter = ({
   type: FilterTypes;
   options?: string[];
 }) => {
+  const isYear = type === "year";
   const [availableOptions, setAvailableOptions] = useState<string[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState<string>("");
   const { handleFilter, filterInputs, setFilterInputs, isSortingLoading } =
     useGamesContext();
   const filterRef = useRef(null);
+  const contextFilterValue = filterInputs[type];
   const filterId = `${type}-filter`;
 
   const chevronClass = {
@@ -172,25 +212,24 @@ const Filter = ({
   };
 
   const applyFilter = (value: string) => {
-    setInputValue(value);
     setFilterInputs({ ...filterInputs, [type]: value });
     setIsOpen(false);
 
-    let filterQuery = "";
+    let gamesFilter = "";
     if (value) {
-      if (type === "year") {
+      if (isYear) {
         const timestamps = getYearTimestamps(value);
-        filterQuery = `first_release_date > ${timestamps.startOfYear} & first_release_date < ${timestamps.endOfYear}`;
+        gamesFilter = `first_release_date > ${timestamps.startOfYear} & first_release_date < ${timestamps.endOfYear}`;
       } else {
-        const pluralizedType =
-          type === "company"
-            ? "involved_companies.company"
-            : convertToPlural(type);
-        filterQuery = `${pluralizedType} = (${data.find((item: FilterOptions) => item.name === value).id})`;
+        const isCompany = type === "company";
+        const pluralizedType = isCompany
+          ? "involved_companies.company"
+          : convertToPlural(type);
+        gamesFilter = `${pluralizedType} = (${data.find((item: FilterOptions) => item.name === value).id})`;
       }
     }
 
-    handleFilter(type, filterQuery);
+    handleFilter(type, gamesFilter);
   };
 
   useEffect(() => {
@@ -214,6 +253,10 @@ const Filter = ({
     };
   }, []);
 
+  useEffect(() => {
+    setInputValue(contextFilterValue);
+  }, [contextFilterValue]);
+
   return (
     <div
       id={filterId}
@@ -225,7 +268,7 @@ const Filter = ({
       ) : (
         <>
           <Input
-            value={inputValue || filterInputs[type]}
+            value={inputValue || contextFilterValue}
             placeholder={`Enter ${type}`}
             className={`search ${css({ w: "full", h: `${filterHeight}px`, pl: 2, pr: 10 })}`}
             onChange={(val) => handleInputChange(val)}
@@ -245,7 +288,7 @@ const Filter = ({
           >
             {type}
           </span>
-          {!!inputValue || !!filterInputs[type] ? (
+          {!!inputValue || !!contextFilterValue ? (
             <RxCross2
               className={css(chevronClass)}
               onClick={() => {
@@ -287,24 +330,36 @@ const Filter = ({
                   <Skeleton className={css({ my: 2 })} />
                 </li>
               ) : (
-                availableOptions.sort().map((option, index) => (
-                  <li
-                    key={index}
-                    className={`dropdown-item ${css({
-                      py: 2,
-                      textTransform: "capitalize",
-                      cursor: "pointer",
-                    })}`}
-                    onClick={() => applyFilter(option)}
-                  >
-                    {option}
-                  </li>
-                ))
+                availableOptions
+                  .sort(!isYear ? undefined : () => 0)
+                  .map((option, index) => (
+                    <li
+                      key={index}
+                      className={`dropdown-item ${css({
+                        py: 2,
+                        textTransform: "capitalize",
+                        cursor: "pointer",
+                      })}`}
+                      onClick={() => applyFilter(option)}
+                    >
+                      {option}
+                    </li>
+                  ))
               )}
             </ul>
           )}
         </>
       )}
     </div>
+  );
+};
+
+const AtiveFilters = () => {
+  const { filterInputs } = useGamesContext();
+
+  return (
+    !!filterInputs && (
+      <div>{Object.values(filterInputs).map((item) => item)}</div>
+    )
   );
 };

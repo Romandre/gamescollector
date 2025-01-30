@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { css } from "../../../styled-system/css";
+import { IoChevronUp, IoChevronDown } from "react-icons/io5";
 
 export function Dropdown({
   value,
@@ -45,7 +46,6 @@ export function Dropdown({
       className={css({
         position: "relative",
         display: "flex",
-        alignItems: "baseline",
       })}
     >
       <p
@@ -58,6 +58,8 @@ export function Dropdown({
       </p>
       <div
         className={css({
+          display: "flex",
+          alignItems: "center",
           cursor: "pointer",
         })}
         onClick={toggleDropdown}
@@ -66,7 +68,7 @@ export function Dropdown({
           className={css({
             display: "inline-block",
             verticalAlign: "bottom",
-            w: "120px",
+            w: "108px",
             px: 2,
             color: "var(--colors-primary)",
             textOverflow: "ellipsis",
@@ -76,9 +78,11 @@ export function Dropdown({
         >
           {value ? options[value].toUpperCase() : options[0].toUpperCase()}
         </span>
-        <span className={`${css({ float: "right" })} ${isOpen ? "open" : ""}`}>
-          &#9662;
-        </span>
+        {isOpen ? (
+          <IoChevronUp className={css({ float: "right" })} />
+        ) : (
+          <IoChevronDown className={css({ float: "right" })} />
+        )}
       </div>
       {isOpen && (
         <ul

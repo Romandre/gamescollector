@@ -34,6 +34,7 @@ type GamesContextType = {
   setOffset: (value: SetStateAction<number>) => void;
   filters: Filters;
   handleFilter: (name: string, filter: string) => void;
+  resetFilters: () => void;
   filterInputs: FilterInputs;
   setFilterInputs: Dispatch<SetStateAction<FilterInputs>>;
   sorting: number;
@@ -60,6 +61,12 @@ const sortingOptions = [
 ];
 const limit = 60;
 const dlcFilter = "category != (1,2)";
+const filtersInMenu = {
+  year: "",
+  genre: "",
+  platform: "",
+  company: "",
+};
 
 const getGames = async (query: string) => {
   const response = await axios.get(`/api/games`, { params: { query } });
@@ -89,17 +96,11 @@ export const GamesProvider = ({ children }: { children: ReactNode }) => {
   const [offset, setOffset] = useState(0);
   const [filters, setFilters] = useState<Filters>({
     search: "",
-    year: "",
-    genre: "",
-    platform: "",
-    company: "",
     dlcs: "",
+    ...filtersInMenu,
   });
   const [filterInputs, setFilterInputs] = useState<FilterInputs>({
-    year: "",
-    genre: "",
-    platform: "",
-    company: "",
+    ...filtersInMenu,
   });
   const [sorting, setSorting] = useState(0);
 
@@ -148,6 +149,11 @@ export const GamesProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const resetFilters = () => {
+    setFilters((prev) => ({ ...prev, ...filtersInMenu }));
+    setFilterInputs({ ...filtersInMenu });
+  };
+
   const handleSorting = (index: number) => {
     if (sorting !== index) {
       setGames([]);
@@ -170,6 +176,7 @@ export const GamesProvider = ({ children }: { children: ReactNode }) => {
     setOffset,
     filters,
     handleFilter,
+    resetFilters,
     filterInputs,
     setFilterInputs,
     sorting,
