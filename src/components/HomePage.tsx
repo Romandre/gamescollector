@@ -12,7 +12,7 @@ import Skeleton from "react-loading-skeleton";
 import { useQuery } from "@tanstack/react-query";
 
 // Types
-import { Game } from "@/types";
+import { Game, ReleaseDate } from "@/types";
 
 // Styles
 import { css } from "../../styled-system/css";
@@ -138,7 +138,7 @@ const twoMonthsAgo = getTimestampTwoMonthsAgo();
 export function HomePage({ randomImgNumber }: { randomImgNumber: number }) {
   const gamePannelsLimit = 4;
   const comingSoonQuery = `fields name, first_release_date, cover.*, platforms.*; where first_release_date > ${timeNow} & hypes > 50; sort first_release_date asc; limit ${gamePannelsLimit};`;
-  const mostAnticipatedQuery = `fields name, release_dates.*, cover.*, platforms.*, summary; where first_release_date > ${timeNow}; sort hypes desc; limit ${gamePannelsLimit};`;
+  const mostAnticipatedQuery = `fields name, release_dates.*, cover.*, platforms.*, summary, storyline; where first_release_date > ${timeNow}; sort hypes desc; limit ${gamePannelsLimit};`;
   const popularNowQuery = `fields name, cover.*, platforms.*, total_rating; where first_release_date > ${twoMonthsAgo} & first_release_date < ${timeNow}; sort hypes desc; limit ${gamePannelsLimit};`;
 
   const {
@@ -356,25 +356,7 @@ const PannelGrid = ({
 };
 
 const GamePannel = ({ game }: { game: Game; timer?: boolean }) => {
-  const [currentTime, setCurrentTime] = useState(Date.now());
-  const timeLeftGrid = game.first_release_date ? (
-    timeLeftUntil(currentTime, game.first_release_date)
-  ) : game.release_dates ? (
-    <div className={css({ my: 4 })}>
-      Planned release: <b>{game.release_dates?.[0].human}</b>
-    </div>
-  ) : (
-    ""
-  );
-
-  useEffect(() => {
-    if (game.first_release_date) {
-      const timerId = setInterval(() => {
-        setCurrentTime(Date.now());
-      }, 1000);
-      return () => clearInterval(timerId);
-    }
-  }, [game.first_release_date]);
+  const gameDescription = game.storyline || game.summary;
 
   return (
     <Link
@@ -448,7 +430,7 @@ const GamePannel = ({ game }: { game: Game; timer?: boolean }) => {
           px: 4,
           color: "{colors.text.dark}",
           maskImage: !game.first_release_date
-            ? "linear-gradient(to top, transparent 0%, 26%, white 30%)"
+            ? "linear-gradient(to top, transparent 0, 14%, white 20%)"
             : "",
           zIndex: 1,
         })}
@@ -465,15 +447,18 @@ const GamePannel = ({ game }: { game: Game; timer?: boolean }) => {
           {game.name}
         </div>
         <PlatformsIcons platforms={game.platforms} className={css({ mt: 5 })} />
-        {timeLeftGrid}
-        {!!game.summary && (
+        <GameReleaseBlock
+          firstReleaseDate={game.first_release_date!}
+          releaseDates={game.release_dates!}
+        />
+        {!!gameDescription && (
           <div
             className={css({
               fontFamily: "var(--font-exo-2)",
               fontSize: 14,
             })}
           >
-            {game.summary}
+            {gameDescription}
           </div>
         )}
         {!!game.total_rating && (
@@ -485,6 +470,36 @@ const GamePannel = ({ game }: { game: Game; timer?: boolean }) => {
       </div>
     </Link>
   );
+};
+
+const GameReleaseBlock = ({
+  firstReleaseDate,
+  releaseDates,
+}: {
+  firstReleaseDate: number;
+  releaseDates: ReleaseDate[];
+}) => {
+  const [currentTime, setCurrentTime] = useState(Date.now());
+  const timeLeftGrid = firstReleaseDate ? (
+    timeLeftUntil(currentTime, firstReleaseDate)
+  ) : releaseDates ? (
+    <div className={css({ my: 4 })}>
+      Planned release: <b>{releaseDates?.[0].human}</b>
+    </div>
+  ) : (
+    ""
+  );
+
+  useEffect(() => {
+    if (firstReleaseDate) {
+      const timerId = setInterval(() => {
+        setCurrentTime(Date.now());
+      }, 1000);
+      return () => clearInterval(timerId);
+    }
+  }, [firstReleaseDate]);
+
+  return timeLeftGrid;
 };
 
 const PannelLoader = ({ count }: { count: number }) => {

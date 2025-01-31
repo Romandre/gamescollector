@@ -8,6 +8,7 @@ import {
 } from "react-icons/fa";
 import { BsNintendoSwitch } from "react-icons/bs";
 import { DiAndroid } from "react-icons/di";
+import { SiAtari } from "react-icons/si";
 
 // Types
 import { Platform } from "@/types";
@@ -56,6 +57,9 @@ export const PlatformsIcons = ({
           {!!platforms.some((platform) =>
             platform.name.toLowerCase().includes("nintendo")
           ) && <BsNintendoSwitch />}
+          {!!platforms.some((platform) =>
+            platform.name.toLowerCase().includes("atari")
+          ) && <SiAtari />}
         </div>
       </div>
     )

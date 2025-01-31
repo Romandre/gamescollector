@@ -837,6 +837,7 @@ const WebsiteLinks = ({ links }: { links: Website[] }) => {
             <Link
               key={link.id}
               href={link.url}
+              target="_blank"
               className={css({
                 display: "flex",
                 py: 1,
