@@ -7,6 +7,7 @@ import {
   Dispatch,
   SetStateAction,
   useEffect,
+  useCallback,
 } from "react";
 import axios from "axios";
 
@@ -141,13 +142,16 @@ export const GamesProvider = ({ children }: { children: ReactNode }) => {
     setSearch(value);
   };
 
-  const handleFilter = (name: string, filter: string) => {
-    if (filters[name as FilterTypes] !== filter) {
-      setOffset(0);
-      setGames([]);
-      setFilters((prev) => ({ ...prev, [name]: filter }));
-    }
-  };
+  const handleFilter = useCallback(
+    (name: string, filter: string) => {
+      if (filters[name as FilterTypes] !== filter) {
+        setOffset(0);
+        setGames([]);
+        setFilters((prev) => ({ ...prev, [name]: filter }));
+      }
+    },
+    [filters]
+  );
 
   const resetFilters = () => {
     setOffset(0);
@@ -196,7 +200,7 @@ export const GamesProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (showDlcs) handleFilter("dlcs", "");
     else handleFilter("dlcs", dlcFilter);
-  }, [showDlcs]);
+  }, [showDlcs, handleFilter]);
 
   useEffect(() => {
     if (data?.games?.length) setGames((prev) => [...prev, ...data.games]);
