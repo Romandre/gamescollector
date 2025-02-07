@@ -5,19 +5,25 @@ import { css } from "../../../styled-system/css";
 
 export function Input({
   value,
+  label,
+  name,
   onChange,
   onKeyUp,
   onClick,
   className,
   placeholder,
+  required = false,
   children,
 }: {
   value: string;
+  label?: string;
+  name?: string;
   onChange: (value: string) => void;
   onKeyUp?: (e: React.KeyboardEvent<Element>) => void;
   onClick?: () => void;
   className?: string;
   placeholder?: string;
+  required?: boolean;
   children?: ReactNode;
 }) {
   return (
@@ -38,12 +44,30 @@ export function Input({
       )}
       <input
         value={value}
+        name={name}
         className={className}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
         onKeyUp={(e) => onKeyUp && onKeyUp(e)}
         onClick={onClick}
+        required={required}
       ></input>
+      {!!label && (
+        <span
+          className={`filters ${css({
+            position: "absolute",
+            top: "-10px",
+            left: 0,
+            px: 1,
+            fontSize: 14,
+            textTransform: "capitalize",
+            borderRadius: "0 0 6px 0",
+            opacity: 0.8,
+          })}`}
+        >
+          {label}
+        </span>
+      )}
     </div>
   );
 }

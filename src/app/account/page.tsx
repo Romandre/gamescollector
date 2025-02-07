@@ -1,23 +1,22 @@
-import { Header, Container } from "@/components";
-import { login, signup } from "./actions";
 import { supabaseClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import { LoginForm } from "@/components/layout/LoginForm";
 
-export default async function Signin() {
+import { Header, Container, AccountForm } from "@/components";
+
+export default async function Account() {
   const supabase = await supabaseClient();
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (user) redirect("/account");
+  if (!user) redirect("/signin");
 
   return (
     <>
       <Header />
       <Container>
-        <LoginForm login={login} signup={signup} />
+        <AccountForm user={user} />
       </Container>
     </>
   );

@@ -2,6 +2,7 @@
 @import "../css/switch.css";
 @import "../css/scroll-bar.css";
 @import "../css/stars-rating.css";
+@import "../css/loader.css";
 
 :root {
 }
@@ -31,6 +32,20 @@ body,
 
 input:focus-visible {
   outline: none;
+}
+
+/* Change Autocomplete styles in Chrome*/
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  -webkit-text-fill-color: #aaa;
+  transition: background-color 999999999s ease-in-out 0s;
 }
 
 .logo {

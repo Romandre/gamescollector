@@ -271,25 +271,12 @@ const Filter = ({
         <>
           <Input
             value={inputValue || contextFilterValue}
+            label={type}
             placeholder={`Enter ${type}`}
             className={`search ${css({ w: "full", h: `${filterHeight}px`, pl: 2, pr: 10 })}`}
             onChange={(val) => handleInputChange(val)}
             onClick={() => setIsOpen(true)}
           />
-          <span
-            className={`filters ${css({
-              position: "absolute",
-              top: "-10px",
-              left: 0,
-              px: 1,
-              fontSize: 14,
-              textTransform: "capitalize",
-              borderRadius: "0 0 6px 0",
-              opacity: 0.8,
-            })}`}
-          >
-            {type}
-          </span>
           {!!inputValue || !!contextFilterValue ? (
             <RxCross2
               className={css(chevronClass)}

@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 
-import { GamesProvider, QueryProvider, ThemeProvider } from "../context";
+import {
+  AuthProvider,
+  GamesProvider,
+  QueryProvider,
+  ThemeProvider,
+} from "../context";
 
 import { SkeletonTheme } from "react-loading-skeleton";
 
@@ -54,11 +59,13 @@ export default async function RootLayout({
       >
         <QueryProvider>
           <ThemeProvider>
-            <GamesProvider>
-              <SkeletonTheme baseColor="#2F2633" highlightColor="#734985">
-                {children}
-              </SkeletonTheme>
-            </GamesProvider>
+            <AuthProvider>
+              <GamesProvider>
+                <SkeletonTheme baseColor="#2F2633" highlightColor="#734985">
+                  {children}
+                </SkeletonTheme>
+              </GamesProvider>
+            </AuthProvider>
           </ThemeProvider>
         </QueryProvider>
       </body>

@@ -4,5 +4,6 @@ export * from "./GamePage";
 export * from "./GamesGrid";
 export * from "./GameFilters";
 export * from "./GameSorting";
+export * from "./AccountForm";
 export * from "./layout";
 export * from "./design";

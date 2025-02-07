@@ -1,4 +1,5 @@
 // Components
+import { supabaseClient } from "@/utils/supabase/server";
 import { SearchInput } from "../design";
 import { HeaderActions } from "./HeaderActions";
 import Link from "next/link";
@@ -7,7 +8,13 @@ import Image from "next/image";
 // Styles
 import { css } from "../../../styled-system/css";
 
-export function Header() {
+export async function Header() {
+  const supabase = await supabaseClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   return (
     <div
       className={[
@@ -67,7 +74,7 @@ export function Header() {
           })}`}
         />
 
-        <HeaderActions />
+        <HeaderActions user={user} />
       </div>
     </div>
   );

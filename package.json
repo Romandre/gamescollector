@@ -17,6 +17,9 @@
     "@fontsource/lato": "^5.1.0",
     "@fontsource/rampart-one": "^5.1.0",
     "@fontsource/zen-tokyo-zoo": "^5.1.0",
+    "@prisma/client": "6.3.0",
+    "@supabase/ssr": "^0.5.2",
+    "@supabase/supabase-js": "^2.48.1",
     "@tanstack/react-query": "^5.62.7",
     "@types/js-cookie": "^3.0.6",
     "axios": "^1.7.9",
@@ -39,6 +42,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.1.0",
     "postcss": "^8",
+    "prisma": "^6.3.0",
     "typescript": "^5"
   }
 }
