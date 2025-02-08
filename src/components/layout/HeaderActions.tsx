@@ -139,7 +139,7 @@ const MenuLink = ({
         flexDirection: "column",
         alignItems: "center",
         w: { base: "100%", sm: "auto" },
-        fontSize: { base: 16, sm: 12 },
+        fontSize: { base: 14, sm: 12 },
         textAlign: "center",
         lineHeight: { base: "", sm: 1.2 },
         backdropFilter: { base: "contrast(0.8)", sm: "none" },

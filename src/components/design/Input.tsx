@@ -7,6 +7,7 @@ export function Input({
   value,
   label,
   name,
+  type,
   onChange,
   onKeyUp,
   onClick,
@@ -18,6 +19,7 @@ export function Input({
   value: string;
   label?: string;
   name?: string;
+  type?: string;
   onChange: (value: string) => void;
   onKeyUp?: (e: React.KeyboardEvent<Element>) => void;
   onClick?: () => void;
@@ -45,6 +47,7 @@ export function Input({
       <input
         value={value}
         name={name}
+        type={type}
         className={className}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}

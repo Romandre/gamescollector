@@ -13,6 +13,7 @@ import { css } from "../../../styled-system/css";
 
 // Icons
 import { MdErrorOutline } from "react-icons/md";
+import { VscEye, VscEyeClosed } from "react-icons/vsc";
 
 interface LoginForm {
   email: string;
@@ -42,8 +43,19 @@ export function LoginForm({
     password: "",
   });
   const [message, setMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const isLoginForm = activeForm === "login";
   const inputClass = `search ${css({ w: "full", h: `50px`, px: 2 })}`;
+
+  const eyeIconClass = css({
+    position: "absolute",
+    h: "full",
+    top: 0,
+    right: 2,
+    color: "#989898",
+    fontSize: 22,
+    cursor: "pointer",
+  });
 
   const handleLogin = (formData: FormData) => {
     setMessage("");
@@ -124,18 +136,36 @@ export function LoginForm({
           }}
           required={true}
         />
-        <Input
-          value={loginForm.password}
-          label="password"
-          name="password"
-          placeholder="Enter password"
-          className={inputClass}
-          onChange={(val) => {
-            setMessage("");
-            setLoginForm({ ...loginForm, password: val });
-          }}
-          required={true}
-        />
+        <div className={css({ position: "relative", w: "full", h: "full" })}>
+          <Input
+            value={loginForm.password}
+            label="password"
+            name="password"
+            type={showPassword ? "text" : "password"}
+            placeholder="Enter password"
+            className={inputClass}
+            onChange={(val) => {
+              setMessage("");
+              setLoginForm({ ...loginForm, password: val });
+            }}
+            required={true}
+          />
+          {showPassword ? (
+            <VscEye
+              className={eyeIconClass}
+              onClick={() => {
+                setShowPassword(false);
+              }}
+            />
+          ) : (
+            <VscEyeClosed
+              className={eyeIconClass}
+              onClick={() => {
+                setShowPassword(true);
+              }}
+            />
+          )}
+        </div>
         <input id="link" name="link" type="hidden" value={linkBeforeLogin} />
         <div
           className={css({
