@@ -128,8 +128,6 @@ const MenuLink = ({
       setLinkBeforeLogin(pathname);
   };
 
-  console.log(pathname, link, pathname === link);
-
   return (
     <Link
       href={link}
@@ -147,12 +145,15 @@ const MenuLink = ({
         borderBottom: { base: "1px solid", sm: "none" },
         transition: "opacity 0.3s",
         opacity: { base: pathname === link ? 0.5 : 1, sm: 1 },
-        pointerEvents: pathname === link ? "none" : "all",
+        pointerEvents: {
+          base: pathname === link ? "none" : "all",
+          sm: "unset",
+        },
         _focus: {
-          opacity: { base: 0.6, sm: 1 },
+          opacity: { base: 0.6 },
         },
         _active: {
-          opacity: { base: 0.6, sm: 1 },
+          opacity: { base: 0.6 },
         },
       })}
     >

@@ -102,6 +102,7 @@ export function GamePage({ id }: { id: string }) {
           position: "relative",
           display: "grid",
           mt: { base: 7, lg: "90px", xl: "120px" },
+          px: { base: 0, xl: 6 },
           gridTemplateAreas: {
             base: `
             "cover"
@@ -132,7 +133,7 @@ export function GamePage({ id }: { id: string }) {
               "left main right"
               `,
           },
-          gridTemplateColumns: { sm: "264px 1fr", xl: "300px 1fr 240px" },
+          gridTemplateColumns: { sm: "264px 1fr", xl: "300px 1fr 200px" },
           gridTemplateRows: {
             md: "auto auto auto 0fr 1fr",
             xl: "auto auto auto 1fr",

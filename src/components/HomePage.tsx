@@ -515,5 +515,4 @@ const PannelLoader = ({ count }: { count: number }) => {
 /* const GamesCarousel = ({ games }: { games: Game[] }) => {
   console.log(games);
   return <div></div>;
-};
- */
+}; */

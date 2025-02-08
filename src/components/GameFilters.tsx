@@ -83,6 +83,7 @@ export function GameFilters() {
                     w: 4,
                     h: 4,
                     fontSize: 10,
+                    color: "#FFFFFF",
                     justifyContent: "center",
                     bg: "{colors.primary}",
                     borderRadius: "10px",
@@ -106,7 +107,7 @@ export function GameFilters() {
             h: "full",
             top: { base: 0, lg: "unset" },
             py: { base: "72px", lg: 0 },
-            pl: { base: 4, lg: 2 },
+            pl: { base: 4, lg: 0 },
             px: 4,
             animation: "fade-in 0.3s",
             zIndex: { base: 998, lg: "unset" },
@@ -137,7 +138,7 @@ export function GameFilters() {
               className={css({ display: { base: "block", lg: "none" } })}
               onClick={() => setIsFiltersOpen(false)}
             >
-              Apply
+              Show games
             </Button>
             {!!Object.values(filterInputs).some((item) => !!item) && (
               <span
