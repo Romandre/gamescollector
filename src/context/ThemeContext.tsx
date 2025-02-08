@@ -31,7 +31,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const toggleTheme = () => {
     const newTheme = theme === mainTheme ? alterTheme : mainTheme;
     document.documentElement.setAttribute("data-theme", newTheme);
-    Cookies.set("theme", newTheme);
+    Cookies.set("theme", newTheme, { expires: 999999 });
     setTheme(newTheme);
   };
 
