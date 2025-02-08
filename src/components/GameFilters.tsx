@@ -97,7 +97,7 @@ export function GameFilters() {
         </div>
 
         <div
-          className={`filters ${css({
+          className={`modal ${css({
             position: "fixed",
             display: { base: isFiltersOpen ? "block" : "none", lg: "block" },
             left: 0,

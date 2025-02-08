@@ -60,7 +60,7 @@ export function GameSorting() {
       </div>
 
       <div
-        className={`filters ${css({
+        className={`modal ${css({
           position: { base: "fixed", md: "relative" },
           top: 0,
           right: 0,

@@ -29,7 +29,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUserSession(session);
     });
 
-    supabase.auth.onAuthStateChange((_event, session) => {
+    supabase.auth.onAuthStateChange((event, session) => {
       setUserSession(session);
     });
   }, [supabase.auth]);

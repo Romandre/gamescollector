@@ -92,6 +92,10 @@ export default defineConfig({
         color: "#555555",
       },
       ".filters": { backgroundColor: "{colors.background.light}" },
+      ".modal": {
+        backgroundColor: "{colors.background.light}",
+        boxShadow: { base: "0 0 14px rgba(0,0,0,0.35)", sm: "none" },
+      },
       ".tile": { backgroundColor: "#FFFFFF" },
       "& p": {
         color: "{colors.paragraph.light}",
@@ -112,6 +116,10 @@ export default defineConfig({
         color: "#AAAAAA",
       },
       ".filters": { backgroundColor: "{colors.background.dark}" },
+      ".modal": {
+        backgroundColor: "{colors.background.dark}",
+        boxShadow: { base: "0 0 14px rgba(0,0,0,0.7)", sm: "none" },
+      },
       ".tile": {
         backgroundColor: "{colors.background.search.dark}",
       },

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
 // Components
@@ -15,7 +15,6 @@ import { css } from "../../../styled-system/css";
 import { MdErrorOutline } from "react-icons/md";
 
 interface LoginForm {
-  username: string;
   email: string;
   password: string;
 }
@@ -34,55 +33,60 @@ export function LoginForm({
   }>;
 }) {
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
   const { linkBeforeLogin } = useAuthContext();
-  const [loading, setLoading] = useState(false);
   const [activeForm, setActiveForm] = useState<"login" | "signup">("login");
+  const [isFormChanging, setIsFormChanging] = useState(false);
   const [loginForm, setLoginForm] = useState<LoginForm>({
-    username: "",
     email: "",
     password: "",
   });
   const [message, setMessage] = useState("");
   const isLoginForm = activeForm === "login";
-
   const inputClass = `search ${css({ w: "full", h: `50px`, px: 2 })}`;
 
-  console.log(loading);
+  const handleLogin = (formData: FormData) => {
+    setMessage("");
+    startTransition(async () => {
+      try {
+        const result = await login(formData);
 
-  const handleLogin = async (formData: FormData) => {
-    setLoading(true);
-    try {
-      const result = await login(formData);
-
-      if (result.success) {
-        router.push(linkBeforeLogin);
-      } else {
-        setMessage(result.message || "Login failed.");
+        if (result.success) {
+          router.push(linkBeforeLogin);
+        } else {
+          setMessage(result.message || "Login failed.");
+        }
+      } catch (error) {
+        setMessage("An error occurred during login.");
+        console.error("Login Error:", error);
       }
-    } catch (error) {
-      setMessage("An error occurred during login.");
-      console.error("Login Error:", error);
-    } finally {
-      setLoading(false);
-    }
+    });
   };
 
-  const handleSignup = async (formData: FormData) => {
-    setLoading(true);
-    try {
-      const result = await signup(formData);
+  const handleSignup = (formData: FormData) => {
+    setMessage("");
+    startTransition(async () => {
+      try {
+        const result = await signup(formData);
 
-      if (result.success) {
-        router.push(linkBeforeLogin);
-      } else {
-        setMessage(result.message || "Account creation failed.");
+        if (result.success) {
+          router.push(linkBeforeLogin);
+        } else {
+          setMessage(result.message || "Account creation failed.");
+        }
+      } catch (error) {
+        setMessage("An error occurred during account creation.");
+        console.error("Signup Error:", error);
       }
-    } catch (error) {
-      setMessage("An error occurred during account creation.");
-      console.error("Login Error:", error);
-    } finally {
-      setLoading(false);
-    }
+    });
+  };
+
+  const handleFormChange = () => {
+    setIsFormChanging(true);
+    setTimeout(() => {
+      setActiveForm(isLoginForm ? "signup" : "login");
+      setIsFormChanging(false);
+    }, 300);
   };
 
   return (
@@ -91,8 +95,11 @@ export function LoginForm({
         maxW: "500px",
         mt: 20,
         mx: "auto",
-        p: 8,
+        p: { base: 4, sm: 8 },
         borderRadius: 10,
+        opacity: isFormChanging ? 0 : 1,
+        transition: "opacity 0.4s",
+        animation: "fade-in 0.6s",
       })}
     >
       <SectionTitle>{isLoginForm ? "Login" : "Sign up"}</SectionTitle>
@@ -112,6 +119,7 @@ export function LoginForm({
           placeholder="Enter email"
           className={inputClass}
           onChange={(val) => {
+            setMessage("");
             setLoginForm({ ...loginForm, email: val });
           }}
           required={true}
@@ -123,6 +131,7 @@ export function LoginForm({
           placeholder="Enter password"
           className={inputClass}
           onChange={(val) => {
+            setMessage("");
             setLoginForm({ ...loginForm, password: val });
           }}
           required={true}
@@ -138,16 +147,32 @@ export function LoginForm({
         >
           <span
             className={css({ color: "{colors.primary}", fontWeight: 500 })}
-            onClick={() => setActiveForm(isLoginForm ? "signup" : "login")}
+            onClick={handleFormChange}
           >
             {isLoginForm
               ? "I don't have an account"
               : "I already have an account"}
           </span>
-          {loading ? (
-            <span className="loader"></span>
+          {isPending ? (
+            <div
+              className={css({
+                display: "flex",
+                w: "160px",
+                h: 50,
+                justifyContent: "center",
+                alignItems: "center",
+              })}
+            >
+              <span className="loader" />
+            </div>
           ) : (
-            <Button type="submit" className={css({ w: "160px" })}>
+            <Button
+              type="submit"
+              className={css({
+                w: { base: "140px", sm: "160px" },
+                flexShrink: 0,
+              })}
+            >
               {isLoginForm ? "Let me in" : "Create account"}
             </Button>
           )}
@@ -158,6 +183,7 @@ export function LoginForm({
               display: "flex",
               alignItems: "center",
               gap: 2,
+              animation: "fade-in 0.4s",
             })}
           >
             <MdErrorOutline size={24} />

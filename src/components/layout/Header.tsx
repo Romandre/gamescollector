@@ -43,7 +43,7 @@ export async function Header() {
           className={css({
             display: "flex",
             justifyContent: "center",
-            flexBasis: { base: "90px", sm: "140px" },
+            flexBasis: { base: "96px", sm: "140px" },
             flexShrink: 0,
           })}
         >

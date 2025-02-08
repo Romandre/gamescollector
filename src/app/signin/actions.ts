@@ -6,7 +6,6 @@ import { validateEmail, validatePassword } from "@/utils/credentialsValidation";
 export async function login(formData: FormData) {
   const supabase = await supabaseClient();
 
-  // ADD VALIDATION !!!
   const data = {
     email: formData.get("email") as string,
     password: formData.get("password") as string,

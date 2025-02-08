@@ -21,6 +21,7 @@ import { RxHamburgerMenu } from "react-icons/rx";
 import { LiaGamepadSolid } from "react-icons/lia";
 import { RiAccountCircle2Line } from "react-icons/ri";
 import { PiSignInBold } from "react-icons/pi";
+import { GrHomeRounded } from "react-icons/gr";
 
 export function HeaderActions({ user }: { user: User | null }) {
   const { theme, toggleTheme } = useThemeContext();
@@ -43,7 +44,7 @@ export function HeaderActions({ user }: { user: User | null }) {
         onClick={() => setIsMenuOpen(true)}
       />
       <div
-        className={`filters ${css({
+        className={`modal ${css({
           position: { base: "fixed", sm: "relative" },
           display: { base: isMenuOpen ? "flex" : "none", sm: "flex" },
           top: 0,
@@ -60,7 +61,7 @@ export function HeaderActions({ user }: { user: User | null }) {
       >
         <div
           className={css({
-            flexBasis: "58px",
+            flexBasis: { base: "unset", sm: "58px" },
             flexShrink: 0,
             order: { base: 3, sm: 0 },
             scale: { base: 1.25, sm: 1 },
@@ -75,6 +76,7 @@ export function HeaderActions({ user }: { user: User | null }) {
           />
         </div>
         <MenuLink link="/" onlyMobile={true}>
+          <GrHomeRounded size={20} className={css({ mb: "4px" })} />
           Home
         </MenuLink>
         <MenuLink link="/browse">
@@ -83,12 +85,24 @@ export function HeaderActions({ user }: { user: User | null }) {
         </MenuLink>
         {user ? (
           <MenuLink link="/account">
-            <RiAccountCircle2Line size={26} className={css({ mt: 1 })} />
+            <RiAccountCircle2Line
+              size={26}
+              className={css({
+                mt: { base: 0, sm: 1 },
+                mb: { base: "2px", sm: 0 },
+              })}
+            />
             Account
           </MenuLink>
         ) : (
           <MenuLink link="/signin">
-            <PiSignInBold size={25} className={css({ mt: 1 })} />
+            <PiSignInBold
+              size={25}
+              className={css({
+                mt: { base: 0, sm: 1 },
+                mb: { base: "3px", sm: 0 },
+              })}
+            />
             Sign In
           </MenuLink>
         )}
@@ -114,21 +128,32 @@ const MenuLink = ({
       setLinkBeforeLogin(pathname);
   };
 
+  console.log(pathname, link, pathname === link);
+
   return (
     <Link
       href={link}
       onClick={handleRedirect}
       className={css({
-        display: { base: "block", sm: onlyMobile ? "none" : "flex" },
+        display: { base: "flex", sm: onlyMobile ? "none" : "flex" },
         flexDirection: "column",
         alignItems: "center",
         w: { base: "100%", sm: "auto" },
-        fontSize: 12,
+        fontSize: { base: 16, sm: 12 },
         textAlign: "center",
         lineHeight: { base: "", sm: 1.2 },
         backdropFilter: { base: "contrast(0.8)", sm: "none" },
-        py: { base: 4, sm: 0 },
+        py: { base: 3, sm: 0 },
         borderBottom: { base: "1px solid", sm: "none" },
+        transition: "opacity 0.3s",
+        opacity: { base: pathname === link ? 0.5 : 1, sm: 1 },
+        pointerEvents: pathname === link ? "none" : "all",
+        _focus: {
+          opacity: { base: 0.6, sm: 1 },
+        },
+        _active: {
+          opacity: { base: 0.6, sm: 1 },
+        },
       })}
     >
       {children}
