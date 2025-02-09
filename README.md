@@ -1,6 +1,6 @@
 # GamesCollector
 
-GamesCollector is a passion-driven project built for gamers, by gamers. Our goal is to create a central hub where users can discover games, track new releases, build personalized game collections, rate games, and share their experiences.
+GamesCollector is a passion-driven project built for gamers, by gamers. My goal is to create a central hub where users can discover games, track new releases, build personalized game collections, rate games, and share their experiences.
 
 ## Tech Stack
 
@@ -19,7 +19,7 @@ GamesCollector is a non-commercial project created purely for fun. It is an evol
 
 ## Status
 
-The project is currently in its early development stages, and any feedback, contributions, and ideas are welcomed from the community.
+The project is currently in its early development stages. Any feedback, contributions and ideas are welcomed.
 
 ## Get Involved
 
