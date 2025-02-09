@@ -29,4 +29,4 @@ If you're interested in contributing, feel free to reaching out to me to discuss
 
 Thank you for reading this! Stay tuned for more cool stuff!
 
-Explore GamesCollector at: [GamesCollector](https://gamescollector.netlify.app/browse)
+Explore at: [GamesCollector](https://gamescollector.netlify.app)
