@@ -1,36 +1,32 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# GamesCollector
 
-## Getting Started
+GamesCollector is a passion-driven project built for gamers, by gamers. Our goal is to create a central hub where users can discover games, track new releases, build personalized game collections, rate games, and share their experiences.
 
-First, run the development server:
+## Tech Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+This project is built using the following technologies:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **React** - For building the user interface
+- **TypeScript** - Ensuring type safety and better developer experience
+- **Next.js** - Providing server-side rendering and optimized performance
+- **PandaCSS** - Used for styling and maintaining a consistent design system
+- **Supabase** - Backend-as-a-service for authentication and real-time capabilities
+- **PostgreSQL** - Database for storing game-related data and user interactions
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Purpose
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+GamesCollector is a non-commercial project created purely for fun. It is an evolving platform aimed at bringing gamers together and providing valuable game-related information without any financial objectives.
 
-## Learn More
+## Status
 
-To learn more about Next.js, take a look at the following resources:
+The project is currently in its early development stages, and any feedback, contributions, and ideas are welcomed from the community.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Get Involved
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+If you're interested in contributing, feel free to reaching out to me to discuss possible collaboration. Your support and enthusiasm will help make GamesCollector even better!
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Thank you for reading this! Stay tuned for more cool stuff!
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Explore GamesCollector at: [GamesCollector](https://gamescollector.netlify.app/browse)
