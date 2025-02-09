@@ -280,9 +280,6 @@ const Cover = ({
             fill
             style={{ objectFit: "cover", animation: "fade-in 0.8s" }}
             sizes="(max-width: 700px) 100vw, 700px"
-            className={css({
-              height: "100vh",
-            })}
             loading="lazy"
           />
         ) : (
@@ -292,9 +289,6 @@ const Cover = ({
             fill
             style={{ objectFit: "cover", animation: "fade-in 0.8s" }}
             sizes="(max-width: 700px) 100vw, 700px"
-            className={css({
-              height: "100vh",
-            })}
             loading="lazy"
           />
         )}
@@ -327,7 +321,7 @@ const Cover = ({
       >
         {userId ? (
           <div
-            className={css({ display: "flex", alignItems: "center", gap: 4 })}
+            className={css({ display: "flex", alignItems: "center", gap: 3 })}
           >
             <div className={css({ flexBasis: "50%" })}>
               <ToggleFavourite gameId={gameId} userId={userId} />

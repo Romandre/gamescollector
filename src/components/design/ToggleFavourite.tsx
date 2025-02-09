@@ -27,25 +27,19 @@ export function ToggleFavourite({
       })}
     >
       {isFavourite ? (
-        <>
-          <IoMdHeart
-            size={28}
-            className={css({
-              color: "{colors.primary}",
-            })}
-          />
-          Remove from favourites
-        </>
+        <IoMdHeart
+          size={34}
+          className={css({
+            color: "{colors.primary}",
+          })}
+        />
       ) : (
-        <>
-          <IoMdHeartEmpty
-            size={28}
-            className={css({
-              color: "{colors.primary}",
-            })}
-          />
-          Add to favourites
-        </>
+        <IoMdHeartEmpty
+          size={34}
+          className={css({
+            color: "{colors.primary}",
+          })}
+        />
       )}
     </div>
   );

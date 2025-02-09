@@ -58,9 +58,10 @@ export async function Header() {
             <Image
               src="/logo.png"
               alt="logo"
-              width="76"
-              height="44"
+              width={0}
+              height={0}
               blurDataURL="/logo.png"
+              style={{ width: "76px", height: "44px" }}
             />
             {/* <h1 className="logo">GC</h1> */}
           </Link>
