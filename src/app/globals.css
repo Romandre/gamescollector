@@ -27,7 +27,8 @@ body,
 .tile {
   transition:
     background 0.2s,
-    border 0.2s;
+    border 0.2s,
+    color 0.12s;
 }
 
 input:focus-visible {

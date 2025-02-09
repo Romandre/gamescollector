@@ -4,13 +4,16 @@ import axios from "axios";
 
 // Components
 import { GameCard } from "./GameCard";
-import { Grid, Overlay, SectionTitle, Tiles } from "./design";
+import { Grid, Overlay, SectionTitle, Tiles, ToggleFavourite } from "./design";
 import Skeleton from "react-loading-skeleton";
 import Link from "next/link";
 import Image from "next/image";
 
 // Hooks
 import { useQuery } from "@tanstack/react-query";
+
+// Context
+import { useAuthContext } from "@/context";
 
 // Styles
 import { css } from "../../styled-system/css";
@@ -29,14 +32,14 @@ import {
   FaReddit,
   FaAppStoreIos,
   FaItchIo,
+  FaChevronLeft,
+  FaChevronRight,
 } from "react-icons/fa";
 import { BsTwitterX } from "react-icons/bs";
 import { CgWebsite } from "react-icons/cg";
 import { SiEpicgames, SiWikibooks } from "react-icons/si";
 import { IoLogoGameControllerB } from "react-icons/io";
-import { IoLogoGooglePlaystore } from "react-icons/io5";
-import { FaChevronLeft } from "react-icons/fa";
-import { FaChevronRight } from "react-icons/fa";
+import { IoLogoGooglePlaystore, IoStarOutline } from "react-icons/io5";
 
 // Types
 import type {
@@ -144,6 +147,7 @@ export function GamePage({ id }: { id: string }) {
       >
         <div className={css({ gridArea: "cover" })}>
           <Cover
+            gameId={gameId}
             cover={game?.cover}
             bage={game?.category}
             isLoaded={isGameLoaded}
@@ -240,14 +244,18 @@ const PageBackground = ({ images }: { images: Screenshot[] }) => {
 };
 
 const Cover = ({
+  gameId,
   cover,
   bage,
   isLoaded,
 }: {
+  gameId: string;
   cover: Cover | undefined;
   bage?: number;
   isLoaded: boolean;
 }) => {
+  const { userId } = useAuthContext();
+
   return isLoaded ? (
     <div
       className={css({
@@ -317,13 +325,46 @@ const Cover = ({
           textAlign: "center",
         })}`}
       >
-        <Link
-          href="/signin"
-          className={css({ color: "var(--colors-primary)", fontWeight: 500 })}
-        >
-          Sign in
-        </Link>{" "}
-        to add games to your personal library
+        {userId ? (
+          <div
+            className={css({ display: "flex", alignItems: "center", gap: 3 })}
+          >
+            <div
+              className={css({
+                flexBasis: "50%",
+                color: "{colors.primary}",
+              })}
+            >
+              <ToggleFavourite gameId={gameId} />
+            </div>
+            |
+            <div
+              className={css({
+                flexBasis: "50%",
+                color: "{colors.primary}",
+                opacity: 0.4,
+              })}
+            >
+              <IoStarOutline
+                size={25}
+                className={css({ justifySelf: "center", cursor: "pointer" })}
+              />
+            </div>
+          </div>
+        ) : (
+          <>
+            <Link
+              href="/signin"
+              className={css({
+                color: "var(--colors-primary)",
+                fontWeight: 500,
+              })}
+            >
+              Sign in
+            </Link>{" "}
+            to rate and add games to your personal library{" "}
+          </>
+        )}
       </div>
     </div>
   ) : (

@@ -83,7 +83,7 @@ export function HeaderActions({ user }: { user: User | null }) {
         <MenuLink link="/about">
           <IoInformationOutline
             size={22}
-            className={css({ mt: "4px", mb: "2px" })}
+            className={css({ mt: "4px", mb: "1px" })}
           />
           About
         </MenuLink>
@@ -94,10 +94,10 @@ export function HeaderActions({ user }: { user: User | null }) {
         {user ? (
           <MenuLink link="/account">
             <RiAccountCircle2Line
-              size={25}
+              size={24}
               className={css({
                 mt: { base: 0, sm: 1 },
-                mb: { base: "2px", sm: 0 },
+                mb: { base: "3px", sm: 0 },
               })}
             />
             Account

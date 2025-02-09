@@ -13,6 +13,7 @@ import { type Session } from "@supabase/supabase-js";
 
 type AuthContextType = {
   userSession: Session | null;
+  userId: string;
   linkBeforeLogin: string;
   setLinkBeforeLogin: (value: SetStateAction<string>) => void;
 };
@@ -23,19 +24,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const supabase = supabaseClient();
   const [userSession, setUserSession] = useState<Session | null>(null);
   const [linkBeforeLogin, setLinkBeforeLogin] = useState("/");
+  const userId = userSession?.user?.id || "";
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const getSession = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       setUserSession(session);
-    });
+    };
 
-    supabase.auth.onAuthStateChange((event, session) => {
-      setUserSession(session);
-    });
-  }, [supabase.auth]);
+    getSession();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (_, session) => {
+        setUserSession(session);
+      }
+    );
+
+    return () => {
+      authListener?.subscription?.unsubscribe(); // Cleanup the listener
+    };
+  }, [supabase]);
 
   const contextValue = {
     userSession,
+    userId,
     linkBeforeLogin,
     setLinkBeforeLogin,
   };
