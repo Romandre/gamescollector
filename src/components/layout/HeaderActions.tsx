@@ -22,6 +22,7 @@ import { LiaGamepadSolid } from "react-icons/lia";
 import { RiAccountCircle2Line } from "react-icons/ri";
 import { PiSignInBold } from "react-icons/pi";
 import { GrHomeRounded } from "react-icons/gr";
+import { IoInformationOutline } from "react-icons/io5";
 
 export function HeaderActions({ user }: { user: User | null }) {
   const { theme, toggleTheme } = useThemeContext();
@@ -30,7 +31,7 @@ export function HeaderActions({ user }: { user: User | null }) {
   return (
     <div
       className={css({
-        flexBasis: { base: "none", sm: "250px" },
+        flexBasis: { base: "none", sm: "300px" },
         flexShrink: 0,
       })}
     >
@@ -79,6 +80,13 @@ export function HeaderActions({ user }: { user: User | null }) {
           <GrHomeRounded size={20} className={css({ mb: "4px" })} />
           Home
         </MenuLink>
+        <MenuLink link="/about">
+          <IoInformationOutline
+            size={22}
+            className={css({ mt: "4px", mb: "2px" })}
+          />
+          About
+        </MenuLink>
         <MenuLink link="/browse">
           <LiaGamepadSolid size={28} />
           Browse
@@ -86,7 +94,7 @@ export function HeaderActions({ user }: { user: User | null }) {
         {user ? (
           <MenuLink link="/account">
             <RiAccountCircle2Line
-              size={26}
+              size={25}
               className={css({
                 mt: { base: 0, sm: 1 },
                 mb: { base: "2px", sm: 0 },
