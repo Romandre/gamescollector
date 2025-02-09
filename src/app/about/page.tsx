@@ -16,13 +16,12 @@ export default function About() {
               display: "inline-block",
               mt: 8,
               mb: 2,
-              color: "{colors.text.dark}",
               fontSize: { base: 42, lg: 46, "2xl": 48 },
               fontWeight: 700,
               textWrap: "balance",
               lineHeight: 1.2,
               letterSpacing: 1,
-              textShadow: "4px 6px 4px rgba(0,0,0,0.55)",
+              textShadow: "4px 6px 4px rgba(0,0,0,0.3)",
             })}
           >
             Hi, welcome to GamesCollector site!
@@ -30,8 +29,8 @@ export default function About() {
           <p className={css({ my: 4 })}>
             GamesCollector is a project built with passion for gamers, by
             gamers! My goal is to create the ultimate hub for everything related
-            to video games. Whether you`&apos;re searching for your next
-            favorite game, tracking upcoming releases, or curating your own game
+            to video games. Whether you&apos;re searching for your next favorite
+            game, tracking upcoming releases, or curating your own game
             collections, GamesCollector is here to enhance your gaming
             experience.
           </p>
