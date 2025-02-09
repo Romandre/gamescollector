@@ -1,2 +1,2 @@
-export * from "./useSorting";
 export * from "./useFavourite";
+export * from "./useSorting";

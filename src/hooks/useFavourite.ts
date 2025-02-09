@@ -1,57 +1,60 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabaseClient } from "@/utils/supabase/client";
 
-export function useFavourite(gameId: string, userId: string | undefined) {
+export function useFavourite(gameId: string, userId: string | null) {
   const supabase = supabaseClient();
-  const [isAddedToFavourites, setIsAddedToFavourites] = useState(false);
+  const [isFavourite, setIsFavourite] = useState(false);
 
-  const checkFavourite = useCallback(async () => {
-    if (!gameId || !userId) return;
+  const checkIfFavorite = useCallback(async () => {
+    try {
+      const { data, error } = await supabase
+        .from("favourites")
+        .select("*")
+        .eq("user_id", userId)
+        .eq("game_id", gameId)
+        .maybeSingle();
 
-    const { data, error } = await supabase
-      .from("favourites")
-      .select(`id`)
-      .eq("game_id", gameId)
-      .eq("user_id", userId)
-      .single();
-
-    if (!error && data) {
-      setIsAddedToFavourites(true);
-    } else {
-      setIsAddedToFavourites(false);
+      if (error) throw error;
+      setIsFavourite(!!data);
+    } catch (error) {
+      console.error("Error checking favorite status:", error);
     }
   }, [gameId, userId, supabase]);
 
-  // Check if the item is already in favourites
   useEffect(() => {
-    checkFavourite();
-  }, [checkFavourite]);
+    checkIfFavorite();
+  }, [checkIfFavorite]);
 
-  // Function to toggle favourite status
-  const toggleFavourite = useCallback(async () => {
-    if (!gameId || !userId) return;
+  const toggleFavourite = async () => {
+    setIsFavourite(true);
+    try {
+      if (isFavourite) {
+        // Remove from favorites
+        const { error } = await supabase
+          .from("favourites")
+          .delete()
+          .eq("user_id", userId)
+          .eq("game_id", gameId);
 
-    if (isAddedToFavourites) {
-      // Remove from favourites
-      const { error } = await supabase
-        .from("favourites")
-        .delete()
-        .match({ game_id: gameId, user_id: userId });
+        if (error) throw error;
+        setIsFavourite(false);
+      } else {
+        // Add to favorites
+        const { error } = await supabase.from("favourites").insert([
+          {
+            user_id: userId,
+            game_id: gameId,
+          },
+        ]);
 
-      if (!error) {
-        setIsAddedToFavourites(false);
+        if (error) throw error;
+        setIsFavourite(true);
       }
-    } else {
-      // Add to favourites
-      const { error } = await supabase
-        .from("favourites")
-        .insert([{ game_id: gameId, user_id: userId }]);
-
-      if (!error) {
-        setIsAddedToFavourites(true);
-      }
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
+      alert("Error updating favorites");
     }
-  }, [isAddedToFavourites, gameId, userId, supabase]);
+  };
 
-  return { isAddedToFavourites, toggleFavourite };
+  return { isFavourite, toggleFavourite };
 }

@@ -59,13 +59,13 @@ export default async function RootLayout({
       >
         <QueryProvider>
           <ThemeProvider>
-            <AuthProvider>
-              <GamesProvider>
+            <GamesProvider>
+              <AuthProvider>
                 <SkeletonTheme baseColor="#2F2633" highlightColor="#734985">
                   {children}
                 </SkeletonTheme>
-              </GamesProvider>
-            </AuthProvider>
+              </AuthProvider>
+            </GamesProvider>
           </ThemeProvider>
         </QueryProvider>
       </body>

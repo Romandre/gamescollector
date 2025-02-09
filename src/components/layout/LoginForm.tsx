@@ -16,6 +16,7 @@ import { MdErrorOutline } from "react-icons/md";
 import { VscEye, VscEyeClosed } from "react-icons/vsc";
 
 interface LoginForm {
+  username?: string;
   email: string;
   password: string;
 }
@@ -39,6 +40,7 @@ export function LoginForm({
   const [activeForm, setActiveForm] = useState<"login" | "signup">("login");
   const [isFormChanging, setIsFormChanging] = useState(false);
   const [loginForm, setLoginForm] = useState<LoginForm>({
+    username: "",
     email: "",
     password: "",
   });
@@ -124,6 +126,20 @@ export function LoginForm({
           gap: 5,
         })}
       >
+        {!isLoginForm && (
+          <Input
+            value={loginForm.username || ""}
+            label="username"
+            name="username"
+            placeholder="Enter username"
+            className={inputClass}
+            onChange={(val) => {
+              setMessage("");
+              setLoginForm({ ...loginForm, username: val });
+            }}
+            required={true}
+          />
+        )}
         <Input
           value={loginForm.email}
           label="email"
@@ -176,7 +192,11 @@ export function LoginForm({
           })}
         >
           <span
-            className={css({ color: "{colors.primary}", fontWeight: 500 })}
+            className={css({
+              color: "{colors.primary}",
+              fontWeight: 500,
+              cursor: "pointer",
+            })}
             onClick={handleFormChange}
           >
             {isLoginForm

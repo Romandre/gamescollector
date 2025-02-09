@@ -12,9 +12,6 @@ import Image from "next/image";
 // Hooks
 import { useQuery } from "@tanstack/react-query";
 
-// Context
-import { useAuthContext } from "@/context";
-
 // Styles
 import { css } from "../../styled-system/css";
 import { grid } from "../../styled-system/patterns";
@@ -50,6 +47,7 @@ import type {
   Screenshot,
   Website,
 } from "@/types";
+import { User } from "@supabase/supabase-js";
 
 const fields =
   "fields *, screenshots.*, cover.url, release_dates.*, release_dates.status.*, platforms.*, genres.*, age_ratings.*, dlcs.*, dlcs.cover.*, expansions.*, expansions.cover.*, ports.*, ports.cover.*, remakes.*, remakes.cover.*, involved_companies.*, involved_companies.company.*, parent_game.*, parent_game.cover.*, websites.*, videos.*;";
@@ -79,8 +77,9 @@ const getGame = async (query: string) => {
   return response.data;
 };
 
-export function GamePage({ id }: { id: string }) {
+export function GamePage({ id, user }: { id: string; user: User | null }) {
   const gameId = id;
+  const userId = user?.id || "";
   const query = `${fields} where id = ${gameId};`;
   const { data, isLoading /* isError, error */ } = useQuery({
     queryKey: ["game", gameId],
@@ -148,6 +147,7 @@ export function GamePage({ id }: { id: string }) {
         <div className={css({ gridArea: "cover" })}>
           <Cover
             gameId={gameId}
+            userId={userId}
             cover={game?.cover}
             bage={game?.category}
             isLoaded={isGameLoaded}
@@ -245,17 +245,17 @@ const PageBackground = ({ images }: { images: Screenshot[] }) => {
 
 const Cover = ({
   gameId,
+  userId,
   cover,
   bage,
   isLoaded,
 }: {
   gameId: string;
+  userId: string;
   cover: Cover | undefined;
   bage?: number;
   isLoaded: boolean;
 }) => {
-  const { userId } = useAuthContext();
-
   return isLoaded ? (
     <div
       className={css({
@@ -327,22 +327,16 @@ const Cover = ({
       >
         {userId ? (
           <div
-            className={css({ display: "flex", alignItems: "center", gap: 3 })}
+            className={css({ display: "flex", alignItems: "center", gap: 4 })}
           >
-            <div
-              className={css({
-                flexBasis: "50%",
-                color: "{colors.primary}",
-              })}
-            >
-              <ToggleFavourite gameId={gameId} />
+            <div className={css({ flexBasis: "50%" })}>
+              <ToggleFavourite gameId={gameId} userId={userId} />
             </div>
             |
             <div
               className={css({
                 flexBasis: "50%",
-                color: "{colors.primary}",
-                opacity: 0.4,
+                opacity: 0.2,
               })}
             >
               <IoStarOutline

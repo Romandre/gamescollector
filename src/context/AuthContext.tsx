@@ -5,15 +5,10 @@ import {
   ReactNode,
   SetStateAction,
   useContext,
-  useEffect,
   useState,
 } from "react";
-import { supabaseClient } from "@/utils/supabase/client";
-import { type Session } from "@supabase/supabase-js";
 
 type AuthContextType = {
-  userSession: Session | null;
-  userId: string;
   linkBeforeLogin: string;
   setLinkBeforeLogin: (value: SetStateAction<string>) => void;
 };
@@ -21,35 +16,9 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const supabase = supabaseClient();
-  const [userSession, setUserSession] = useState<Session | null>(null);
   const [linkBeforeLogin, setLinkBeforeLogin] = useState("/");
-  const userId = userSession?.user?.id || "";
-
-  useEffect(() => {
-    const getSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      setUserSession(session);
-    };
-
-    getSession();
-
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      (_, session) => {
-        setUserSession(session);
-      }
-    );
-
-    return () => {
-      authListener?.subscription?.unsubscribe(); // Cleanup the listener
-    };
-  }, [supabase]);
 
   const contextValue = {
-    userSession,
-    userId,
     linkBeforeLogin,
     setLinkBeforeLogin,
   };
@@ -62,7 +31,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 export function useAuthContext() {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error("useTheme must be used within a AuthProvider");
+    throw new Error("useAuthContext must be used within a AuthProvider");
   }
   return context;
 }

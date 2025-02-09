@@ -105,7 +105,7 @@ export function HeaderActions({ user }: { user: User | null }) {
         ) : (
           <MenuLink link="/signin">
             <PiSignInBold
-              size={25}
+              size={24}
               className={css({
                 mt: { base: 0, sm: 1 },
                 mb: { base: "3px", sm: 0 },
