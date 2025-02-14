@@ -97,7 +97,10 @@ export default defineConfig({
       },
       ".filters": { backgroundColor: "{colors.background.light}" },
       ".modal": {
-        backgroundColor: "{colors.background.header.light}",
+        backgroundColor: {
+          base: "{colors.background.header.light}",
+          sm: "inherit",
+        },
         boxShadow: { base: "0 0 14px rgba(0,0,0,0.35)", sm: "none" },
       },
       ".tile": { backgroundColor: "#FFFFFF" },
@@ -125,7 +128,7 @@ export default defineConfig({
       },
       ".filters": { backgroundColor: "{colors.background.dark}" },
       ".modal": {
-        backgroundColor: "{colors.background.dark}",
+        backgroundColor: { base: "{colors.background.dark}", sm: "inherit" },
         boxShadow: { base: "0 0 14px rgba(0,0,0,0.7)", sm: "none" },
       },
       ".tile": {
