@@ -104,11 +104,12 @@ export function GameFilters() {
             left: 0,
             w: { base: "70%", lg: "full" },
             maxW: "400px",
-            h: "full",
+            h: { base: "100dvh", lg: "full" },
             top: { base: 0, lg: "unset" },
             py: { base: "72px", lg: 0 },
             pl: { base: 4, lg: 0 },
             px: 4,
+            bgColor: { lg: "inherit" },
             animation: "fade-in 0.3s",
             zIndex: { base: 998, lg: "unset" },
           })}`}
