@@ -1,7 +1,7 @@
 // Components
+import { PlatformsIcons, StarsRating } from "./";
 import Link from "next/link";
 import Image from "next/image";
-import { PlatformsIcons, StarsRating } from "./design";
 
 // Contexts
 import { useGamesContext } from "@/context";
@@ -10,7 +10,7 @@ import { useGamesContext } from "@/context";
 import { Game } from "@/types";
 
 // Styles
-import { css } from "../../styled-system/css";
+import { css } from "../../../styled-system/css";
 
 export function GameCard({
   game,
@@ -25,9 +25,8 @@ export function GameCard({
     <>
       <Link
         href={`/game/${game.id}`}
-        className={[
-          "group",
-          css({
+        className={`group 
+          ${css({
             position: "relative",
             borderRadius: "8px",
             overflow: "hidden",
@@ -39,8 +38,7 @@ export function GameCard({
             _active: {
               opacity: 0.55,
             },
-          }),
-        ].join(" ")}
+          })}`}
       >
         <div
           className={css({

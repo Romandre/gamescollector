@@ -2,7 +2,7 @@
 import { useState } from "react";
 
 // Components
-import { Dropdown, Overlay, Switch } from "./design";
+import { Dropdown, Overlay, Switch } from "../design";
 
 // Contexts
 import { useGamesContext } from "@/context";
@@ -11,7 +11,7 @@ import { useGamesContext } from "@/context";
 import Skeleton from "react-loading-skeleton";
 
 // Styles
-import { css } from "../../styled-system/css";
+import { css } from "../../../styled-system/css";
 
 // Icons
 import { HiViewList } from "react-icons/hi";

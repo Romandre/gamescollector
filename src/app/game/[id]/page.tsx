@@ -1,5 +1,5 @@
 import { supabaseClient } from "@/utils/supabase/server";
-import { Header, Container, GamePage } from "@/components";
+import { GamePage, Layout } from "@/components";
 
 export default async function GameRoute({
   params,
@@ -13,11 +13,8 @@ export default async function GameRoute({
   } = await supabase.auth.getUser();
 
   return (
-    <>
-      <Header />
-      <Container>
-        <GamePage id={id} user={user} />
-      </Container>
-    </>
+    <Layout>
+      <GamePage id={id} user={user} />
+    </Layout>
   );
 }

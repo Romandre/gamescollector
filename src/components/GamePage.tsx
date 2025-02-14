@@ -3,8 +3,8 @@ import { ReactNode, useEffect, useMemo, useState } from "react";
 import axios from "axios";
 
 // Components
-import { GameCard } from "./GameCard";
-import { Grid, Overlay, SectionTitle, Tiles, ToggleFavourite } from "./design";
+import { GameCard, ToggleFavourite } from "./blocks";
+import { Grid, Overlay, SectionTitle, Tiles } from "./design";
 import Skeleton from "react-loading-skeleton";
 import Link from "next/link";
 import Image from "next/image";
@@ -457,7 +457,10 @@ const Platforms = ({
   isLoaded: boolean;
 }) => {
   const platformNames =
-    platforms?.map((platform) => platform.name).sort() || [];
+    platforms
+      ?.filter((platform) => platform.name !== "Google Stadia")
+      .map((platform) => platform.name)
+      .sort() || [];
 
   return isLoaded ? (
     <Section

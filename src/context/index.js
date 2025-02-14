@@ -1,4 +1,4 @@
 export * from "./ThemeContext";
 export * from "./QueryContext";
 export * from "./GamesContext";
-export * from "./AuthContext";
+export * from "./CommonContext";

@@ -3,7 +3,8 @@ import { ReactNode, useEffect, useState } from "react";
 import axios from "axios";
 
 // Components
-import { PlatformsIcons, SectionTitle, StarsRating } from "./design";
+import { PlatformsIcons, StarsRating } from "./blocks";
+import { SectionTitle } from "./design";
 import Image from "next/image";
 import Link from "next/link";
 import Skeleton from "react-loading-skeleton";

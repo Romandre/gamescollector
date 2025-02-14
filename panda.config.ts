@@ -87,13 +87,17 @@ export default defineConfig({
         borderBottom: "2px solid rgba(200, 200, 200, .6)",
         boxShadow: "0px 2px 16px 4px rgba(50,50,50,0.15)",
       },
+      ".menu": {
+        backgroundColor: "{colors.background.header.light}",
+        boxShadow: "0px 8px 8px rgba(50,50,50,0.15)",
+      },
       ".search": {
         backgroundColor: "{colors.background.search.light}",
         color: "#555555",
       },
       ".filters": { backgroundColor: "{colors.background.light}" },
       ".modal": {
-        backgroundColor: "{colors.background.light}",
+        backgroundColor: "{colors.background.header.light}",
         boxShadow: { base: "0 0 14px rgba(0,0,0,0.35)", sm: "none" },
       },
       ".tile": { backgroundColor: "#FFFFFF" },
@@ -110,6 +114,10 @@ export default defineConfig({
         backgroundColor: "{colors.background.header.dark}",
         borderBottom: "2px solid rgba(0, 0, 0, .3)",
         boxShadow: "0px 0px 12px 0px rgba(0,0,0,0.75)",
+      },
+      ".menu": {
+        backgroundColor: "{colors.background.header.dark}",
+        boxShadow: "0px 8px 8px rgba(0,0,0,0.55)",
       },
       ".search": {
         backgroundColor: "{colors.background.search.dark}",

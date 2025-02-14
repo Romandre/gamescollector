@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 
 // Components
-import { Input, Overlay, SectionTitle, Button } from "./design";
+import { Input, Overlay, SectionTitle, Button } from "../design";
 import Skeleton from "react-loading-skeleton";
 
 // Hooks
@@ -20,7 +20,7 @@ import { convertToPlural, getYearTimestamps } from "@/utils/filtersFormatter";
 import { FilterOptions, FilterTypes } from "@/types";
 
 // Styles
-import { css } from "../../styled-system/css";
+import { css } from "../../../styled-system/css";
 
 // Icons
 import { IoFilter, IoChevronUp, IoChevronDown } from "react-icons/io5";

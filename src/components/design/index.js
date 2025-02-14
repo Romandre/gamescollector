@@ -6,7 +6,4 @@ export * from "./Dropdown";
 export * from "./SearchInput";
 export * from "./SectionTitle";
 export * from "./Tiles";
-export * from "./PlatformIcons";
-export * from "./StarsRating";
 export * from "./Overlay";
-export * from "./ToggleFavourite";

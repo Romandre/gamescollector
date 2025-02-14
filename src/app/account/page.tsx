@@ -1,7 +1,13 @@
 import { supabaseClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
+// Components
 import { Header, Container, AccountForm } from "@/components";
+
+// Styles
+import { css } from "../../../styled-system/css";
+
+const accountMenuWidth = 270;
 
 export default async function Account() {
   const supabase = await supabaseClient();
@@ -16,7 +22,17 @@ export default async function Account() {
     <>
       <Header />
       <Container>
-        <AccountForm user={user} />
+        <div
+          className={css({
+            display: "grid",
+            gridTemplateColumns: {
+              lg: `${accountMenuWidth}px 1fr`,
+            },
+          })}
+        >
+          {/* <AccountMenu /> */}
+          <AccountForm user={user} />
+        </div>
       </Container>
     </>
   );

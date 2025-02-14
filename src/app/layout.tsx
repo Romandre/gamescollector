@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 
 import {
-  AuthProvider,
+  CommonProvider,
   GamesProvider,
   QueryProvider,
   ThemeProvider,
@@ -60,11 +60,11 @@ export default async function RootLayout({
         <QueryProvider>
           <ThemeProvider>
             <GamesProvider>
-              <AuthProvider>
+              <CommonProvider>
                 <SkeletonTheme baseColor="#2F2633" highlightColor="#734985">
                   {children}
                 </SkeletonTheme>
-              </AuthProvider>
+              </CommonProvider>
             </GamesProvider>
           </ThemeProvider>
         </QueryProvider>

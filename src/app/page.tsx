@@ -1,14 +1,11 @@
-import { Header, Container, HomePage } from "@/components";
+import { Layout, HomePage } from "@/components";
 
 export default function Home() {
   const randomImgNumber = Math.ceil(Math.random() * 3);
 
   return (
-    <>
-      <Header />
-      <Container>
-        <HomePage randomImgNumber={randomImgNumber} />
-      </Container>
-    </>
+    <Layout>
+      <HomePage randomImgNumber={randomImgNumber} />
+    </Layout>
   );
 }

@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Button, Input, SectionTitle } from "../design";
 
 // Context
-import { useAuthContext } from "@/context";
+import { useCommonContext } from "@/context";
 
 // Styles
 import { css } from "../../../styled-system/css";
@@ -36,7 +36,7 @@ export function LoginForm({
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const { linkBeforeLogin } = useAuthContext();
+  const { linkBeforeLogin } = useCommonContext();
   const [activeForm, setActiveForm] = useState<"login" | "signup">("login");
   const [isFormChanging, setIsFormChanging] = useState(false);
   const [loginForm, setLoginForm] = useState<LoginForm>({

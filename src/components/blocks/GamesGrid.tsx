@@ -1,11 +1,9 @@
 "use client";
+import { InView } from "react-intersection-observer";
 
 // Components
-import { GameSorting } from "./GameSorting";
-import { GameCard } from "./GameCard";
-import { Grid } from "./design/Grid";
-import { InView } from "react-intersection-observer";
-import { Tiles, PlatformsIcons, StarsRating } from "./design";
+import { GameCard, GameSorting, PlatformsIcons, StarsRating } from "./";
+import { Grid, Tiles } from "../design";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -16,7 +14,7 @@ import { useGamesContext } from "@/context";
 import Skeleton from "react-loading-skeleton";
 
 // Styles
-import { css } from "../../styled-system/css";
+import { css } from "../../../styled-system/css";
 import "react-loading-skeleton/dist/skeleton.css";
 
 export function GamesGrid() {
