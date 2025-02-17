@@ -289,7 +289,7 @@ const PageBackground = ({ randomImgNumber }: { randomImgNumber?: number }) => {
           top: 0,
           left: 0,
           w: "100%",
-          h: "500px",
+          h: "600px",
           overflow: "hidden",
           maskImage: "linear-gradient(to top, transparent 2%, 35%, white 55%)",
         })}

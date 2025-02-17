@@ -125,7 +125,7 @@ export default defineConfig({
       },
       ".filters": { backgroundColor: "{colors.background.dark}" },
       ".modal": {
-        backgroundColor: { base: "{colors.background.dark}", sm: "inherit" },
+        backgroundColor: "{colors.background.dark}",
         boxShadow: { base: "0 0 14px rgba(0,0,0,0.7)", sm: "none" },
       },
       ".tile": {
