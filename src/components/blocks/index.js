@@ -1,4 +1,5 @@
 export * from "./AccountForm";
+export * from "./AccountMenu";
 export * from "./LoginForm";
 export * from "./GameCard";
 export * from "./GameFilters";

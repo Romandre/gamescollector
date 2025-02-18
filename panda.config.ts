@@ -71,12 +71,6 @@ export default defineConfig({
     p: {
       letterSpacing: 0.5,
     },
-    button: {
-      textAlign: "center",
-      bgColor: "{colors.primary}",
-      color: "{colors.text.dark}",
-      cursor: "pointer",
-    },
     ":root": {
       body: {
         color: "{colors.text.light}",

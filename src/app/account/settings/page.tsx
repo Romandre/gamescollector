@@ -2,15 +2,9 @@ import { supabaseClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
 // Components
-import {
-  Header,
-  Container,
-  AccountLayout,
-  AccountForm,
-  AccountMenu,
-} from "@/components";
+import { Header, Container, AccountLayout, AccountMenu } from "@/components";
 
-export default async function Account() {
+export default async function Settings() {
   const supabase = await supabaseClient();
 
   const {
@@ -25,7 +19,7 @@ export default async function Account() {
       <Container>
         <AccountLayout>
           <AccountMenu />
-          <AccountForm user={user} />
+          <div>Settings are not ready yet...</div>
         </AccountLayout>
       </Container>
     </>

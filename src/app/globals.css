@@ -33,6 +33,18 @@ body,
     color 0.12s;
 }
 
+button {
+  text-align: center;
+  background-color: var(--colors-primary);
+  color: var(--colors-text-dark);
+  cursor: pointer;
+}
+button.secondary {
+  border: 1px solid var(--colors-primary);
+  background-color: rgba(50, 50, 50, 0.02);
+  color: var(--colors-primary);
+}
+
 input:focus-visible {
   outline: none;
 }

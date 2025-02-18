@@ -108,3 +108,9 @@ export type FilterInputs = {
 export type FilterTypes = "year" | "platform" | "company" | "genre";
 
 export type FilterOptions = { id: number; name: string };
+
+export type LinksSideMenuSection = {
+  id: number;
+  name: string;
+  link: string;
+};

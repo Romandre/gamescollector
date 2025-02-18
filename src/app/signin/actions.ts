@@ -1,7 +1,11 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { supabaseClient } from "@/utils/supabase/server";
-import { validateEmail, validatePassword } from "@/utils/credentialsValidation";
+import {
+  validateEmail,
+  validatePassword,
+  validateUsername,
+} from "@/utils/credentialsValidation";
 
 export async function login(formData: FormData) {
   const supabase = await supabaseClient();
@@ -27,14 +31,23 @@ export async function login(formData: FormData) {
 
 export async function signup(formData: FormData) {
   const supabase = await supabaseClient();
+  const username = formData.get("username") as string;
 
   const data = {
     email: formData.get("email") as string,
     password: formData.get("password") as string,
     options: {
-      data: { username: formData.get("username") as string },
+      data: { username },
     },
   };
+
+  if (!validateUsername(username)) {
+    return {
+      success: false,
+      message:
+        "Username can be minimum 5 and up to 18 characters long and must not include special characters.",
+    };
+  }
 
   if (!validateEmail(data.email)) {
     return { success: false, message: "Please, enter correct email" };

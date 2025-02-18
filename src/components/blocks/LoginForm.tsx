@@ -236,12 +236,10 @@ export function LoginForm({
               animation: "fade-in 0.4s",
             })}
           >
-            <MdErrorOutline size={24} />
+            <MdErrorOutline size={24} className={css({ flexShrink: 0 })} />
             <span>{message}</span>
           </div>
         )}
-        {/* <button formAction={login}></button>
-        <button formAction={signup}>Sign up</button> */}
       </form>
     </div>
   );

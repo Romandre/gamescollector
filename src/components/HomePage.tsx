@@ -304,7 +304,7 @@ const PageBackground = ({ randomImgNumber }: { randomImgNumber?: number }) => {
             filter: "blur(3px)",
             scale: "1.01",
             objectPosition: "center 15%",
-            animation: "fade-in 2s",
+            animation: "fade-in .8s ease-in",
           })}
         />
       </div>

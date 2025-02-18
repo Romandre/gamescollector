@@ -9,3 +9,8 @@ export function validatePassword(password: string): boolean {
 
   return password.length >= minLength && !forbiddenCharacters.test(password);
 }
+
+export function validateUsername(username: string): boolean {
+  const nameRegex = /^[a-zA-Z0-9]{5,18}$/;
+  return nameRegex.test(username);
+}
