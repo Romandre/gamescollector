@@ -9,3 +9,4 @@ export * from "./PlatformIcons";
 export * from "./StarsRating";
 export * from "./ToggleFavourite";
 export * from "./MenuLink";
+export * from "./Collection";

@@ -6,6 +6,7 @@ import { css } from "../../../styled-system/css";
 
 // Icons
 import { IoInformationOutline } from "react-icons/io5";
+import { BiCollection } from "react-icons/bi";
 
 export function HeaderMenu() {
   return (
@@ -22,8 +23,13 @@ export function HeaderMenu() {
         justifyContent: "flex-end",
         alignItems: "center",
         animation: "fade-in 0.3s",
+        gap: 5,
       })}`}
     >
+      <MenuLink link="/collection">
+        <BiCollection size={22} className={css({ mt: "4px", mb: "1px" })} />
+        Collection
+      </MenuLink>
       <MenuLink link="/about">
         <IoInformationOutline
           size={22}

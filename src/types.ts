@@ -114,3 +114,10 @@ export type LinksSideMenuSection = {
   name: string;
   link: string;
 };
+
+export type GamesCollection = {
+  id: string;
+  created_at: string;
+  user_id: string;
+  game_id: number;
+};

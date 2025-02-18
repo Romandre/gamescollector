@@ -23,6 +23,7 @@ import { PiSignInBold } from "react-icons/pi";
 import { GrHomeRounded } from "react-icons/gr";
 import { TbMenuDeep } from "react-icons/tb";
 import { IoInformationOutline } from "react-icons/io5";
+import { BiCollection } from "react-icons/bi";
 
 export function HeaderActions({ user }: { user: User | null }) {
   const { theme, toggleTheme } = useThemeContext();
@@ -88,6 +89,10 @@ export function HeaderActions({ user }: { user: User | null }) {
           <MenuLink link="/browse">
             <LiaGamepadSolid size={28} />
             Browse
+          </MenuLink>
+          <MenuLink link="/collection" onlyMobile={true}>
+            <BiCollection size={24} className={css({ mt: "2px", mb: "1px" })} />
+            Collection
           </MenuLink>
           <MenuLink link="/about" onlyMobile={true}>
             <IoInformationOutline

@@ -2,9 +2,15 @@ import { supabaseClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
 // Components
-import { Header, Container, AccountLayout, AccountMenu } from "@/components";
+import {
+  Header,
+  Container,
+  AccountLayout,
+  AccountMenu,
+  Collection,
+} from "@/components";
 
-export default async function Collection() {
+export default async function CollectionRoute() {
   const supabase = await supabaseClient();
 
   const {
@@ -19,7 +25,7 @@ export default async function Collection() {
       <Container>
         <AccountLayout>
           <AccountMenu />
-          <div>Game collection is not ready yet...</div>
+          <Collection user={user} />
         </AccountLayout>
       </Container>
     </>
