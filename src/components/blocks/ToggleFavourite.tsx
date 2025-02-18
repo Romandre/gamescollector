@@ -1,6 +1,8 @@
 "use client";
 import { useFavourite } from "@/hooks";
-import { IoMdHeart, IoMdHeartEmpty } from "react-icons/io";
+import { BiCollection, BiSolidCollection } from "react-icons/bi";
+import { FaPlus } from "react-icons/fa";
+
 import { css } from "../../../styled-system/css";
 
 export function ToggleFavourite({
@@ -16,6 +18,7 @@ export function ToggleFavourite({
     <div
       onClick={toggleFavourite}
       className={css({
+        position: "relative",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -27,19 +30,36 @@ export function ToggleFavourite({
       })}
     >
       {isFavourite ? (
-        <IoMdHeart
-          size={34}
-          className={css({
-            color: "{colors.primary}",
-          })}
-        />
+        <>
+          <BiSolidCollection
+            size={34}
+            className={css({
+              color: "{colors.primary}",
+            })}
+          />
+          <span>In your collection</span>
+        </>
       ) : (
-        <IoMdHeartEmpty
-          size={34}
-          className={css({
-            color: "{colors.primary}",
-          })}
-        />
+        <>
+          <div className={css({ position: "relative" })}>
+            <BiCollection
+              size={34}
+              className={css({
+                color: "{colors.primary}",
+              })}
+            />
+            <FaPlus
+              size={10}
+              className={css({
+                position: "absolute",
+                color: "{colors.primary}",
+                top: "1px",
+                right: "-4px",
+              })}
+            />
+          </div>
+          <span>Add to collection</span>
+        </>
       )}
     </div>
   );

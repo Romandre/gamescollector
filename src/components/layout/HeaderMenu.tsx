@@ -23,7 +23,7 @@ export function HeaderMenu() {
         justifyContent: "flex-end",
         alignItems: "center",
         animation: "fade-in 0.3s",
-        gap: 5,
+        gap: "1.35rem",
       })}`}
     >
       <MenuLink link="/collection">
