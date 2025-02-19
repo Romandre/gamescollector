@@ -34,6 +34,7 @@ export function Collection({ user }: { user: User | null }) {
     useQuery({
       queryKey: ["game", gameIds],
       queryFn: () => getGames(query),
+      enabled: !!favourites,
     });
 
   const isLoading = apiIsLoading || dbIsLoading;
@@ -47,15 +48,23 @@ export function Collection({ user }: { user: User | null }) {
         .eq("user_id", user?.id);
 
       if (error && status !== 406) {
+        setMessage(
+          "Error occured on retrieving your collection. Try again later."
+        );
         console.log(error);
         throw error;
       }
 
-      if (data) {
+      if (data && !data.length) {
+        setMessage("You don't have any games in your collection.");
+      }
+
+      if (data && data.length) {
         setFavourites(data);
+        console.log(data);
       }
     } catch (error) {
-      setMessage("You don't have any games in your collection.");
+      setMessage("Something went wrong. Try again later.");
       console.log(error);
     } finally {
       setDbIsLoading(false);
@@ -71,7 +80,7 @@ export function Collection({ user }: { user: User | null }) {
   }, [gamesFromApi]);
 
   return (
-    <div>
+    <div className={css({ mt: { base: 2, md: 0 } })}>
       {!games && !isLoading ? (
         !!message ? (
           <div>{message}</div>
