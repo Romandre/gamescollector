@@ -13,30 +13,39 @@ export function HeaderMenu() {
     <div
       className={`menu ${css({
         position: "absolute",
-        display: { base: "none", sm: "flex" },
+        display: { base: "none", sm: "block" },
         top: "52px",
+        left: 0,
         right: 0,
         w: "full",
-        h: "54px",
-        px: 6,
-        pb: 1,
-        justifyContent: "flex-end",
-        alignItems: "center",
-        animation: "fade-in 0.3s",
-        gap: "1.35rem",
       })}`}
     >
-      <MenuLink link="/collection">
-        <BiCollection size={22} className={css({ mt: "4px", mb: "1px" })} />
-        Collection
-      </MenuLink>
-      <MenuLink link="/about">
-        <IoInformationOutline
-          size={22}
-          className={css({ mt: "4px", mb: "1px" })}
-        />
-        About
-      </MenuLink>
+      <div
+        className={css({
+          display: "flex",
+          maxW: "1800px",
+          h: "54px",
+          mx: "auto",
+          px: 6,
+          pb: 1,
+          justifyContent: "flex-end",
+          alignItems: "center",
+          animation: "fade-in 0.3s",
+          gap: "1.35rem",
+        })}
+      >
+        <MenuLink link="/collection">
+          <BiCollection size={22} className={css({ mt: "4px", mb: "1px" })} />
+          Collection
+        </MenuLink>
+        <MenuLink link="/about">
+          <IoInformationOutline
+            size={22}
+            className={css({ mt: "4px", mb: "1px" })}
+          />
+          About
+        </MenuLink>
+      </div>
     </div>
   );
 }

@@ -26,7 +26,6 @@ export async function Header() {
     >
       <div
         className={css({
-          position: "relative",
           display: "flex",
           maxW: "1800px",
           w: "100%",
@@ -34,7 +33,7 @@ export async function Header() {
           mx: "auto",
           justifyContent: "center",
           alignItems: "center",
-          overflow: "hidden",
+          overflow: "visible",
         })}
       >
         <div
