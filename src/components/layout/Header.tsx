@@ -17,53 +17,61 @@ export async function Header() {
 
   return (
     <div
-      className={`header ${css({
-        position: "fixed",
-        display: "flex",
-        maxW: "1800px",
-        w: "100%",
-        h: "54px",
-        mx: "auto",
-        justifyContent: "center",
-        alignItems: "center",
-        overflow: "visible",
-        zIndex: 999,
-      })}`}
+      className={`header
+        ${css({
+          position: "fixed",
+          w: "100%",
+          zIndex: 999,
+        })}`}
     >
       <div
         className={css({
+          position: "relative",
           display: "flex",
+          maxW: "1800px",
+          w: "100%",
+          h: "54px",
+          mx: "auto",
           justifyContent: "center",
-          flexBasis: { base: "96px", sm: "140px" },
-          flexShrink: 0,
+          alignItems: "center",
+          overflow: "hidden",
         })}
       >
-        <Link
-          href="/"
+        <div
           className={css({
-            position: "relative",
-            display: "block",
-            h: "full",
+            display: "flex",
+            justifyContent: "center",
+            flexBasis: { base: "96px", sm: "140px" },
+            flexShrink: 0,
           })}
         >
-          <Image
-            src="/logo.png"
-            alt="logo"
-            width={0}
-            height={0}
-            blurDataURL="/logo.png"
-            style={{ width: "76px", height: "44px" }}
-          />
-        </Link>
+          <Link
+            href="/"
+            className={css({
+              position: "relative",
+              display: "block",
+              h: "full",
+            })}
+          >
+            <Image
+              src="/logo.png"
+              alt="logo"
+              width={0}
+              height={0}
+              blurDataURL="/logo.png"
+              style={{ width: "76px", height: "44px" }}
+            />
+          </Link>
+        </div>
+        <SearchInput
+          className={`search ${css({
+            h: "100%",
+            w: "100%",
+            px: 10,
+          })}`}
+        />
+        <HeaderActions user={user} />
       </div>
-      <SearchInput
-        className={`search ${css({
-          h: "100%",
-          w: "100%",
-          px: 10,
-        })}`}
-      />
-      <HeaderActions user={user} />
     </div>
   );
 }
