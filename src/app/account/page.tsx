@@ -4,11 +4,10 @@ import { supabaseClient } from "@/utils/supabase/server";
 
 // Components
 import {
-  Header,
-  Container,
-  AccountLayout,
+  Layout,
+  TwoColumnsLayout,
+  AccountNavigation,
   AccountForm,
-  AccountMenu,
 } from "@/components";
 
 export const metadata: Metadata = {
@@ -25,14 +24,11 @@ export default async function Account() {
   if (!user) redirect("/signin");
 
   return (
-    <>
-      <Header />
-      <Container>
-        <AccountLayout>
-          <AccountMenu />
-          <AccountForm user={user} />
-        </AccountLayout>
-      </Container>
-    </>
+    <Layout>
+      <TwoColumnsLayout breakpoint="md">
+        <AccountNavigation />
+        <AccountForm user={user} />
+      </TwoColumnsLayout>
+    </Layout>
   );
 }

@@ -4,10 +4,9 @@ import { supabaseClient } from "@/utils/supabase/server";
 
 // Components
 import {
-  Header,
-  Container,
-  AccountLayout,
-  AccountMenu,
+  Layout,
+  TwoColumnsLayout,
+  AccountNavigation,
   Collection,
 } from "@/components";
 
@@ -25,14 +24,11 @@ export default async function CollectionRoute() {
   if (!user) redirect("/signin");
 
   return (
-    <>
-      <Header />
-      <Container>
-        <AccountLayout>
-          <AccountMenu />
-          <Collection user={user} />
-        </AccountLayout>
-      </Container>
-    </>
+    <Layout>
+      <TwoColumnsLayout breakpoint="md">
+        <AccountNavigation />
+        <Collection user={user} />
+      </TwoColumnsLayout>
+    </Layout>
   );
 }

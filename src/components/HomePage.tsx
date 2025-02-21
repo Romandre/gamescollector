@@ -1,6 +1,5 @@
 "use client";
 import { ReactNode, useEffect, useState } from "react";
-import axios from "axios";
 
 // Components
 import { PlatformsIcons, StarsRating } from "./blocks";
@@ -12,23 +11,16 @@ import Skeleton from "react-loading-skeleton";
 // Hooks
 import { useQuery } from "@tanstack/react-query";
 
+// Utils
+import { getGames } from "@/utils/getGames";
+import { getTimestampTwoMonthsAgo } from "@/utils/yearsArray";
+
 // Types
 import { type User } from "@supabase/supabase-js";
 import { Game, ReleaseDate } from "@/types";
 
 // Styles
 import { css } from "../../styled-system/css";
-
-const getGames = async (query: string) => {
-  const response = await axios.get("/api/games", { params: { query } });
-  return response.data;
-};
-
-const getTimestampTwoMonthsAgo = () => {
-  const now = new Date();
-  now.setMonth(now.getMonth() - 2);
-  return Math.floor(now.getTime() / 1000);
-};
 
 const timeLeftUntil = (now: number, unixTimestamp: number) => {
   const targetTime = unixTimestamp * 1000;
@@ -261,14 +253,16 @@ export function HomePage({
 
       <div
         className={css({
+          position: "relative",
           display: "block",
           w: "full",
           maxW: { base: "536px", md: "1200px" },
           mx: "auto",
           animation: "fade-in 0.4s",
+          zIndex: 1,
         })}
       >
-        <PannelGrid title="Coming soon">
+        <PannelGrid title="Coming soon" link="/browse/comingsoon">
           {!isComingSoonLoading ? (
             !!comingSoonGames.length ? (
               comingSoonGames.map((game: Game) => (
@@ -281,7 +275,7 @@ export function HomePage({
             <PannelLoader count={gamePannelsLimit} />
           )}
         </PannelGrid>
-        <PannelGrid title="Most anticipated">
+        <PannelGrid title="Most anticipated" link="/browse/anticipated">
           {!isMostAnticipatedLoading ? (
             !!mostAnticipatedGames.length ? (
               mostAnticipatedGames.map((game: Game) => (
@@ -294,7 +288,7 @@ export function HomePage({
             <PannelLoader count={gamePannelsLimit} />
           )}
         </PannelGrid>
-        <PannelGrid title="Popular now">
+        <PannelGrid title="Popular now" link="/browse/popular">
           {!isPopularNowLoading ? (
             !!popularNowGames.length ? (
               popularNowGames.map((game: Game) => (
@@ -346,9 +340,11 @@ const PageBackground = ({ randomImgNumber }: { randomImgNumber?: number }) => {
 
 const PannelGrid = ({
   title,
+  link,
   children,
 }: {
   title: string;
+  link: string;
   children: ReactNode;
 }) => {
   return (
@@ -361,18 +357,20 @@ const PannelGrid = ({
         })}
       >
         {title}
-        {/* <span
-          className={css({
-            pt: 2,
-            float: "right",
-            textTransform: "capitalize",
-            fontSize: 16,
-            color: "var(--colors-primary)",
-            cursor: "pointer",
-          })}
-        >
-          See more
-        </span> */}
+        <Link href={link}>
+          <span
+            className={css({
+              pt: 2,
+              float: "right",
+              textTransform: "capitalize",
+              fontSize: 16,
+              color: "var(--colors-primary)",
+              cursor: "pointer",
+            })}
+          >
+            See more
+          </span>
+        </Link>
       </SectionTitle>
       <div
         className={css({

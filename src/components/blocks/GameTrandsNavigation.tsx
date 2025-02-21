@@ -1,4 +1,5 @@
 "use client";
+
 // Components
 import Link from "next/link";
 import { SectionTitle } from "../design";
@@ -12,13 +13,13 @@ import { LinksSideMenuSection } from "@/types";
 // Styles
 import { css } from "../../../styled-system/css";
 
-const accountMenuSections = [
-  { id: 1, name: "Account Info", link: "/account" },
-  { id: 2, name: "Game Collection", link: "/collection" },
-  { id: 3, name: "Settings", link: "/account/settings" },
+const trandsMenuSections = [
+  { id: 1, name: "Coming soon", link: "/browse/comingsoon" },
+  { id: 2, name: "Most anticipated", link: "/browse/anticipated" },
+  { id: 3, name: "Popular now", link: "/browse/popular" },
 ];
 
-export function AccountMenu() {
+export function GameTrandsNavigation() {
   const pathname = usePathname();
 
   return (
@@ -33,7 +34,7 @@ export function AccountMenu() {
       <div className={css({ display: { base: "none", md: "block" } })}>
         <SectionTitle>Navigation</SectionTitle>
       </div>
-      {accountMenuSections.map((item: LinksSideMenuSection) => (
+      {trandsMenuSections.map((item: LinksSideMenuSection) => (
         <Link
           key={item.id}
           href={item.link}

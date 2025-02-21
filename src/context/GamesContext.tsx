@@ -9,11 +9,13 @@ import {
   useEffect,
   useCallback,
 } from "react";
-import axios from "axios";
 
 // Hooks
 import { useSorting } from "@/hooks";
 import { useQuery } from "@tanstack/react-query";
+
+// Utils
+import { getGames } from "@/utils/getGames";
 
 // Types
 import { Game, Filters, FilterInputs, FilterTypes } from "@/types";
@@ -67,11 +69,6 @@ const filtersInMenu = {
   genre: "",
   platform: "",
   company: "",
-};
-
-const getGames = async (query: string) => {
-  const response = await axios.get(`/api/games`, { params: { query } });
-  return response.data;
 };
 
 /* 

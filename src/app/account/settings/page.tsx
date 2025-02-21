@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { supabaseClient } from "@/utils/supabase/server";
 
 // Components
-import { Header, Container, AccountLayout, AccountMenu } from "@/components";
+import { Layout, TwoColumnsLayout, AccountNavigation } from "@/components";
 
 export const metadata: Metadata = {
   title: "Settings",
@@ -19,14 +19,11 @@ export default async function Settings() {
   if (!user) redirect("/signin");
 
   return (
-    <>
-      <Header />
-      <Container>
-        <AccountLayout>
-          <AccountMenu />
-          <div>Settings are not ready yet...</div>
-        </AccountLayout>
-      </Container>
-    </>
+    <Layout>
+      <TwoColumnsLayout breakpoint="md">
+        <AccountNavigation />
+        <div>Settings are not ready yet...</div>
+      </TwoColumnsLayout>
+    </Layout>
   );
 }

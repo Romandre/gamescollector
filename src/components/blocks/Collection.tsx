@@ -1,6 +1,4 @@
 "use client";
-import axios from "axios";
-import { type User } from "@supabase/supabase-js";
 import { supabaseClient } from "@/utils/supabase/client";
 import { useCallback, useEffect, useState } from "react";
 
@@ -9,17 +7,16 @@ import { Grid } from "../design";
 import { GameCard } from "./GameCard";
 import Skeleton from "react-loading-skeleton";
 
+// Utils
+import { getGames } from "@/utils/getGames";
+
 // Types
+import { type User } from "@supabase/supabase-js";
 import { Game, GamesCollection } from "@/types";
 
 // Styles
 import { css } from "../../../styled-system/css";
 import { useQuery } from "@tanstack/react-query";
-
-const getGames = async (query: string) => {
-  const response = await axios.get("/api/games", { params: { query } });
-  return response.data;
-};
 
 export function Collection({ user }: { user: User | null }) {
   const supabase = supabaseClient();
@@ -107,7 +104,7 @@ const GridView = ({
         games?.map((game) => <GameCard key={game.id} game={game} />)}
       {!games &&
         isLoading &&
-        [...Array(Number(6)).keys()].map((item) => (
+        [...Array(Number(12)).keys()].map((item) => (
           <Skeleton key={item} className={css({ pt: "120%" })} />
         ))}
     </Grid>

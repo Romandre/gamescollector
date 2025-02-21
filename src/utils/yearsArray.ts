@@ -8,3 +8,9 @@ export function getYearsArray(
   }
   return years.reverse();
 }
+
+export function getTimestampTwoMonthsAgo() {
+  const now = new Date();
+  now.setMonth(now.getMonth() - 2);
+  return Math.floor(now.getTime() / 1000);
+}

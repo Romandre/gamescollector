@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { Layout, BrowsePage } from "@/components";
+import { Layout, TwoColumnsLayout, BrowsePage } from "@/components";
 
 export const metadata: Metadata = {
   title: "Browse games",
@@ -8,7 +8,9 @@ export const metadata: Metadata = {
 export default function BrowseRoute() {
   return (
     <Layout>
-      <BrowsePage />
+      <TwoColumnsLayout breakpoint="lg">
+        <BrowsePage />
+      </TwoColumnsLayout>
     </Layout>
   );
 }

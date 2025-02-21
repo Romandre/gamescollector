@@ -1,6 +1,5 @@
 "use client";
 import { ReactNode, useEffect, useMemo, useState } from "react";
-import axios from "axios";
 
 // Components
 import { GameCard, ToggleFavourite } from "./blocks";
@@ -11,6 +10,20 @@ import Image from "next/image";
 
 // Hooks
 import { useQuery } from "@tanstack/react-query";
+
+// Utils
+import { getGames } from "@/utils/getGames";
+
+// Types
+import type {
+  Cover,
+  Game,
+  GameStatus,
+  Platform,
+  Screenshot,
+  Website,
+} from "@/types";
+import { User } from "@supabase/supabase-js";
 
 // Styles
 import { css } from "../../styled-system/css";
@@ -38,17 +51,6 @@ import { SiEpicgames, SiWikibooks } from "react-icons/si";
 import { IoLogoGameControllerB } from "react-icons/io";
 import { IoLogoGooglePlaystore, IoStarOutline } from "react-icons/io5";
 
-// Types
-import type {
-  Cover,
-  Game,
-  GameStatus,
-  Platform,
-  Screenshot,
-  Website,
-} from "@/types";
-import { User } from "@supabase/supabase-js";
-
 const fields =
   "fields *, screenshots.*, cover.url, release_dates.*, release_dates.status.*, platforms.*, genres.*, age_ratings.*, dlcs.*, dlcs.cover.*, expansions.*, expansions.cover.*, ports.*, ports.cover.*, remakes.*, remakes.cover.*, remasters.*, remasters.cover.*, involved_companies.*, involved_companies.company.*, parent_game.*, parent_game.cover.*, websites.*, videos.*;";
 
@@ -73,18 +75,13 @@ const regions = [
   { id: 10, name: "brazil" },
 ];
 
-const getGame = async (query: string) => {
-  const response = await axios.get("/api/games", { params: { query } });
-  return response.data;
-};
-
 export function GamePage({ id, user }: { id: string; user: User | null }) {
   const gameId = id;
   const userId = user?.id || "";
   const query = `${fields} where id = ${gameId};`;
   const { data, isLoading /* isError, error */ } = useQuery({
     queryKey: ["game", gameId],
-    queryFn: () => getGame(query),
+    queryFn: () => getGames(query),
   });
   const game = data?.games?.[0] as Game;
   const isGameLoaded = !!(!isLoading && game?.id);
