@@ -1,6 +1,11 @@
+import { Metadata } from "next";
+import Link from "next/link";
 import { Container, Header } from "@/components";
 import { css } from "../../../styled-system/css";
-import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "About",
+};
 
 export default function About() {
   return (

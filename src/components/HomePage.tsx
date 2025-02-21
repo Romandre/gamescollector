@@ -4,7 +4,7 @@ import axios from "axios";
 
 // Components
 import { PlatformsIcons, StarsRating } from "./blocks";
-import { SectionTitle } from "./design";
+import { Button, SectionTitle } from "./design";
 import Image from "next/image";
 import Link from "next/link";
 import Skeleton from "react-loading-skeleton";
@@ -13,6 +13,7 @@ import Skeleton from "react-loading-skeleton";
 import { useQuery } from "@tanstack/react-query";
 
 // Types
+import { type User } from "@supabase/supabase-js";
 import { Game, ReleaseDate } from "@/types";
 
 // Styles
@@ -136,7 +137,13 @@ const twoMonthsAgo = getTimestampTwoMonthsAgo();
 // ----------------------- //
 // - HomePage Component - //
 // --------------------- //
-export function HomePage({ randomImgNumber }: { randomImgNumber: number }) {
+export function HomePage({
+  user,
+  randomImgNumber,
+}: {
+  user: User | null;
+  randomImgNumber: number;
+}) {
   const gamePannelsLimit = 4;
   const comingSoonQuery = `fields name, first_release_date, cover.*, platforms.*; where first_release_date > ${timeNow} & hypes > 50; sort first_release_date asc; limit ${gamePannelsLimit};`;
   const mostAnticipatedQuery = `fields name, release_dates.*, cover.*, platforms.*, summary, storyline; where first_release_date > ${timeNow}; sort hypes desc; limit ${gamePannelsLimit};`;
@@ -187,7 +194,7 @@ export function HomePage({ randomImgNumber }: { randomImgNumber: number }) {
             position: "relative",
             display: "inline-block",
             color: "{colors.text.dark}",
-            fontSize: { base: 60, lg: 70, "2xl": 74 },
+            fontSize: { base: 54, md: 70, "2xl": 74 },
             fontWeight: 700,
             textWrap: "balance",
             lineHeight: 1.2,
@@ -195,35 +202,60 @@ export function HomePage({ randomImgNumber }: { randomImgNumber: number }) {
             textShadow: "4px 6px 4px rgba(0,0,0,0.55)",
           })}
         >
-          Build Your Ultimate Game Collection
+          Build Your Ultimate Games Collection
         </div>
+
         <div
           className={css({
             position: "relative",
+            mt: 12,
             fontFamily: "var(--font-outfit-sans)",
             color: "{colors.text.dark}",
-            fontSize: { base: 20, lg: 24, "2xl": 26 },
+            fontSize: { base: 20, lg: 22, "2xl": 24 },
+            fontWeight: 500,
             textWrap: "balance",
             lineHeight: 1.2,
-            textShadow: "2px 2px 3px rgba(0,0,0,0.55)",
+            textShadow: "2px 2px 1px rgba(0,0,0,0.6)",
           })}
         >
-          <div className={css({ mt: 12 })}>
-            Browse, find, track, share, like, save and comment games!
-          </div>
-          <div className={css({ mt: 12 })}>
-            Check the{" "}
-            <Link
-              href="/browse"
-              className={css({
-                color: "var(--colors-primary)",
-                fontWeight: 500,
-              })}
-            >
-              games list
-            </Link>{" "}
-            right now!
-          </div>
+          {user ? (
+            <>
+              <div className={css({ mb: 12 })}>
+                Browse, find, track, share, like, save and comment games!
+              </div>
+              <div>
+                Check the{" "}
+                <Link
+                  href="/browse"
+                  className={css({
+                    color: "var(--colors-primary)",
+                    fontWeight: 600,
+                    textShadow: "2px 2px 1px rgba(0,0,0,0.2)",
+                  })}
+                >
+                  games list
+                </Link>{" "}
+                and start creating your own games collection!
+              </div>
+            </>
+          ) : (
+            <>
+              <div className={css({ mb: 4 })}>
+                Sign in to start creating your own games collection
+              </div>
+              <Link href="/signin">
+                <Button
+                  className={css({
+                    w: "120px",
+                    fontSize: 16,
+                    boxShadow: "0 4px 8px rgba(0,0,0,.4)",
+                  })}
+                >
+                  Sign in
+                </Button>
+              </Link>
+            </>
+          )}
         </div>
       </div>
 

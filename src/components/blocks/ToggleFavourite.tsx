@@ -1,18 +1,28 @@
 "use client";
+
+// Hooks
 import { useFavourite } from "@/hooks";
+
+// Styles
+import { css } from "../../../styled-system/css";
+
+// Icons
 import { BiCollection, BiSolidCollection } from "react-icons/bi";
 import { FaPlus } from "react-icons/fa";
-
-import { css } from "../../../styled-system/css";
 
 export function ToggleFavourite({
   gameId,
   userId,
+  hasText = true,
 }: {
   gameId: string;
   userId: string;
+  hasText?: boolean;
 }) {
-  const { isFavourite, toggleFavourite } = useFavourite(gameId, userId);
+  const { isFavourite, toggleFavourite, toggleNote } = useFavourite(
+    gameId,
+    userId
+  );
 
   return (
     <div
@@ -37,7 +47,7 @@ export function ToggleFavourite({
               color: "{colors.primary}",
             })}
           />
-          <span>In your collection</span>
+          {!!hasText && <span>In your collection</span>}
         </>
       ) : (
         <>
@@ -58,9 +68,25 @@ export function ToggleFavourite({
               })}
             />
           </div>
-          <span>Add to collection</span>
+          {!!hasText && <span>Add to collection</span>}
         </>
       )}
+      {!!toggleNote.length &&
+        toggleNote.map((note) => (
+          <span
+            key={note.id}
+            className={css({
+              position: "absolute",
+              top: -3,
+              color: "{colors.primary}",
+              fontSize: 14,
+              textShadow: "1px 1px 2px rgba(0,0,0,.25)",
+              animation: "float-up 1.4s",
+            })}
+          >
+            {note.text}
+          </span>
+        ))}
     </div>
   );
 }

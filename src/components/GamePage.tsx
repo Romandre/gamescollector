@@ -50,12 +50,13 @@ import type {
 import { User } from "@supabase/supabase-js";
 
 const fields =
-  "fields *, screenshots.*, cover.url, release_dates.*, release_dates.status.*, platforms.*, genres.*, age_ratings.*, dlcs.*, dlcs.cover.*, expansions.*, expansions.cover.*, ports.*, ports.cover.*, remakes.*, remakes.cover.*, involved_companies.*, involved_companies.company.*, parent_game.*, parent_game.cover.*, websites.*, videos.*;";
+  "fields *, screenshots.*, cover.url, release_dates.*, release_dates.status.*, platforms.*, genres.*, age_ratings.*, dlcs.*, dlcs.cover.*, expansions.*, expansions.cover.*, ports.*, ports.cover.*, remakes.*, remakes.cover.*, remasters.*, remasters.cover.*, involved_companies.*, involved_companies.company.*, parent_game.*, parent_game.cover.*, websites.*, videos.*;";
 
 const bages = [
   { id: 1, name: "DLC" },
   { id: 2, name: "Expansion" },
   { id: 8, name: "Remake" },
+  { id: 9, name: "Remaster" },
   { id: 11, name: "Port" },
 ];
 
@@ -300,6 +301,7 @@ const Cover = ({
               top: 0,
               py: 1,
               px: 2,
+              color: "white",
               bg: "var(--colors-primary)",
               fontSize: 12,
               fontWeight: 700,
@@ -709,6 +711,17 @@ const ColumnMain = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
             <Grid className={gridClass}>
               {game.remakes.map((remake) => (
                 <GameCard key={remake.id} game={remake} showHints={false} />
+              ))}
+            </Grid>
+          </div>
+        </Section>
+      )}
+      {!!game?.remasters?.length && (
+        <Section title="Remasters">
+          <div className={css({ display: "block" })}>
+            <Grid className={gridClass}>
+              {game.remasters.map((remaster) => (
+                <GameCard key={remaster.id} game={remaster} showHints={false} />
               ))}
             </Grid>
           </div>

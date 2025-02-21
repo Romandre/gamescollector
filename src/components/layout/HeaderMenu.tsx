@@ -18,6 +18,7 @@ export function HeaderMenu() {
         left: 0,
         right: 0,
         w: "full",
+        animation: "fade-in 0.3s",
       })}`}
     >
       <div
@@ -30,7 +31,6 @@ export function HeaderMenu() {
           pb: 1,
           justifyContent: "flex-end",
           alignItems: "center",
-          animation: "fade-in 0.3s",
           gap: "1.35rem",
         })}
       >

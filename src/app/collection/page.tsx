@@ -1,5 +1,6 @@
-import { supabaseClient } from "@/utils/supabase/server";
+import { Metadata } from "next";
 import { redirect } from "next/navigation";
+import { supabaseClient } from "@/utils/supabase/server";
 
 // Components
 import {
@@ -9,6 +10,10 @@ import {
   AccountMenu,
   Collection,
 } from "@/components";
+
+export const metadata: Metadata = {
+  title: "Your games collection",
+};
 
 export default async function CollectionRoute() {
   const supabase = await supabaseClient();

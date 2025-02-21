@@ -1,9 +1,12 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, ReactNode } from "react";
 import { supabaseClient } from "@/utils/supabase/client";
 
 export function useFavourite(gameId: string, userId: string | null) {
   const supabase = supabaseClient();
   const [isFavourite, setIsFavourite] = useState(false);
+  const [toggleNote, setToggleNote] = useState<
+    { id: number; text: ReactNode }[]
+  >([]);
 
   const checkIfFavorite = useCallback(async () => {
     try {
@@ -27,6 +30,7 @@ export function useFavourite(gameId: string, userId: string | null) {
 
   const toggleFavourite = async () => {
     setIsFavourite(true);
+
     try {
       if (isFavourite) {
         // Remove from favorites
@@ -50,11 +54,24 @@ export function useFavourite(gameId: string, userId: string | null) {
         if (error) throw error;
         setIsFavourite(true);
       }
+      toggleAnimation();
     } catch (error) {
       console.error("Error toggling favorite:", error);
       alert("Error updating favorites");
     }
   };
 
-  return { isFavourite, toggleFavourite };
+  const toggleAnimation = () => {
+    const newElement = {
+      id: Date.now(),
+      text: isFavourite ? "Removed" : "Added",
+    };
+    setToggleNote((prev) => [...prev, newElement]);
+
+    setTimeout(() => {
+      setToggleNote((prev) => prev.filter((el) => el.id !== newElement.id));
+    }, 1000);
+  };
+
+  return { isFavourite, toggleFavourite, toggleNote };
 }

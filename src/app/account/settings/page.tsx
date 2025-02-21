@@ -1,8 +1,13 @@
-import { supabaseClient } from "@/utils/supabase/server";
+import { Metadata } from "next";
 import { redirect } from "next/navigation";
+import { supabaseClient } from "@/utils/supabase/server";
 
 // Components
 import { Header, Container, AccountLayout, AccountMenu } from "@/components";
+
+export const metadata: Metadata = {
+  title: "Settings",
+};
 
 export default async function Settings() {
   const supabase = await supabaseClient();

@@ -61,7 +61,6 @@ export function Collection({ user }: { user: User | null }) {
 
       if (data && data.length) {
         setFavourites(data);
-        console.log(data);
       }
     } catch (error) {
       setMessage("Something went wrong. Try again later.");

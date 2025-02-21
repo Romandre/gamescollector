@@ -23,6 +23,7 @@ export type Game = {
   expansions?: Game[];
   ports?: Game[];
   remakes?: Game[];
+  remasters?: Game[];
   parent_game?: Game;
   url: string;
 };

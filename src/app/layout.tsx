@@ -37,8 +37,11 @@ const zenTokyo = Zen_Tokyo_Zoo({
 });
 
 export const metadata: Metadata = {
-  title: "GamesCollector",
-  description: "Build your own collection of games",
+  title: {
+    template: "%s | GamesCollector",
+    default: "GamesCollector",
+  },
+  description: "Build your ultimate games collection.",
 };
 
 export default async function RootLayout({

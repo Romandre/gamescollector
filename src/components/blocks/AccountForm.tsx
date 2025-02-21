@@ -153,7 +153,7 @@ export function AccountForm({ user }: { user: User | null }) {
         <div
           className={css({
             fontFamily: "var(--font-outfit-sans)",
-            fontSize: { base: 42, md: 46 },
+            fontSize: { base: 38, md: 46 },
           })}
         >
           {titleName}
