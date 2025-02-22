@@ -7,6 +7,9 @@ import { Grid } from "../design";
 import { GameCard } from "./GameCard";
 import Skeleton from "react-loading-skeleton";
 
+// Hooks
+import { useQuery } from "@tanstack/react-query";
+
 // Utils
 import { getGames } from "@/utils/getGames";
 
@@ -16,7 +19,7 @@ import { Game, GamesCollection } from "@/types";
 
 // Styles
 import { css } from "../../../styled-system/css";
-import { useQuery } from "@tanstack/react-query";
+import { grid } from "../../../styled-system/patterns";
 
 export function Collection({ user }: { user: User | null }) {
   const supabase = supabaseClient();
@@ -76,7 +79,7 @@ export function Collection({ user }: { user: User | null }) {
   }, [gamesFromApi]);
 
   return (
-    <div className={css({ mt: { base: 2, md: 0 } })}>
+    <div>
       {!games && !isLoading ? (
         !!message ? (
           <div>{message}</div>
@@ -97,8 +100,14 @@ const GridView = ({
   games: Game[] | null;
   isLoading: boolean;
 }) => {
+  const gridClass = grid({
+    w: "100%",
+    columns: { base: 2, sm: 3, lg: 4, xl: 5, "2xl": 6 },
+    gap: { base: 2.5, sm: 2 },
+  });
+
   return (
-    <Grid>
+    <Grid className={gridClass}>
       {games &&
         games?.length &&
         games?.map((game) => <GameCard key={game.id} game={game} />)}
