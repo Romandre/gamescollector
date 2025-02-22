@@ -92,7 +92,7 @@ export function HeaderActions({ user }: { user: User | null }) {
             <LiaGamepadSolid size={28} />
             Browse
           </MenuLink>
-          <MenuLink link="/browse/comingsoon">
+          <MenuLink link="/browse/comingsoon" onlyMobile={true}>
             <GiHypersonicBolt
               size={19}
               className={css({ mt: "5px", mb: "2px" })}
