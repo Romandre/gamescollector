@@ -8,7 +8,7 @@ import { css } from "../../../styled-system/css";
 
 // Icons
 import { BiCollection, BiSolidCollection } from "react-icons/bi";
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaCheck } from "react-icons/fa";
 
 export function ToggleFavourite({
   gameId,
@@ -41,12 +41,23 @@ export function ToggleFavourite({
     >
       {isFavourite ? (
         <>
-          <BiSolidCollection
-            size={34}
-            className={css({
-              color: "{colors.primary}",
-            })}
-          />
+          <div className={css({ position: "relative" })}>
+            <BiSolidCollection
+              size={34}
+              className={css({
+                color: "{colors.primary}",
+              })}
+            />
+            <FaCheck
+              size={10}
+              className={css({
+                position: "absolute",
+                color: "{colors.primary}",
+                top: 0,
+                right: "-4px",
+              })}
+            />
+          </div>
           {!!hasText && <span>In your collection</span>}
         </>
       ) : (

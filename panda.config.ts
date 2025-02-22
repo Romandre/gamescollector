@@ -91,7 +91,7 @@ export default defineConfig({
       },
       ".filters": { backgroundColor: "{colors.background.light}" },
       ".modal": {
-        backgroundColor: "{colors.background.header.light}",
+        backgroundColor: "{colors.background.light}",
         boxShadow: { base: "0 0 14px rgba(0,0,0,0.35)", sm: "none" },
       },
       ".tile": { backgroundColor: "#FFFFFF" },

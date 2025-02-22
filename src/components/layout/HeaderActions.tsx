@@ -61,6 +61,7 @@ export function HeaderActions({ user }: { user: User | null }) {
             flexDirection: { base: "column", sm: "row" },
             justifyContent: { base: "flex-start", sm: "space-evenly" },
             alignItems: "center",
+            bg: { sm: "none" },
             animation: { base: "fade-in 0.3s", sm: "none" },
             userSelect: "none",
             zIndex: 998,
