@@ -24,6 +24,7 @@ import { GrHomeRounded } from "react-icons/gr";
 import { TbMenuDeep } from "react-icons/tb";
 import { IoInformationOutline } from "react-icons/io5";
 import { BiCollection } from "react-icons/bi";
+import { GiHypersonicBolt } from "react-icons/gi";
 
 export function HeaderActions({ user }: { user: User | null }) {
   const { theme, toggleTheme } = useThemeContext();
@@ -91,14 +92,21 @@ export function HeaderActions({ user }: { user: User | null }) {
             <LiaGamepadSolid size={28} />
             Browse
           </MenuLink>
+          <MenuLink link="/browse/comingsoon">
+            <GiHypersonicBolt
+              size={19}
+              className={css({ mt: "5px", mb: "2px" })}
+            />
+            Hype
+          </MenuLink>
           <MenuLink link="/collection" onlyMobile={true}>
             <BiCollection size={24} className={css({ mt: "2px", mb: "1px" })} />
             Collection
           </MenuLink>
           <MenuLink link="/about" onlyMobile={true}>
             <IoInformationOutline
-              size={22}
-              className={css({ mt: "4px", mb: "1px" })}
+              size={23}
+              className={css({ mt: "2px", mb: "1px" })}
             />
             About
           </MenuLink>
@@ -108,7 +116,7 @@ export function HeaderActions({ user }: { user: User | null }) {
                 size={24}
                 className={css({
                   mt: { base: 0, sm: 1 },
-                  mb: { base: "3px", sm: 0 },
+                  mb: { base: "2px", sm: 0 },
                 })}
               />
               Account

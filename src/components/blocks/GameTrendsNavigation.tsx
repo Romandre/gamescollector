@@ -13,13 +13,13 @@ import { LinksSideMenuSection } from "@/types";
 // Styles
 import { css } from "../../../styled-system/css";
 
-const trandsMenuSections = [
+const trendsMenuSections = [
   { id: 1, name: "Coming soon", link: "/browse/comingsoon" },
   { id: 2, name: "Most anticipated", link: "/browse/anticipated" },
   { id: 3, name: "Popular now", link: "/browse/popular" },
 ];
 
-export function GameTrandsNavigation() {
+export function GameTrendsNavigation() {
   const pathname = usePathname();
 
   return (
@@ -34,7 +34,7 @@ export function GameTrandsNavigation() {
       <div className={css({ display: { base: "none", md: "block" } })}>
         <SectionTitle>Navigation</SectionTitle>
       </div>
-      {trandsMenuSections.map((item: LinksSideMenuSection) => (
+      {trendsMenuSections.map((item: LinksSideMenuSection) => (
         <Link
           key={item.id}
           href={item.link}

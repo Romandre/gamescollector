@@ -1,5 +1,6 @@
 export * from "./AccountForm";
 export * from "./AccountNavigation";
+export * from "./GameTrendsNavigation";
 export * from "./LoginForm";
 export * from "./GameCard";
 export * from "./GameFilters";
@@ -10,4 +11,3 @@ export * from "./StarsRating";
 export * from "./ToggleFavourite";
 export * from "./MenuLink";
 export * from "./Collection";
-export * from "./GameTrandsNavigation";

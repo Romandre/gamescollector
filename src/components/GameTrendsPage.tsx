@@ -16,14 +16,13 @@ import { Game } from "@/types";
 
 // Styles
 import { css } from "../../styled-system/css";
+import { grid } from "../../styled-system/patterns";
 
-const timeNow = Math.floor(Date.now() / 1000);
-
-export function AnticipatedPage() {
-  const comingSoonQuery = `fields name, first_release_date, cover.*, platforms.*; where first_release_date > ${timeNow} & hypes > 5; sort hypes desc; limit 500;`;
+export function GameTrendsPage({ query }: { query: string }) {
   const { data, isLoading /*  isError, error */ } = useQuery({
-    queryKey: ["comingSoon", [comingSoonQuery]],
-    queryFn: () => getGames(comingSoonQuery),
+    queryKey: ["comingSoon", [query]],
+    queryFn: () => getGames(query),
+    enabled: !!query,
   });
   const games = data?.games;
 
@@ -37,8 +36,14 @@ const GridView = ({
   games: Game[] | null;
   isLoading: boolean;
 }) => {
+  const gridClass = grid({
+    w: "100%",
+    columns: { base: 2, sm: 3, lg: 4, xl: 5, "2xl": 6 },
+    gap: { base: 2.5, sm: 2 },
+  });
+
   return (
-    <Grid>
+    <Grid className={gridClass}>
       {games &&
         games?.length &&
         games?.map((game) => <GameCard key={game.id} game={game} />)}
