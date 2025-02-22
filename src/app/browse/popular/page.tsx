@@ -7,10 +7,10 @@ import {
 } from "@/components";
 
 export const metadata: Metadata = {
-  title: "Coming soon",
+  title: "Now popular games",
 };
 
-export default function BrowseRoute() {
+export default function PopularRoute() {
   return (
     <Layout>
       <TwoColumnsLayout breakpoint="md">

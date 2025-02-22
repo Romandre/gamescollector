@@ -1,19 +1,14 @@
 import { Metadata } from "next";
-import { supabaseClient } from "@/utils/supabase/server";
 import { Layout, HomePage } from "@/components";
+import { withAuth, WithAuthProps } from "@/hoc/withAuth";
 
 export const metadata: Metadata = {
   title: "Home | GamesCollector",
   description: "Build your ultimate games collection.",
 };
 
-export default async function Home() {
+async function HomeRoute({ user }: WithAuthProps) {
   const randomImgNumber = Math.ceil(Math.random() * 3);
-  const supabase = await supabaseClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
 
   return (
     <Layout>
@@ -21,3 +16,5 @@ export default async function Home() {
     </Layout>
   );
 }
+
+export default withAuth(HomeRoute);

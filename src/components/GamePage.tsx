@@ -496,31 +496,41 @@ const ColumnLeft = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
             {
               date: string;
               platforms: string[];
+              regions: number[];
               status: GameStatus;
-              region: number;
             }[]
           >((acc, release) => {
+            const {
+              human: date,
+              platform: platformId,
+              region,
+              status,
+            } = release;
+
             // Find existing entry for this date
-            const existingEntry = acc.find(
-              (entry) => entry.date === release.human
-            );
+            const existingEntry = acc.find((entry) => entry.date === date);
 
             // Find platform name
-            const platform = platforms.find(
-              (p) => p.id === release.platform
-            )?.name;
+            const platform = platforms.find((p) => p.id === platformId)?.name;
             if (!platform) return acc;
 
             if (existingEntry) {
-              // Add platform to existing date entry
-              existingEntry.platforms.push(platform);
+              // Add platform if not already included
+              if (!existingEntry.platforms.includes(platform)) {
+                existingEntry.platforms.push(platform);
+              }
+
+              // Add region if not already included
+              if (!existingEntry.regions.includes(region)) {
+                existingEntry.regions.push(region);
+              }
             } else {
-              // Create new entry for this date
+              // Create a new entry for this date
               acc.push({
-                date: release.human,
+                date,
                 platforms: [platform],
-                status: release.status,
-                region: release.region,
+                regions: [region],
+                status,
               });
             }
 
@@ -586,33 +596,39 @@ const ColumnLeft = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
                 date && ( // Ensure date is not undefined
                   <div key={date.date} className={css({ mb: 2 })}>
                     - {date.date}{" "}
-                    {date.region !== 8 ? (
+                    {date.status?.id === 34 || date.status?.id === 3 ? (
                       <span
                         className={css({
                           fontSize: 13,
                           fontWeight: 600,
-                          textTransform: "capitalize",
                         })}
                       >
-                        |{" "}
-                        <i>
-                          {regions.find((reg) => reg.id === date.region)?.name}
-                        </i>
+                        | <i>{date.status.name}</i>
                       </span>
                     ) : (
-                      (date.status?.id === 34 || date.status?.id === 3) && (
+                      !!date.regions.length &&
+                      date.regions[0] !== 8 && (
                         <span
                           className={css({
                             fontSize: 13,
                             fontWeight: 600,
+                            textTransform: "capitalize",
                           })}
                         >
-                          | <i>{date.status.name}</i>
+                          |{" "}
+                          <i>
+                            {date.regions
+                              .map(
+                                (region) =>
+                                  regions.find((reg) => reg.id === region)?.name
+                              )
+                              .join(", ")}
+                          </i>
                         </span>
                       )
                     )}
                     <p className={css({ fontSize: 13 })}>
-                      <i>{(date.platforms as string[]).join(", ")}</i>
+                      <i>{(date.platforms.sort() as string[]).join(", ")}</i>
                     </p>
                   </div>
                 )
@@ -768,7 +784,7 @@ const ColumnRight = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
               alt="igdb"
               width="40"
               height="10"
-              className={css({ bg: "var(--colors-primary)" })}
+              className={css({ bg: "var(--colors-primary)", opacity: 0.9 })}
             />
           </Link>
         </div>
@@ -776,7 +792,7 @@ const ColumnRight = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
           <>
             <div
               className={css({
-                mt: 8,
+                mt: { base: 4, xl: 6 },
                 fontSize: 18,
                 textTransform: "uppercase",
               })}

@@ -1,6 +1,5 @@
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { supabaseClient } from "@/utils/supabase/server";
 
 // Components
 import {
@@ -10,17 +9,14 @@ import {
   AccountForm,
 } from "@/components";
 
+// HOC
+import { withAuth, WithAuthProps } from "@/hoc/withAuth";
+
 export const metadata: Metadata = {
   title: "Account",
 };
 
-export default async function Account() {
-  const supabase = await supabaseClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+function AccountRoute({ user }: WithAuthProps) {
   if (!user) redirect("/signin");
 
   return (
@@ -32,3 +28,5 @@ export default async function Account() {
     </Layout>
   );
 }
+
+export default withAuth(AccountRoute);

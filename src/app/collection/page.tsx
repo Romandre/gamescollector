@@ -1,6 +1,5 @@
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { supabaseClient } from "@/utils/supabase/server";
 
 // Components
 import {
@@ -10,17 +9,14 @@ import {
   Collection,
 } from "@/components";
 
+// HOC
+import { withAuth, WithAuthProps } from "@/hoc/withAuth";
+
 export const metadata: Metadata = {
   title: "Your games collection",
 };
 
-export default async function CollectionRoute() {
-  const supabase = await supabaseClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+function CollectionRoute({ user }: WithAuthProps) {
   if (!user) redirect("/signin");
 
   return (
@@ -32,3 +28,5 @@ export default async function CollectionRoute() {
     </Layout>
   );
 }
+
+export default withAuth(CollectionRoute);

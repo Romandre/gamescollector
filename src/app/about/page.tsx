@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title: "About",
 };
 
-export default function About() {
+export default function AboutRoute() {
   return (
     <Layout>
       <div className={css({ maxW: "750px", mx: "auto", textAlign: "center" })}>

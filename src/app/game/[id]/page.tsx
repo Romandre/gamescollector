@@ -1,7 +1,14 @@
-import type { Metadata } from "next";
-import { supabaseClient } from "@/utils/supabase/server";
-import { GamePage, Layout } from "@/components";
 import axios from "axios";
+import type { Metadata } from "next";
+
+// Components
+import { GamePage, Layout } from "@/components";
+
+// HOC
+import { withAuth } from "@/hoc/withAuth";
+
+// Types
+import { User } from "@supabase/supabase-js";
 
 export async function generateMetadata({
   params,
@@ -21,16 +28,14 @@ export async function generateMetadata({
   };
 }
 
-export default async function GameRoute({
+async function GameRoute({
   params,
+  user,
 }: {
   params: Promise<{ id: string }>;
+  user: User;
 }) {
   const { id } = await params;
-  const supabase = await supabaseClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
 
   return (
     <Layout>
@@ -38,3 +43,5 @@ export default async function GameRoute({
     </Layout>
   );
 }
+
+export default withAuth(GameRoute);
