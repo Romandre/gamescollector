@@ -325,7 +325,7 @@ const Cover = ({
             <div className={css({ flexBasis: "50%" })}>
               <ToggleFavourite gameId={gameId} userId={userId} />
             </div>
-            |
+            <span className={`divider ${css({ w: "1px", h: 5 })}`} />
             <div
               className={css({
                 flexBasis: "50%",
@@ -334,7 +334,11 @@ const Cover = ({
             >
               <IoStarOutline
                 size={25}
-                className={css({ justifySelf: "center", cursor: "pointer" })}
+                className={css({
+                  mx: "auto",
+                  justifySelf: "center",
+                  cursor: "pointer",
+                })}
               />
             </div>
           </div>
@@ -596,7 +600,9 @@ const ColumnLeft = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
                 date && ( // Ensure date is not undefined
                   <div key={date.date} className={css({ mb: 2 })}>
                     - {date.date}{" "}
-                    {date.status?.id === 34 || date.status?.id === 3 ? (
+                    {date.status?.id === 34 ||
+                    date.status?.id === 3 ||
+                    date.status?.id === 2 ? (
                       <span
                         className={css({
                           fontSize: 13,

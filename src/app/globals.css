@@ -22,6 +22,7 @@ h1 {
 
 body,
 .header,
+.divider,
 .menu,
 .modal,
 .search,
@@ -30,7 +31,7 @@ body,
   transition:
     background 0.2s,
     border 0.2s,
-    color 0.12s;
+    color 0.15s;
 }
 
 button {
@@ -85,6 +86,13 @@ select:-webkit-autofill:focus {
   z-index: 997;
   backdrop-filter: blur(2px);
   animation: fade-in 0.3s;
+}
+
+.divider {
+  background-color: #333333;
+}
+[data-theme="dark"] .divider {
+  background-color: #ffffff;
 }
 
 @keyframes fade-in {
