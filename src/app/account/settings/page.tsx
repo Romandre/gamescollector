@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   title: "Settings",
 };
 
-function Settings({ user }: WithAuthProps) {
+function SettingsRoute({ user }: WithAuthProps) {
   if (!user) redirect("/signin");
 
   return (
@@ -24,4 +24,4 @@ function Settings({ user }: WithAuthProps) {
   );
 }
 
-export default withAuth(Settings);
+export default withAuth(SettingsRoute);
