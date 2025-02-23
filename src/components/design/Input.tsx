@@ -53,6 +53,7 @@ export function Input({
         onChange={(e) => onChange(e.target.value)}
         onKeyUp={(e) => onKeyUp && onKeyUp(e)}
         onClick={onClick}
+        autoComplete={name === "password" || name === "email" ? "on" : "off"}
         required={required}
       ></input>
       {!!label && (

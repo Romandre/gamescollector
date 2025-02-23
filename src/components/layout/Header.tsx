@@ -59,6 +59,7 @@ export async function Header() {
               height={0}
               blurDataURL="/logo.png"
               style={{ width: "76px", height: "44px" }}
+              priority
             />
           </Link>
         </div>

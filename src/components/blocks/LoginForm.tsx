@@ -96,6 +96,7 @@ export function LoginForm({
   };
 
   const handleFormChange = () => {
+    setMessage("");
     setIsFormChanging(true);
     setTimeout(() => {
       setActiveForm(isLoginForm ? "signup" : "login");
