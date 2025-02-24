@@ -8,8 +8,6 @@ import {
   ThemeProvider,
 } from "../context";
 
-import { SkeletonTheme } from "react-loading-skeleton";
-
 // Styles
 import { css } from "../../styled-system/css";
 import "./globals.css";
@@ -63,11 +61,7 @@ export default async function RootLayout({
         <QueryProvider>
           <ThemeProvider>
             <GamesProvider>
-              <CommonProvider>
-                <SkeletonTheme baseColor="#2F2633" highlightColor="#734985">
-                  {children}
-                </SkeletonTheme>
-              </CommonProvider>
+              <CommonProvider>{children}</CommonProvider>
             </GamesProvider>
           </ThemeProvider>
         </QueryProvider>

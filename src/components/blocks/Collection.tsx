@@ -79,7 +79,7 @@ export function Collection({ user }: { user: User | null }) {
   }, [gamesFromApi]);
 
   return (
-    <div>
+    <div className={css({ animation: "fade-in 0.2s" })}>
       {!games && !isLoading ? (
         !!message ? (
           <div>{message}</div>

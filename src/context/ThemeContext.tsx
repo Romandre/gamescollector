@@ -10,6 +10,8 @@ import {
   useState,
 } from "react";
 
+import { SkeletonTheme } from "react-loading-skeleton";
+
 type ThemeContextType = {
   theme: string;
   toggleTheme: () => void;
@@ -21,6 +23,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const mainTheme = process.env.NEXT_PUBLIC_THEME_DEFAULT!;
   const alterTheme = process.env.NEXT_PUBLIC_THEME_ALTERNATIVE!;
   const [theme, setTheme] = useState("");
+
+  const skeletonColors = {
+    baseColor: "var(--skeleton-base-color)",
+    highlightColor: "var(--skeleton-highlight-color)",
+  };
 
   useEffect(() => {
     const savedTheme = Cookies.get("theme") || mainTheme;
@@ -37,7 +44,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      {children}
+      <SkeletonTheme {...skeletonColors}>{children}</SkeletonTheme>
     </ThemeContext.Provider>
   );
 }

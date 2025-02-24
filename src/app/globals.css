@@ -11,6 +11,12 @@ body {
   font-family: var(--font-exo-2);
   font-display: swap;
   overflow-x: hidden;
+  --skeleton-base-color: #f2dcec;
+  --skeleton-highlight-color: #ebbfde;
+}
+[data-theme="dark"] body {
+  --skeleton-base-color: #261a23;
+  --skeleton-highlight-color: #4c1b3d;
 }
 
 h1 {
@@ -30,8 +36,15 @@ body,
 .tile {
   transition:
     background 0.2s,
+    box-shadow 0.2s,
     border 0.2s,
     color 0.15s;
+}
+
+.react-loading-skeleton {
+  transition:
+    background 0.4s,
+    background-image 0.4s;
 }
 
 button {
