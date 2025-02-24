@@ -71,6 +71,12 @@ const filtersInMenu = {
   company: "",
 };
 
+const dataIsNew = (currentGames: Game[], newGames: Game[]): boolean => {
+  if (!newGames?.length) return false; // No new data to check
+  const existingIds = new Set(currentGames.map((game) => game.id)); // Store existing game IDs in a Set for fast lookup
+  return !newGames.some((game) => existingIds.has(game.id)); // Check if at least one new game exists
+};
+
 /* 
 const getCurrentTimestamp = () => {
   const now = new Date();
@@ -109,7 +115,7 @@ export const GamesProvider = ({ children }: { children: ReactNode }) => {
   const gamesQuery = `${fields} ${filtersQuery} ${sortingOptions[sorting]} limit ${limit}; offset ${offset};`;
 
   const {
-    data,
+    data: apiGamesData,
     isFetched,
     isFetching,
     isLoading: isQueryLoading,
@@ -120,8 +126,8 @@ export const GamesProvider = ({ children }: { children: ReactNode }) => {
     queryFn: () => getGames(gamesQuery),
     enabled: showDlcs !== undefined,
   });
-  const gamesCount = data?.count || 0;
-  const emptyData = !data?.games?.length && isFetched;
+  const gamesCount = apiGamesData?.count || 0;
+  const emptyData = !apiGamesData?.games?.length && isFetched;
   const isLoading = showDlcs === undefined || isQueryLoading;
   const isSortingLoading = hintsEnabled === undefined && !games?.length;
 
@@ -200,8 +206,10 @@ export const GamesProvider = ({ children }: { children: ReactNode }) => {
   }, [showDlcs, handleFilter]);
 
   useEffect(() => {
-    if (data?.games?.length) setGames((prev) => [...prev, ...data.games]);
-  }, [data, setGames]);
+    if (apiGamesData?.games?.length && dataIsNew(games, apiGamesData.games))
+      setGames((prev) => [...prev, ...apiGamesData.games]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [apiGamesData, setGames]);
 
   return (
     <GamesContext.Provider value={contextValue}>
