@@ -1,6 +1,5 @@
 "use client";
-import { supabaseClient } from "@/utils/supabase/client";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 // Components
 import { Grid } from "../design";
@@ -20,13 +19,14 @@ import { Game, GamesCollection } from "@/types";
 // Styles
 import { css } from "../../../styled-system/css";
 import { grid } from "../../../styled-system/patterns";
+import { useFavourite } from "@/hooks";
 
 export function Collection({ user }: { user: User | null }) {
-  const supabase = supabaseClient();
   const [favourites, setFavourites] = useState<GamesCollection[] | null>(null);
   const [games, setGames] = useState(null);
-  const [dbIsLoading, setDbIsLoading] = useState(true);
-  const [message, setMessage] = useState("");
+  const { message, isCollectionLoading, getCollection } = useFavourite(
+    user?.id
+  );
 
   const gameIds = favourites?.map((item) => item.game_id).join(",");
   const query = `fields *, genres.name, platforms.name, release_dates.*, cover.url; where id = (${gameIds});`;
@@ -37,42 +37,18 @@ export function Collection({ user }: { user: User | null }) {
       enabled: !!favourites,
     });
 
-  const isLoading = apiIsLoading || dbIsLoading;
+  const isLoading = apiIsLoading || isCollectionLoading;
 
-  const getFavourites = useCallback(async () => {
-    setDbIsLoading(true);
-    try {
-      const { data, error, status } = await supabase
-        .from("favourites")
-        .select(`*`)
-        .eq("user_id", user?.id);
-
-      if (error && status !== 406) {
-        setMessage(
-          "Error occured on retrieving your collection. Try again later."
-        );
-        console.log(error);
-        throw error;
-      }
-
-      if (data && !data.length) {
-        setMessage("You don't have any games in your collection.");
-      }
-
-      if (data && data.length) {
-        setFavourites(data);
-      }
-    } catch (error) {
-      setMessage("Something went wrong. Try again later.");
-      console.log(error);
-    } finally {
-      setDbIsLoading(false);
+  const formCollection = useCallback(async () => {
+    const favourites = await getCollection();
+    if (favourites.length) {
+      setFavourites(favourites);
     }
-  }, [user, supabase]);
+  }, [getCollection]);
 
   useEffect(() => {
-    getFavourites();
-  }, [getFavourites]);
+    formCollection();
+  }, [formCollection]);
 
   useEffect(() => {
     if (gamesFromApi) setGames(gamesFromApi.games);

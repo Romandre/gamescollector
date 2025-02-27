@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 
 // Components
-import { Input, Overlay, SectionTitle, Button } from "../design";
+import { Overlay, SectionTitle, Button, Select } from "../design";
 import Skeleton from "react-loading-skeleton";
 
 // Hooks
@@ -23,8 +23,8 @@ import { FilterOptions, FilterTypes } from "@/types";
 import { css } from "../../../styled-system/css";
 
 // Icons
-import { IoFilter, IoChevronUp, IoChevronDown } from "react-icons/io5";
-import { RxCross2, RxCrossCircled } from "react-icons/rx";
+import { IoFilter } from "react-icons/io5";
+import { RxCrossCircled } from "react-icons/rx";
 
 const fetchFilterOptions = async (type: FilterTypes, input: string) => {
   const pluralizedType = convertToPlural(type);
@@ -180,16 +180,6 @@ const Filter = ({
   const contextFilterValue = filterInputs[type];
   const filterId = `${type}-filter`;
 
-  const chevronClass = {
-    position: "absolute",
-    h: "full",
-    top: 0,
-    right: 2,
-    color: "#AAAAAA",
-    fontSize: 22,
-    cursor: "pointer",
-  };
-
   const { data, isLoading /* isError, error */ } = useQuery({
     queryKey: ["game", filterId, inputValue],
     queryFn: () => fetchFilterOptions(type, inputValue),
@@ -265,81 +255,23 @@ const Filter = ({
     <div
       id={filterId}
       ref={filterRef}
-      className={css({ position: "relative", w: "full", h: "full" })}
+      className={css({ w: "full", h: "full" })}
     >
       {isSortingLoading ? (
         <Skeleton height={filterHeight} />
       ) : (
-        <>
-          <Input
-            value={inputValue || contextFilterValue}
-            label={type}
-            placeholder={`Enter ${type}`}
-            className={`search ${css({ w: "full", h: `${filterHeight}px`, pl: 2, pr: 10 })}`}
-            onChange={(val) => handleInputChange(val)}
-            onClick={() => setIsOpen(true)}
-          />
-          {!!inputValue || !!contextFilterValue ? (
-            <RxCross2
-              className={css(chevronClass)}
-              onClick={() => {
-                applyFilter("");
-              }}
-            />
-          ) : isOpen ? (
-            <IoChevronUp
-              className={css(chevronClass)}
-              onClick={() => {
-                setIsOpen(false);
-              }}
-            />
-          ) : (
-            <IoChevronDown
-              className={css(chevronClass)}
-              onClick={() => {
-                setIsOpen(true);
-              }}
-            />
-          )}
-          {isOpen && (
-            <ul
-              className={`tile ${css({
-                position: "absolute",
-                top: `${filterHeight}px`,
-                w: "full",
-                maxH: "210px",
-                py: 1,
-                px: 4,
-                boxShadow: "0 14px 12px rgba(0,0,0,.4)",
-                animation: "fade-in 0.1s",
-                overflowY: "scroll",
-                zIndex: 1,
-              })}`}
-            >
-              {isLoading ? (
-                <li>
-                  <Skeleton className={css({ my: 2 })} />
-                </li>
-              ) : (
-                availableOptions
-                  .sort(!isYear ? undefined : () => 0)
-                  .map((option, index) => (
-                    <li
-                      key={index}
-                      className={`dropdown-item ${css({
-                        py: 2,
-                        textTransform: "capitalize",
-                        cursor: "pointer",
-                      })}`}
-                      onClick={() => applyFilter(option)}
-                    >
-                      {option}
-                    </li>
-                  ))
-              )}
-            </ul>
-          )}
-        </>
+        <Select
+          options={availableOptions}
+          inputValue={inputValue || contextFilterValue}
+          inputLabel={type}
+          inputHeight={filterHeight}
+          onInputChange={handleInputChange}
+          onOptionClick={applyFilter}
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          isLoading={isLoading}
+          isSorted={isYear}
+        />
       )}
     </div>
   );

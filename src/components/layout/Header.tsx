@@ -64,11 +64,11 @@ export async function Header() {
           </Link>
         </div>
         <SearchInput
-          className={`search ${css({
+          className={css({
             h: "100%",
             w: "100%",
             px: 10,
-          })}`}
+          })}
         />
         <HeaderActions user={user} />
       </div>

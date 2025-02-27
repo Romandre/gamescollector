@@ -122,3 +122,27 @@ export type GamesCollection = {
   user_id: string;
   game_id: number;
 };
+
+export type Review = {
+  id: string;
+  user_id: string;
+  game_id: number;
+  rating: number;
+  comment: string;
+  platform: string;
+  updated_at: string;
+  profiles: {
+    username: string;
+  };
+  game_title: string;
+};
+
+export type AverageRating = {
+  average: number;
+  count: number;
+};
+
+export type ComplexMessage = {
+  text: string;
+  type: string;
+};

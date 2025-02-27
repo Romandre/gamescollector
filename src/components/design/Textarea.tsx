@@ -3,14 +3,11 @@
 import { ReactNode } from "react";
 import { css } from "../../../styled-system/css";
 
-export function Input({
+export function Textarea({
   value,
   label,
   name,
-  type,
   onChange,
-  onKeyUp,
-  onClick,
   className,
   placeholder,
   required = false,
@@ -21,15 +18,13 @@ export function Input({
   name?: string;
   type?: string;
   onChange: (value: string) => void;
-  onKeyUp?: (e: React.KeyboardEvent<Element>) => void;
-  onClick?: () => void;
   className?: string;
   placeholder?: string;
   required?: boolean;
   children?: ReactNode;
 }) {
   return (
-    <div className={css({ position: "relative", w: "full", h: "full" })}>
+    <div className={css({ position: "relative", w: "full" })}>
       {children && (
         <div
           className={css({
@@ -44,18 +39,14 @@ export function Input({
           {children}
         </div>
       )}
-      <input
+      <textarea
         value={value}
         name={name}
-        type={type}
         className={`search ${className}`}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
-        onKeyUp={(e) => onKeyUp && onKeyUp(e)}
-        onClick={onClick}
-        autoComplete={name === "password" || name === "email" ? "on" : "off"}
         required={required}
-      ></input>
+      ></textarea>
       {!!label && (
         <span
           className={`filters ${css({

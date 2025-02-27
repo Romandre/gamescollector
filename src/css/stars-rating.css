@@ -1,6 +1,6 @@
 .stars {
   --percent: calc(var(--rating) / 5 * 100%);
-  --star-size: 18px;
+  /* --star-size: 18px; */
   --star-color: #c8c8c8;
   --star-background: var(--colors-primary);
 

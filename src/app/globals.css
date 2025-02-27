@@ -7,6 +7,10 @@
 :root {
 }
 
+html {
+  position: relative;
+}
+
 body {
   font-family: var(--font-exo-2);
   font-display: swap;
@@ -59,7 +63,8 @@ button.secondary {
   color: var(--colors-primary);
 }
 
-input:focus-visible {
+input:focus-visible,
+textarea:focus-visible {
   outline: none;
 }
 
@@ -75,6 +80,13 @@ select:-webkit-autofill:hover,
 select:-webkit-autofill:focus {
   -webkit-text-fill-color: #aaa;
   transition: background-color 999999999s ease-in-out 0s;
+}
+
+.link {
+  color: var(--colors-primary);
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 15px;
 }
 
 .logo {

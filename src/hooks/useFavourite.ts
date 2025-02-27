@@ -1,9 +1,14 @@
 import { useState, useEffect, useCallback, ReactNode } from "react";
 import { supabaseClient } from "@/utils/supabase/client";
 
-export function useFavourite(gameId: string, userId: string | null) {
+export function useFavourite(
+  userId: string | null | undefined,
+  gameId?: string
+) {
   const supabase = supabaseClient();
   const [isFavourite, setIsFavourite] = useState(false);
+  const [isCollectionLoading, setIsCollectionLoading] = useState(true);
+  const [message, setMessage] = useState("");
   const [toggleNote, setToggleNote] = useState<
     { id: number; text: ReactNode }[]
   >([]);
@@ -25,8 +30,10 @@ export function useFavourite(gameId: string, userId: string | null) {
   }, [gameId, userId, supabase]);
 
   useEffect(() => {
-    checkIfFavorite();
-  }, [checkIfFavorite]);
+    if (gameId) {
+      checkIfFavorite();
+    }
+  }, [gameId, checkIfFavorite]);
 
   const toggleFavourite = async () => {
     setIsFavourite(true);
@@ -73,5 +80,45 @@ export function useFavourite(gameId: string, userId: string | null) {
     }, 1000);
   };
 
-  return { isFavourite, toggleFavourite, toggleNote };
+  const getCollection = async () => {
+    setIsCollectionLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from("favourites")
+        .select(`*`)
+        .eq("user_id", userId);
+
+      if (error) {
+        setMessage(
+          "Error occured on retrieving your collection. Try again later."
+        );
+        console.error(error);
+      }
+
+      if (data && !data.length) {
+        setMessage("You don't have any games in your collection.");
+      }
+
+      if (data && data.length) {
+        return data;
+      } else {
+        return [];
+      }
+    } catch (error) {
+      setMessage("Something went wrong. Try again later.");
+      console.error(error);
+      return [];
+    } finally {
+      setIsCollectionLoading(false);
+    }
+  };
+
+  return {
+    isFavourite,
+    toggleFavourite,
+    toggleNote,
+    message,
+    isCollectionLoading,
+    getCollection,
+  };
 }

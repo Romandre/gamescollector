@@ -7,3 +7,6 @@ export * from "./SearchInput";
 export * from "./SectionTitle";
 export * from "./Tiles";
 export * from "./Overlay";
+export * from "./Select";
+export * from "./Textarea";
+export * from "./CircleLoader";

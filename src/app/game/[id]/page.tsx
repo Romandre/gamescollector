@@ -4,6 +4,9 @@ import type { Metadata } from "next";
 // Components
 import { GamePage, Layout } from "@/components";
 
+// Context
+import { RatingsProvider } from "@/context";
+
 // HOC
 import { withAuth } from "@/hoc/withAuth";
 
@@ -39,7 +42,9 @@ async function GameRoute({
 
   return (
     <Layout>
-      <GamePage id={id} user={user} />
+      <RatingsProvider userId={user?.id} gameId={id}>
+        <GamePage id={id} user={user} />
+      </RatingsProvider>
     </Layout>
   );
 }

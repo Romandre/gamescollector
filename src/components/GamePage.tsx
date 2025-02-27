@@ -1,12 +1,24 @@
 "use client";
-import { ReactNode, useEffect, useMemo, useState } from "react";
+import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 
 // Components
-import { GameCard, ToggleFavourite } from "./blocks";
-import { Grid, Overlay, SectionTitle, Tiles } from "./design";
+import { GameCard, StarsRating, ToggleFavourite } from "./blocks";
+import {
+  Button,
+  CircleLoader,
+  Grid,
+  Overlay,
+  SectionTitle,
+  Select,
+  Textarea,
+  Tiles,
+} from "./design";
 import Skeleton from "react-loading-skeleton";
 import Link from "next/link";
 import Image from "next/image";
+
+// Contexts
+import { useRatings } from "@/context";
 
 // Hooks
 import { useQuery } from "@tanstack/react-query";
@@ -20,8 +32,10 @@ import type {
   Game,
   GameStatus,
   Platform,
+  Review,
   Screenshot,
   Website,
+  AverageRating,
 } from "@/types";
 import { User } from "@supabase/supabase-js";
 
@@ -49,7 +63,11 @@ import { BsTwitterX } from "react-icons/bs";
 import { CgWebsite } from "react-icons/cg";
 import { SiEpicgames, SiWikibooks } from "react-icons/si";
 import { IoLogoGameControllerB } from "react-icons/io";
-import { IoLogoGooglePlaystore, IoStarOutline } from "react-icons/io5";
+import { IoLogoGooglePlaystore, IoStarOutline, IoStar } from "react-icons/io5";
+import { RxCross2 } from "react-icons/rx";
+import { TbMoodCry } from "react-icons/tb";
+import { MdErrorOutline } from "react-icons/md";
+import { isOneDayAfterRelease } from "@/utils/isOneDayAfterRelease";
 
 const fields =
   "fields *, screenshots.*, cover.url, release_dates.*, release_dates.status.*, platforms.*, genres.*, age_ratings.*, dlcs.*, dlcs.cover.*, expansions.*, expansions.cover.*, ports.*, ports.cover.*, remakes.*, remakes.cover.*, remasters.*, remasters.cover.*, involved_companies.*, involved_companies.company.*, parent_game.*, parent_game.cover.*, websites.*, videos.*;";
@@ -86,8 +104,24 @@ export function GamePage({ id, user }: { id: string; user: User | null }) {
   const game = data?.games?.[0] as Game;
   const isGameLoaded = !!(!isLoading && game?.id);
   const noGameFound = !!(!isLoading && !game?.id);
+  const isGameReleased = isOneDayAfterRelease(game?.first_release_date);
+  const [ratingsOpen, setRatingsOpen] = useState(false);
 
-  return !noGameFound ? (
+  return noGameFound ? (
+    <div className={css({ mt: 20, textAlign: "center" })}>
+      <h1>Sorry, but the game is not found.</h1>
+      <h1>
+        Go back to{" "}
+        <Link
+          href="/browse"
+          className={css({ color: "var(--colors-primary)" })}
+        >
+          games list
+        </Link>
+        .
+      </h1>
+    </div>
+  ) : (
     <div
       className={css({
         animation: "fade-in 0.8s",
@@ -147,8 +181,10 @@ export function GamePage({ id, user }: { id: string; user: User | null }) {
             gameId={gameId}
             userId={userId}
             cover={game?.cover}
+            isReleased={isGameReleased}
             bage={game?.category}
             isLoaded={isGameLoaded}
+            ratingsToggle={setRatingsOpen}
           />
         </div>
         <div
@@ -173,20 +209,17 @@ export function GamePage({ id, user }: { id: string; user: User | null }) {
           <ColumnRight game={game} isLoaded={isGameLoaded} />
         </div>
       </div>
-    </div>
-  ) : (
-    <div className={css({ mt: 20, textAlign: "center" })}>
-      <h1>Sorry, but the game is not found.</h1>
-      <h1>
-        Go back to{" "}
-        <Link
-          href="/browse"
-          className={css({ color: "var(--colors-primary)" })}
-        >
-          games list
-        </Link>
-        .
-      </h1>
+
+      {!!isGameReleased && (
+        <RatingsModal
+          isOpen={ratingsOpen}
+          setIsOpen={setRatingsOpen}
+          userId={user?.id}
+          gameId={gameId}
+          gamePlatforms={game?.platforms}
+          gameTitle={game?.name}
+        />
+      )}
     </div>
   );
 }
@@ -218,7 +251,7 @@ const PageBackground = ({ images }: { images: Screenshot[] }) => {
         })}
       >
         <Image
-          src={`https:${randomImg.url.replace("t_thumb", "t_screenshot_huge_2x")}`}
+          src={`https:${randomImg.url?.replace("t_thumb", "t_screenshot_huge_2x")}`}
           alt={randomImg.id}
           fill
           style={{ objectFit: "cover" }}
@@ -245,14 +278,18 @@ const Cover = ({
   gameId,
   userId,
   cover,
+  isReleased,
   bage,
   isLoaded,
+  ratingsToggle,
 }: {
   gameId: string;
   userId: string;
   cover: Cover | undefined;
+  isReleased: boolean;
   bage?: number;
   isLoaded: boolean;
+  ratingsToggle: (val: boolean) => void;
 }) => {
   return isLoaded ? (
     <div
@@ -329,16 +366,11 @@ const Cover = ({
             <div
               className={css({
                 flexBasis: "50%",
-                opacity: 0.2,
               })}
             >
-              <IoStarOutline
-                size={25}
-                className={css({
-                  mx: "auto",
-                  justifySelf: "center",
-                  cursor: "pointer",
-                })}
+              <ToggleRating
+                ratingsToggle={ratingsToggle}
+                isReleased={isReleased}
               />
             </div>
           </div>
@@ -372,6 +404,21 @@ const Cover = ({
 };
 
 const Title = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
+  const { getAverageGameRating } = useRatings();
+  const [averageRating, setAverageRating] = useState<AverageRating | null>({
+    average: 0,
+    count: 0,
+  });
+
+  useEffect(() => {
+    const fetchRating = async () => {
+      const rating = await getAverageGameRating();
+      setAverageRating(rating);
+    };
+
+    fetchRating();
+  }, [getAverageGameRating]);
+
   return isLoaded ? (
     <div
       className={css({
@@ -401,35 +448,70 @@ const Title = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
             display: "flex",
             my: { base: 6, sm: 2 },
             alignItems: "center",
-            textShadow: "2px 2px 2px rgba(0,0,0,0.8)",
+            textShadow: "2px 2px 1px rgba(0,0,0,0.5)",
+            gap: 3,
           })}
         >
           <FaStar
             color="var(--colors-primary)"
             className={css({
-              fontSize: { base: 28, md: 28, lg: 32 },
+              position: "relative",
+              top: "2px",
+              fontSize: { base: 28, md: 32, lg: 35 },
               filter: "drop-shadow(2px 2px 2px rgba(0,0,0,0.6))",
             })}
           />
           <div
             className={css({
               display: "flex",
-              alignItems: "baseline",
-              color: "white",
+              flexDirection: "column",
+              lineHeight: 1.2,
             })}
           >
-            <span
+            <div
               className={css({
-                mx: 2,
-                fontSize: { base: 22, md: 24, lg: 28 },
-                fontWeight: 500,
+                display: "flex",
+                alignItems: "baseline",
+                color: "white",
+                gap: 2,
               })}
             >
-              {Math.floor(game.total_rating!) / 10}/10
-            </span>
-            <span className={css({ fontStyle: "italic", opacity: 0.8 })}>
-              ({game.total_rating_count})
-            </span>
+              <span>IGDB:</span>
+              <span
+                className={css({
+                  fontSize: { base: 22, md: 24, lg: 28 },
+                  fontWeight: 500,
+                })}
+              >
+                {Math.floor(game.total_rating!) / 10}/10
+              </span>
+              <span className={css({ fontStyle: "italic", opacity: 0.8 })}>
+                ({game.total_rating_count})
+              </span>
+            </div>
+            {!!(averageRating && averageRating.average) && (
+              <div
+                className={css({
+                  display: "flex",
+                  alignItems: "baseline",
+                  color: "white",
+                  gap: 2,
+                })}
+              >
+                <span>GC:</span>
+                <span
+                  className={css({
+                    fontSize: { base: 22, md: 24, lg: 28 },
+                    fontWeight: 500,
+                  })}
+                >
+                  {averageRating.average}/10
+                </span>
+                <span className={css({ fontStyle: "italic", opacity: 0.8 })}>
+                  ({averageRating.count})
+                </span>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -1092,5 +1174,508 @@ const GalleryChevron = ({
         {isLeftChevron ? <FaChevronLeft /> : <FaChevronRight />}
       </div>
     </div>
+  );
+};
+
+const ToggleRating = ({
+  ratingsToggle,
+  isReleased,
+}: {
+  ratingsToggle: (val: boolean) => void;
+  isReleased: boolean;
+}) => {
+  const { userReview } = useRatings();
+
+  return (
+    <div
+      onClick={() => !!isReleased && ratingsToggle(true)}
+      className={css({
+        position: "relative",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        fontSize: 11,
+        fontWeight: 500,
+        lineHeight: 1.2,
+        gap: 1,
+        cursor: "pointer",
+      })}
+    >
+      {isReleased ? (
+        <>
+          {userReview && userReview?.rating ? (
+            <>
+              <IoStar
+                size={26}
+                className={css({
+                  h: "32px",
+                  mx: "auto",
+                  justifySelf: "center",
+                  color: "{colors.primary}",
+                  cursor: "pointer",
+                })}
+              />
+              <span>Rated {userReview.rating}/10</span>
+            </>
+          ) : (
+            <>
+              <IoStarOutline
+                size={26}
+                className={css({
+                  h: "32px",
+                  mx: "auto",
+                  justifySelf: "center",
+                  color: "{colors.primary}",
+                  cursor: "pointer",
+                })}
+              />
+              <span>Rate the game</span>
+            </>
+          )}
+        </>
+      ) : (
+        <div className={css({ opacity: 0.6 })}>
+          <IoStarOutline
+            size={26}
+            className={css({
+              h: "32px",
+              mx: "auto",
+              justifySelf: "center",
+              cursor: "pointer",
+            })}
+          />
+          <span>Game not released</span>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Ratings (reviews) modal
+const tabs = [
+  { id: 1, name: "My review" },
+  { id: 2, name: "All reviews" },
+];
+const RatingsModal = ({
+  isOpen,
+  setIsOpen,
+  userId,
+  gameId,
+  gamePlatforms,
+  gameTitle,
+}: {
+  isOpen: boolean;
+  setIsOpen: (val: boolean) => void;
+  userId: string | undefined;
+  gameId: string | undefined;
+  gamePlatforms?: Platform[];
+  gameTitle: string;
+}) => {
+  const { userReview, getReviews, removeReview, message, isLoading } =
+    useRatings();
+  const [activeTab, setActiveTab] = useState<1 | 2>(1);
+  const [allReviews, setAllReviews] = useState<Review[] | null>(null);
+  const messageColor =
+    message?.type !== "error"
+      ? message?.type !== "warn"
+        ? "#06a400"
+        : "#f09e03"
+      : "#be0404";
+
+  const tabContentStyle = css({
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    animation: "fade-in 0.3s",
+    overflowY: "auto",
+    gap: 4,
+  });
+
+  const loadAllReviews = useCallback(async () => {
+    if (!userId || !gameId) return;
+
+    const [all] = await Promise.all([getReviews("all")]);
+
+    setAllReviews(all);
+  }, [getReviews, userId, gameId]);
+
+  useEffect(() => {
+    loadAllReviews();
+  }, [loadAllReviews]);
+
+  if (!isOpen) return null;
+
+  return (
+    !!isOpen && (
+      <>
+        <div
+          className={`header ${css({
+            position: "fixed",
+            maxW: "800px",
+            w: { base: "full", sm: "80%" },
+            h: { base: "full", sm: "80%" },
+            top: { base: 0, sm: "50%" },
+            left: { base: 0, sm: "50%" },
+            transform: { base: "none", sm: "translate(-50%, -50%)" },
+            boxShadow: "0 0 24px rgba(0,0,0,0.35)",
+            animation: "fade-in 0.2s",
+            zIndex: { base: 999, sm: 998 },
+          })}`}
+        >
+          <div
+            className={css({
+              display: "flex",
+              flexShrink: 0,
+              w: "full",
+              alignItems: "center",
+            })}
+          >
+            {tabs.map((tab) => (
+              <span
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as 1 | 2)}
+                className={`${activeTab === tab.id ? "modal" : ""} 
+                  ${css({
+                    position: "relative",
+                    py: 4,
+                    px: 6,
+                    color: "{colors.primary}",
+                    fontSize: 14,
+                    textTransform: "uppercase",
+                    boxShadow:
+                      activeTab === tab.id
+                        ? "0 0px 12px rgba(0,0,0,0.35)"
+                        : "none",
+                    cursor: "pointer",
+                  })}`}
+              >
+                {tab.name}
+                {!!(activeTab === tab.id) && (
+                  <div
+                    className={`modal ${css({
+                      position: "absolute",
+                      w: "full",
+                      height: "30px",
+                      left: 0,
+                      right: 0,
+                      bottom: "-20px",
+                      boxShadow: "none",
+                      zIndex: 1,
+                    })}`}
+                  />
+                )}
+              </span>
+            ))}
+            <RxCross2
+              size={24}
+              onClick={() => setIsOpen(false)}
+              className={css({
+                position: "absolute",
+                right: 4,
+                color: "{colors.primary}",
+                cursor: "pointer",
+              })}
+            />
+          </div>
+          <div
+            className={`modal ${css({
+              h: "full",
+              p: 6,
+              boxShadow: "0 0 24px rgba(0,0,0,0.35)",
+              textAlign: "center",
+            })}`}
+          >
+            {isLoading ? (
+              <CircleLoader />
+            ) : (
+              <>
+                {!!(activeTab === 1) && (
+                  <div className={tabContentStyle}>
+                    {userId ? (
+                      <>
+                        {userReview ? (
+                          <>
+                            <div>My review for {gameTitle}</div>
+                            <ReviewBlock
+                              review={userReview}
+                              ownReview={true}
+                              removeReview={removeReview}
+                            />
+                          </>
+                        ) : (
+                          <>
+                            <div className={css({ mb: 4 })}>
+                              Add review for {gameTitle}
+                            </div>
+                            <AddReviewForm
+                              gameTitle={gameTitle}
+                              gamePlatforms={gamePlatforms}
+                            />
+                          </>
+                        )}
+                        {!!(message && message.text) && (
+                          <div
+                            className={css({
+                              display: "flex",
+                              gap: 2,
+                              animation: "fade-in 0.3s",
+                              color: messageColor,
+                            })}
+                          >
+                            <MdErrorOutline size={24} /> {message.text}
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        <Link
+                          href="/signin"
+                          className={css({
+                            color: "var(--colors-primary)",
+                            fontWeight: 500,
+                          })}
+                        >
+                          Sign in
+                        </Link>{" "}
+                        to be able to rate games
+                      </>
+                    )}
+                  </div>
+                )}
+                {!!(activeTab === 2) && (
+                  <div className={tabContentStyle}>
+                    <div
+                      className={css({
+                        textWrap: "balance",
+                      })}
+                    >
+                      All reviews for {gameTitle}
+                    </div>
+                    {allReviews && allReviews.length ? (
+                      allReviews.map((review) => (
+                        <ReviewBlock key={review.id} review={review} />
+                      ))
+                    ) : (
+                      <>
+                        <span>
+                          There are no reviews for this game from other users
+                        </span>
+                        <TbMoodCry size={60} />
+                      </>
+                    )}
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+        <Overlay isOpen={true} setIsOpen={setIsOpen} />
+      </>
+    )
+  );
+};
+
+const ReviewBlock = ({
+  review,
+  ownReview,
+  showGameTitle,
+  removeReview,
+}: {
+  review: Review;
+  ownReview?: boolean;
+  showGameTitle?: boolean;
+  removeReview?: () => void;
+}) => {
+  const labelClass = css({ fontSize: 14, opacity: 0.7 });
+  const formattedDate = new Date(review.updated_at).toLocaleDateString(
+    "en-GB",
+    {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    }
+  );
+
+  return (
+    <div
+      className={`tile ${css({
+        position: "relative",
+        display: "flex",
+        flexDirection: "column",
+        w: "full",
+        p: 4,
+        textAlign: "left",
+        gap: 2,
+        zIndex: 1,
+      })}`}
+    >
+      <div className={css({ mb: 2 })}>
+        {!ownReview && <b>{review.profiles.username}</b>}{" "}
+        <i className={labelClass}>{formattedDate}</i>{" "}
+      </div>
+      <div>
+        <StarsRating rating={review.rating * 10} size={21} />
+        <span className={labelClass}>({review.rating}/10)</span>
+      </div>
+      {!!showGameTitle && (
+        <div>
+          <span className={labelClass}>Game:</span>{" "}
+          <Link
+            href={`game/${review.game_id}`}
+            className={css({
+              color: "{colors.primary}",
+              fontWeight: 500,
+              opacity: 0.9,
+            })}
+          >
+            {review.game_title}
+          </Link>
+        </div>
+      )}
+      <div>
+        <span className={labelClass}>Platform:</span> {review.platform}
+      </div>
+      <div>
+        <span className={labelClass}>Comment:</span> {review.comment}
+      </div>
+      {!!ownReview && removeReview && (
+        <div>
+          <span className="link">edit</span>
+          <span
+            onClick={() => removeReview()}
+            className={`link ${css({ ml: 4 })}`}
+          >
+            remove
+          </span>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const AddReviewForm = ({
+  gameTitle,
+  gamePlatforms,
+}: {
+  gameTitle: string;
+  gamePlatforms?: Platform[];
+}) => {
+  const { addReview } = useRatings();
+  const [rating, setRating] = useState(0);
+  const [text, setText] = useState("");
+
+  const handleReview = (formData: FormData) => {
+    addReview(
+      Number(formData.get("rating")),
+      formData.get("platform") as string,
+      formData.get("comment") as string,
+      gameTitle as string
+    );
+  };
+
+  return (
+    <form
+      action={handleReview}
+      className={css({
+        display: "flex",
+        flexDirection: "column",
+        w: "full",
+        maxW: "340px",
+        textAlign: "left",
+        animation: "fade-in 0.3s",
+        gap: 6,
+      })}
+    >
+      <div className={css({ mb: 1 })}>
+        <div className={css({ fontSize: 14, opacity: 0.8, m: 1 })}>Rating</div>
+        <div
+          className={css({ display: "flex", justifyContent: "space-between" })}
+        >
+          {Array.from({ length: 10 }).map((_, index) => (
+            <span
+              key={index}
+              onClick={() => setRating(index + 1)}
+              className={`search 
+                ${css({
+                  w: 6,
+                  py: 2,
+                  textAlign: "center",
+                  color: "unset",
+                  borderRadius: 8,
+                  fontWeight: rating === index + 1 ? 600 : 400,
+                  bgColor: rating === index + 1 ? "{colors.primary}" : "",
+                  cursor: "pointer",
+                })}`}
+            >
+              {index + 1}
+            </span>
+          ))}
+        </div>
+      </div>
+      {gamePlatforms?.length && (
+        <PlatformSelect gamePlatforms={gamePlatforms || []} />
+      )}
+      <Textarea
+        value={text}
+        name="comment"
+        label="comment"
+        placeholder="Add comment"
+        className={css({
+          w: "full",
+          maxH: "400px",
+          minH: "50px",
+          py: 3,
+          px: 2,
+        })}
+        onChange={setText}
+        required={true}
+      />
+      <input name="rating" value={rating} hidden readOnly />
+      <Button type="submit">Add review</Button>
+    </form>
+  );
+};
+
+const PlatformSelect = ({ gamePlatforms }: { gamePlatforms: Platform[] }) => {
+  const platformNames = gamePlatforms?.map((platform) => platform.name);
+  const [platforms, setPlatforms] = useState(platformNames);
+  const [platform, setPlatform] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleInputChange = (val: string) => {
+    setPlatform(val);
+    const filteredOptions = platformNames.filter((option) =>
+      option.includes(val)
+    );
+
+    if (!val.trim()) setIsOpen(false);
+
+    if (val && filteredOptions.length) {
+      setPlatforms(filteredOptions);
+      setIsOpen(true);
+    } else {
+      setPlatforms(platformNames);
+      setIsOpen(false);
+    }
+  };
+
+  const handlePlatformSelect = (val: string) => {
+    setPlatform(val);
+    setIsOpen(false);
+  };
+
+  return (
+    <Select
+      options={platforms}
+      inputValue={platform}
+      inputName="platform"
+      inputLabel="platform"
+      inputHeight={50}
+      onInputChange={handleInputChange}
+      onOptionClick={handlePlatformSelect}
+      isOpen={isOpen}
+      setIsOpen={setIsOpen}
+      required={true}
+    />
   );
 };

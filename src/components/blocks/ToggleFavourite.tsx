@@ -20,8 +20,8 @@ export function ToggleFavourite({
   hasText?: boolean;
 }) {
   const { isFavourite, toggleFavourite, toggleNote } = useFavourite(
-    gameId,
-    userId
+    userId,
+    gameId
   );
 
   return (
@@ -43,7 +43,7 @@ export function ToggleFavourite({
         <>
           <div className={css({ position: "relative" })}>
             <BiSolidCollection
-              size={34}
+              size={32}
               className={css({
                 color: "{colors.primary}",
               })}
@@ -58,13 +58,13 @@ export function ToggleFavourite({
               })}
             />
           </div>
-          {!!hasText && <span>In your collection</span>}
+          {!!hasText && <span>In my collection</span>}
         </>
       ) : (
         <>
           <div className={css({ position: "relative" })}>
             <BiCollection
-              size={34}
+              size={32}
               className={css({
                 color: "{colors.primary}",
               })}

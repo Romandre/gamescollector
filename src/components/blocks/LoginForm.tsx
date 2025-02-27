@@ -3,7 +3,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
 // Components
-import { Button, Input, SectionTitle } from "../design";
+import { Button, CircleLoader, Input, SectionTitle } from "../design";
 
 // Context
 import { useCommonContext } from "@/context";
@@ -47,7 +47,7 @@ export function LoginForm({
   const [message, setMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const isLoginForm = activeForm === "login";
-  const inputClass = `search ${css({ w: "full", h: `50px`, px: 2 })}`;
+  const inputClass = css({ w: "full", h: `50px`, px: 2 });
 
   const eyeIconClass = css({
     position: "absolute",
@@ -205,17 +205,7 @@ export function LoginForm({
               : "I already have an account"}
           </span>
           {isPending ? (
-            <div
-              className={css({
-                display: "flex",
-                w: "160px",
-                h: 50,
-                justifyContent: "center",
-                alignItems: "center",
-              })}
-            >
-              <span className="loader" />
-            </div>
+            <CircleLoader className={css({ w: "160px" })} />
           ) : (
             <Button
               type="submit"

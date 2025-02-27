@@ -26,7 +26,7 @@ export function AccountForm({ user }: { user: User | null }) {
   const [username, setUsername] = useState<string | null>(null);
   const [website, setWebsite] = useState<string | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-  const inputClass = `search ${css({ w: "300px", h: `50px`, px: 2 })}`;
+  const inputClass = css({ w: "300px", h: `50px`, px: 2 });
 
   const toggleEditing = () => {
     setIsEditMode(!isEditMode);
@@ -43,7 +43,7 @@ export function AccountForm({ user }: { user: User | null }) {
         .single();
 
       if (error && status !== 406) {
-        console.log(error);
+        console.error(error);
         throw error;
       }
 
@@ -56,7 +56,7 @@ export function AccountForm({ user }: { user: User | null }) {
       }
     } catch (error) {
       alert("Error loading user data!");
-      console.log(error);
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -101,10 +101,11 @@ export function AccountForm({ user }: { user: User | null }) {
       //alert("User was updated!");
     } catch (error) {
       alert("Error updating the data!");
-      console.log(error);
+      console.error(error);
     } finally {
-      setErrorMessage("");
       getUser();
+      setErrorMessage("");
+      setIsEditMode(false);
     }
   }
 
@@ -158,16 +159,7 @@ export function AccountForm({ user }: { user: User | null }) {
         >
           {titleName}
         </div>
-        <div
-          className={css({
-            ml: 2,
-            color: "{colors.primary}",
-            fontSize: 15,
-            textDecoration: "underline",
-            cursor: "pointer",
-          })}
-          onClick={toggleEditing}
-        >
+        <div className={`link ${css({ ml: 2 })}`} onClick={toggleEditing}>
           edit
         </div>
       </div>
