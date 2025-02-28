@@ -6,6 +6,7 @@ import { GameCard, StarsRating, ToggleFavourite } from "./blocks";
 import {
   Button,
   CircleLoader,
+  DialogPrompt,
   Grid,
   Overlay,
   SectionTitle,
@@ -67,7 +68,7 @@ import { IoLogoGooglePlaystore, IoStarOutline, IoStar } from "react-icons/io5";
 import { RxCross2 } from "react-icons/rx";
 import { TbMoodCry } from "react-icons/tb";
 import { MdErrorOutline } from "react-icons/md";
-import { isOneDayAfterRelease } from "@/utils/isOneDayAfterRelease";
+import { isGameReleased } from "@/utils/isGameReleased";
 
 const fields =
   "fields *, screenshots.*, cover.url, release_dates.*, release_dates.status.*, platforms.*, genres.*, age_ratings.*, dlcs.*, dlcs.cover.*, expansions.*, expansions.cover.*, ports.*, ports.cover.*, remakes.*, remakes.cover.*, remasters.*, remasters.cover.*, involved_companies.*, involved_companies.company.*, parent_game.*, parent_game.cover.*, websites.*, videos.*;";
@@ -104,7 +105,7 @@ export function GamePage({ id, user }: { id: string; user: User | null }) {
   const game = data?.games?.[0] as Game;
   const isGameLoaded = !!(!isLoading && game?.id);
   const noGameFound = !!(!isLoading && !game?.id);
-  const isGameReleased = isOneDayAfterRelease(game?.first_release_date);
+  const isReleased = isGameReleased(game?.first_release_date);
   const [ratingsOpen, setRatingsOpen] = useState(false);
 
   return noGameFound ? (
@@ -181,7 +182,7 @@ export function GamePage({ id, user }: { id: string; user: User | null }) {
             gameId={gameId}
             userId={userId}
             cover={game?.cover}
-            isReleased={isGameReleased}
+            isReleased={isReleased}
             bage={game?.category}
             isLoaded={isGameLoaded}
             ratingsToggle={setRatingsOpen}
@@ -1284,6 +1285,7 @@ const RatingsModal = ({
 
   const tabContentStyle = css({
     display: "flex",
+    h: "full",
     flexDirection: "column",
     alignItems: "center",
     animation: "fade-in 0.3s",
@@ -1495,61 +1497,78 @@ const ReviewBlock = ({
       year: "numeric",
     }
   );
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   return (
-    <div
-      className={`tile ${css({
-        position: "relative",
-        display: "flex",
-        flexDirection: "column",
-        w: "full",
-        p: 4,
-        textAlign: "left",
-        gap: 2,
-        zIndex: 1,
-      })}`}
-    >
-      <div className={css({ mb: 2 })}>
-        {!ownReview && <b>{review.profiles.username}</b>}{" "}
-        <i className={labelClass}>{formattedDate}</i>{" "}
-      </div>
-      <div>
-        <StarsRating rating={review.rating * 10} size={21} />
-        <span className={labelClass}>({review.rating}/10)</span>
-      </div>
-      {!!showGameTitle && (
-        <div>
-          <span className={labelClass}>Game:</span>{" "}
-          <Link
-            href={`game/${review.game_id}`}
-            className={css({
-              color: "{colors.primary}",
-              fontWeight: 500,
-              opacity: 0.9,
-            })}
-          >
-            {review.game_title}
-          </Link>
+    <>
+      <div
+        className={`tile ${css({
+          position: "relative",
+          display: "flex",
+          flexDirection: "column",
+          w: "full",
+          p: 4,
+          textAlign: "left",
+          gap: 2,
+          zIndex: 1,
+        })}`}
+      >
+        <div className={css({ mb: 2 })}>
+          {!ownReview && <b>{review.profiles.username}</b>}{" "}
+          <i className={labelClass}>{formattedDate}</i>{" "}
         </div>
-      )}
-      <div>
-        <span className={labelClass}>Platform:</span> {review.platform}
-      </div>
-      <div>
-        <span className={labelClass}>Comment:</span> {review.comment}
-      </div>
-      {!!ownReview && removeReview && (
         <div>
-          <span className="link">edit</span>
-          <span
-            onClick={() => removeReview()}
-            className={`link ${css({ ml: 4 })}`}
-          >
-            remove
-          </span>
+          <StarsRating rating={review.rating * 10} size={21} />
+          <span className={labelClass}>({review.rating}/10)</span>
         </div>
+        {!!showGameTitle && (
+          <div>
+            <span className={labelClass}>Game:</span>{" "}
+            <Link
+              href={`game/${review.game_id}`}
+              className={css({
+                color: "{colors.primary}",
+                fontWeight: 500,
+                opacity: 0.9,
+              })}
+            >
+              {review.game_title}
+            </Link>
+          </div>
+        )}
+        <div>
+          <span className={labelClass}>Platform:</span> {review.platform}
+        </div>
+        <div>
+          <span className={labelClass}>Comment:</span> {review.comment}
+        </div>
+        {!!ownReview && removeReview && (
+          <div>
+            <span className="link">edit</span>
+            <span
+              onClick={() => setIsDialogOpen(true)}
+              className={`link ${css({ ml: 4 })}`}
+            >
+              remove
+            </span>
+          </div>
+        )}
+      </div>
+      {isDialogOpen && removeReview && (
+        <>
+          <DialogPrompt
+            message="Do you really want to remove this review?"
+            onConfirm={() => removeReview()}
+            onClose={() => setIsDialogOpen(false)}
+          />
+          <Overlay
+            isOpen={isDialogOpen}
+            setIsOpen={setIsDialogOpen}
+            overflowControl={false}
+          />
+        </>
       )}
-    </div>
+    </>
   );
 };
 

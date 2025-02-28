@@ -4,7 +4,7 @@ import { supabaseClient } from "@/utils/supabase/client";
 import { type User } from "@supabase/supabase-js";
 
 // Components
-import { Button, Input } from "../design";
+import { Button, DialogPrompt, Input, Overlay } from "../design";
 
 // Utils
 import { validateUsername } from "@/utils/credentialsValidation";
@@ -22,6 +22,7 @@ export function AccountForm({ user }: { user: User | null }) {
   const [isEditMode, setIsEditMode] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(true);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [fullname, setFullname] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
   const [website, setWebsite] = useState<string | null>(null);
@@ -62,7 +63,7 @@ export function AccountForm({ user }: { user: User | null }) {
     }
   }, [user, supabase]);
 
-  async function updateUser({
+  const updateUser = async ({
     username,
     fullname,
     website,
@@ -72,7 +73,7 @@ export function AccountForm({ user }: { user: User | null }) {
     fullname: string | null;
     website: string | null;
     avatarUrl: string | null;
-  }) {
+  }) => {
     if (!username) {
       setErrorMessage("Username cannot be empty.");
       return;
@@ -107,7 +108,28 @@ export function AccountForm({ user }: { user: User | null }) {
       setErrorMessage("");
       setIsEditMode(false);
     }
-  }
+  };
+
+  const handleSignOut = async () => {
+    setLoading(true);
+
+    try {
+      const response = await fetch("/auth/signout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.redirected) {
+        window.location.href = response.url;
+      } else {
+        console.error("Sign out failed");
+      }
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
 
   useEffect(() => {
     getUser();
@@ -128,7 +150,8 @@ export function AccountForm({ user }: { user: User | null }) {
   ) : (
     <div
       className={css({
-        my: { base: 2, md: 5 },
+        py: { base: 1, md: 6 },
+        px: { base: 0, md: 2 },
         borderRadius: 10,
         opacity: 1,
         transition: "opacity 0.4s",
@@ -169,18 +192,13 @@ export function AccountForm({ user }: { user: User | null }) {
           <>
             {!!fullname && <div>{fullname}</div>}
 
-            <form
-              action="/auth/signout"
-              method="post"
-              className={css({ mt: 4 })}
+            <Button
+              onClick={() => setIsDialogOpen(true)}
+              className={`secondary ${css({ w: "100px", maxH: "38px", mt: 4 })}`}
+              type="submit"
             >
-              <Button
-                className={`secondary ${css({ w: "100px", maxH: "38px" })}`}
-                type="submit"
-              >
-                Sign out
-              </Button>
-            </form>
+              Sign out
+            </Button>
           </>
         ) : (
           <>
@@ -246,6 +264,16 @@ export function AccountForm({ user }: { user: User | null }) {
           </>
         )}
       </div>
+      {isDialogOpen && (
+        <>
+          <DialogPrompt
+            message="Do you really want to sign out?"
+            onConfirm={() => handleSignOut()}
+            onClose={() => setIsDialogOpen(false)}
+          />
+          <Overlay isOpen={isDialogOpen} setIsOpen={setIsDialogOpen} />
+        </>
+      )}
     </div>
   );
 }

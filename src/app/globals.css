@@ -15,8 +15,8 @@ body {
   font-family: var(--font-exo-2);
   font-display: swap;
   overflow-x: hidden;
-  --skeleton-base-color: #f2dcec;
-  --skeleton-highlight-color: #ebbfde;
+  --skeleton-base-color: #ede2ea;
+  --skeleton-highlight-color: #f6cae9;
 }
 [data-theme="dark"] body {
   --skeleton-base-color: #261a23;

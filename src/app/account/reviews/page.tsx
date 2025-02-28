@@ -8,20 +8,20 @@ import { Layout, TwoColumnsLayout, AccountNavigation } from "@/components";
 import { withAuth, WithAuthProps } from "@/hoc/withAuth";
 
 export const metadata: Metadata = {
-  title: "Settings",
+  title: "My reviews",
 };
 
-function SettingsRoute({ user }: WithAuthProps) {
+function ReviewsRoute({ user }: WithAuthProps) {
   if (!user) redirect("/signin");
 
   return (
     <Layout>
       <TwoColumnsLayout breakpoint="md">
         <AccountNavigation />
-        <div>Settings are not ready yet...</div>
+        <div>Reviews are not ready yet...</div>
       </TwoColumnsLayout>
     </Layout>
   );
 }
 
-export default withAuth(SettingsRoute);
+export default withAuth(ReviewsRoute);

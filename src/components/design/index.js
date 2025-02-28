@@ -10,3 +10,4 @@ export * from "./Overlay";
 export * from "./Select";
 export * from "./Textarea";
 export * from "./CircleLoader";
+export * from "./DialogPrompt";
