@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Head from "next/head";
 import { cookies } from "next/headers";
 
 import {
@@ -56,6 +57,17 @@ export default async function RootLayout({
       lang="en"
       data-theme={theme ? theme.value : process.env.NEXT_PUBLIC_THEME_DEFAULT}
     >
+      <Head>
+        <meta
+          property="og:image"
+          content={`${process.env.BASE_URL}/opengraph-image.jpg`}
+        />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={process.env.BASE_URL} />
+      </Head>
+
       <body
         className={`${exo.variable} ${outfit.variable} ${zenTokyo.variable} ${css({ textStyle: "body" })} antialiased`}
       >
