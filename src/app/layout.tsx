@@ -40,6 +40,7 @@ export const metadata: Metadata = {
     default: "GamesCollector",
   },
   description: "Build your ultimate games collection.",
+  metadataBase: new URL(process.env.BASE_URL!),
 };
 
 export default async function RootLayout({

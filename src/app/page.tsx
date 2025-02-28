@@ -3,7 +3,7 @@ import { Layout, HomePage } from "@/components";
 import { withAuth, WithAuthProps } from "@/hoc/withAuth";
 
 export const metadata: Metadata = {
-  title: "Home | GamesCollector",
+  title: "Welcome to GamesCollector",
   description: "Build your ultimate games collection.",
 };
 
