@@ -120,6 +120,11 @@ select:-webkit-autofill:focus {
   background-color: #ffffff;
 }
 
+*::selection {
+  background: rgba(186, 24, 132, 0.75);
+  color: #ffffff;
+}
+
 @keyframes fade-in {
   from {
     opacity: 0;
