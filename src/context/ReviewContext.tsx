@@ -20,6 +20,11 @@ interface RatingsContextType {
     comment: string,
     gameTitle: string
   ) => Promise<void>;
+  updateReview: (
+    rating: number,
+    platform: string,
+    comment: string
+  ) => Promise<void>;
   removeReview: () => Promise<void>;
   getAverageGameRating: () => Promise<AverageRating | null>;
   message: ComplexMessage | null;
@@ -172,6 +177,53 @@ export const RatingsProvider = ({
     }
   };
 
+  const updateReview = async (
+    rating: number,
+    platform: string,
+    comment: string
+  ) => {
+    if (!userId || !gameId || !userReview) return;
+
+    if (!rating) {
+      setMessage({ text: "Review must have rating value.", type: "error" });
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const { error } = await supabase.from("ratings").upsert([
+        {
+          id: userReview.id,
+          user_id: userReview.user_id,
+          game_id: userReview.game_id,
+          rating,
+          platform,
+          comment,
+        },
+      ]);
+
+      if (error) throw error;
+
+      const newReview = await getReview(); // Fetch the new review from the database
+      setUserReview(newReview); // Update state with the newly added review
+      setMessage({ text: "The review updated successfuly!", type: "success" });
+      setTimeout(() => {
+        setMessage(null);
+      }, 6000);
+    } catch (error) {
+      setMessage({
+        text: "Something wrong happened while updating review. Try again later.",
+        type: "error",
+      });
+      console.error("Error updating review:", error);
+    } finally {
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 1500);
+    }
+  };
+
   const removeReview = async () => {
     if (!userId || !gameId) return;
 
@@ -225,6 +277,7 @@ export const RatingsProvider = ({
         userReview,
         getReviews,
         addReview,
+        updateReview,
         removeReview,
         getAverageGameRating,
         message,

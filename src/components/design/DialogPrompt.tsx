@@ -30,9 +30,6 @@ export function DialogPrompt({
     >
       <p className={css({ textAlign: "center" })}>{message}</p>
       <div className={css({ display: "flex", mt: 4, gap: 4 })}>
-        <Button onClick={onClose} className="secondary">
-          Cancel
-        </Button>
         <Button
           onClick={() => {
             onConfirm();
@@ -41,6 +38,9 @@ export function DialogPrompt({
           className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
         >
           Confirm
+        </Button>
+        <Button onClick={onClose} className="secondary">
+          Cancel
         </Button>
       </div>
     </div>

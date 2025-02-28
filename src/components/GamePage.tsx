@@ -1276,6 +1276,8 @@ const RatingsModal = ({
     useRatings();
   const [activeTab, setActiveTab] = useState<1 | 2>(1);
   const [allReviews, setAllReviews] = useState<Review[] | null>(null);
+  const [isReviewEditMode, setIsReviewEditMode] = useState(false);
+
   const messageColor =
     message?.type !== "error"
       ? message?.type !== "warn"
@@ -1395,23 +1397,26 @@ const RatingsModal = ({
                   <div className={tabContentStyle}>
                     {userId ? (
                       <>
-                        {userReview ? (
+                        {userReview && !isReviewEditMode ? (
                           <>
                             <div>My review for {gameTitle}</div>
                             <ReviewBlock
                               review={userReview}
                               ownReview={true}
                               removeReview={removeReview}
+                              setEditMode={setIsReviewEditMode}
                             />
                           </>
                         ) : (
                           <>
                             <div className={css({ mb: 4 })}>
-                              Add review for {gameTitle}
+                              {isReviewEditMode ? "Update" : "Add"} review for{" "}
+                              {gameTitle}
                             </div>
                             <AddReviewForm
                               gameTitle={gameTitle}
                               gamePlatforms={gamePlatforms}
+                              setEditMode={setIsReviewEditMode}
                             />
                           </>
                         )}
@@ -1482,11 +1487,13 @@ const ReviewBlock = ({
   ownReview,
   showGameTitle,
   removeReview,
+  setEditMode,
 }: {
   review: Review;
   ownReview?: boolean;
   showGameTitle?: boolean;
   removeReview?: () => void;
+  setEditMode?: (val: boolean) => void;
 }) => {
   const labelClass = css({ fontSize: 14, opacity: 0.7 });
   const formattedDate = new Date(review.updated_at).toLocaleDateString(
@@ -1542,9 +1549,11 @@ const ReviewBlock = ({
         <div>
           <span className={labelClass}>Comment:</span> {review.comment}
         </div>
-        {!!ownReview && removeReview && (
+        {!!ownReview && removeReview && setEditMode && (
           <div>
-            <span className="link">edit</span>
+            <span onClick={() => setEditMode(true)} className="link">
+              edit
+            </span>
             <span
               onClick={() => setIsDialogOpen(true)}
               className={`link ${css({ ml: 4 })}`}
@@ -1575,22 +1584,40 @@ const ReviewBlock = ({
 const AddReviewForm = ({
   gameTitle,
   gamePlatforms,
+  setEditMode,
 }: {
   gameTitle: string;
   gamePlatforms?: Platform[];
+  setEditMode: (val: boolean) => void;
 }) => {
-  const { addReview } = useRatings();
+  const { userReview, addReview, updateReview } = useRatings();
   const [rating, setRating] = useState(0);
   const [text, setText] = useState("");
 
   const handleReview = (formData: FormData) => {
-    addReview(
-      Number(formData.get("rating")),
-      formData.get("platform") as string,
-      formData.get("comment") as string,
-      gameTitle as string
-    );
+    if (userReview) {
+      updateReview(
+        Number(formData.get("rating")),
+        formData.get("platform") as string,
+        formData.get("comment") as string
+      );
+      setEditMode(false);
+    } else {
+      addReview(
+        Number(formData.get("rating")),
+        formData.get("platform") as string,
+        formData.get("comment") as string,
+        gameTitle as string
+      );
+    }
   };
+
+  useEffect(() => {
+    if (userReview) {
+      setRating(userReview.rating);
+      setText(userReview.comment);
+    }
+  }, [userReview]);
 
   return (
     <form
@@ -1632,7 +1659,10 @@ const AddReviewForm = ({
         </div>
       </div>
       {gamePlatforms?.length && (
-        <PlatformSelect gamePlatforms={gamePlatforms || []} />
+        <PlatformSelect
+          defaultValue={userReview?.platform}
+          gamePlatforms={gamePlatforms || []}
+        />
       )}
       <Textarea
         value={text}
@@ -1642,7 +1672,7 @@ const AddReviewForm = ({
         className={css({
           w: "full",
           maxH: "400px",
-          minH: "50px",
+          minH: "150px",
           py: 3,
           px: 2,
         })}
@@ -1650,12 +1680,27 @@ const AddReviewForm = ({
         required={true}
       />
       <input name="rating" value={rating} hidden readOnly />
-      <Button type="submit">Add review</Button>
+      <div className={css({ display: "flex", gap: 2 })}>
+        <Button type="submit">
+          {userReview ? "Update review" : "Add review"}
+        </Button>
+        {!!userReview && (
+          <Button className="secondary" onClick={() => setEditMode(false)}>
+            Cancel
+          </Button>
+        )}
+      </div>
     </form>
   );
 };
 
-const PlatformSelect = ({ gamePlatforms }: { gamePlatforms: Platform[] }) => {
+const PlatformSelect = ({
+  gamePlatforms,
+  defaultValue,
+}: {
+  gamePlatforms: Platform[];
+  defaultValue?: string;
+}) => {
   const platformNames = gamePlatforms?.map((platform) => platform.name);
   const [platforms, setPlatforms] = useState(platformNames);
   const [platform, setPlatform] = useState("");
@@ -1682,6 +1727,10 @@ const PlatformSelect = ({ gamePlatforms }: { gamePlatforms: Platform[] }) => {
     setPlatform(val);
     setIsOpen(false);
   };
+
+  useEffect(() => {
+    if (defaultValue) setPlatform(defaultValue);
+  }, [defaultValue]);
 
   return (
     <Select
