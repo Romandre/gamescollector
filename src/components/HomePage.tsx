@@ -495,6 +495,7 @@ const GamePannel = ({ game }: { game: Game; timer?: boolean }) => {
         {!!game.total_rating && (
           <StarsRating
             rating={game.total_rating}
+            size={20}
             className={css({ my: 4, textShadow: "none" })}
           />
         )}

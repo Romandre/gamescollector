@@ -106,7 +106,6 @@ export function GamePage({ id, user }: { id: string; user: User | null }) {
   const isGameLoaded = !!(!isLoading && game?.id);
   const noGameFound = !!(!isLoading && !game?.id);
   const isReleased = isGameReleased(game?.first_release_date);
-  const [ratingsOpen, setRatingsOpen] = useState(false);
 
   return noGameFound ? (
     <div className={css({ mt: 20, textAlign: "center" })}>
@@ -185,7 +184,6 @@ export function GamePage({ id, user }: { id: string; user: User | null }) {
             isReleased={isReleased}
             bage={game?.category}
             isLoaded={isGameLoaded}
-            ratingsToggle={setRatingsOpen}
           />
         </div>
         <div
@@ -213,8 +211,6 @@ export function GamePage({ id, user }: { id: string; user: User | null }) {
 
       {!!isGameReleased && (
         <RatingsModal
-          isOpen={ratingsOpen}
-          setIsOpen={setRatingsOpen}
           userId={user?.id}
           gameId={gameId}
           gamePlatforms={game?.platforms}
@@ -282,7 +278,6 @@ const Cover = ({
   isReleased,
   bage,
   isLoaded,
-  ratingsToggle,
 }: {
   gameId: string;
   userId: string;
@@ -290,7 +285,6 @@ const Cover = ({
   isReleased: boolean;
   bage?: number;
   isLoaded: boolean;
-  ratingsToggle: (val: boolean) => void;
 }) => {
   return isLoaded ? (
     <div
@@ -369,10 +363,7 @@ const Cover = ({
                 flexBasis: "50%",
               })}
             >
-              <ToggleRating
-                ratingsToggle={ratingsToggle}
-                isReleased={isReleased}
-              />
+              <ToggleRating isReleased={isReleased} />
             </div>
           </div>
         ) : (
@@ -405,11 +396,18 @@ const Cover = ({
 };
 
 const Title = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
-  const { getAverageGameRating } = useRatings();
+  const {
+    userReview,
+    getAverageGameRating,
+    setIsReviewModalOpen,
+    setReviewModalActiveView,
+  } = useRatings();
   const [averageRating, setAverageRating] = useState<AverageRating | null>({
     average: 0,
     count: 0,
   });
+  const anyRating =
+    (game?.total_rating_count && game?.total_rating_count > 5) || averageRating;
 
   useEffect(() => {
     const fetchRating = async () => {
@@ -443,7 +441,7 @@ const Title = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
       >
         {game.name}
       </div>
-      {!!game.total_rating_count && game.total_rating_count > 5 && (
+      {anyRating && (
         <div
           className={css({
             display: "flex",
@@ -469,27 +467,29 @@ const Title = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
               lineHeight: 1.2,
             })}
           >
-            <div
-              className={css({
-                display: "flex",
-                alignItems: "baseline",
-                color: "white",
-                gap: 2,
-              })}
-            >
-              <span>IGDB:</span>
-              <span
+            {game.total_rating_count && game.total_rating_count > 5 && (
+              <div
                 className={css({
-                  fontSize: { base: 22, md: 24, lg: 28 },
-                  fontWeight: 500,
+                  display: "flex",
+                  alignItems: "baseline",
+                  color: "white",
+                  gap: 2,
                 })}
               >
-                {Math.floor(game.total_rating!) / 10}/10
-              </span>
-              <span className={css({ fontStyle: "italic", opacity: 0.8 })}>
-                ({game.total_rating_count})
-              </span>
-            </div>
+                <span>IGDB:</span>
+                <span
+                  className={css({
+                    fontSize: { base: 22, md: 24, lg: 28 },
+                    fontWeight: 500,
+                  })}
+                >
+                  {Math.floor(game.total_rating!) / 10}/10
+                </span>
+                <span className={css({ fontStyle: "italic", opacity: 0.8 })}>
+                  ({game.total_rating_count})
+                </span>
+              </div>
+            )}
             {!!(averageRating && averageRating.average) && (
               <div
                 className={css({
@@ -510,6 +510,17 @@ const Title = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
                 </span>
                 <span className={css({ fontStyle: "italic", opacity: 0.8 })}>
                   ({averageRating.count})
+                </span>
+                {}
+                <span
+                  className="link"
+                  onClick={() => {
+                    setIsReviewModalOpen(true);
+                    if (!(userReview && averageRating.count === 1))
+                      setReviewModalActiveView(2);
+                  }}
+                >
+                  see all
                 </span>
               </div>
             )}
@@ -1178,18 +1189,12 @@ const GalleryChevron = ({
   );
 };
 
-const ToggleRating = ({
-  ratingsToggle,
-  isReleased,
-}: {
-  ratingsToggle: (val: boolean) => void;
-  isReleased: boolean;
-}) => {
-  const { userReview } = useRatings();
+const ToggleRating = ({ isReleased }: { isReleased: boolean }) => {
+  const { userReview, setIsReviewModalOpen } = useRatings();
 
   return (
     <div
-      onClick={() => !!isReleased && ratingsToggle(true)}
+      onClick={() => !!isReleased && setIsReviewModalOpen(true)}
       className={css({
         position: "relative",
         display: "flex",
@@ -1258,25 +1263,28 @@ const tabs = [
   { id: 2, name: "All reviews" },
 ];
 const RatingsModal = ({
-  isOpen,
-  setIsOpen,
   userId,
   gameId,
   gamePlatforms,
   gameTitle,
 }: {
-  isOpen: boolean;
-  setIsOpen: (val: boolean) => void;
   userId: string | undefined;
   gameId: string | undefined;
   gamePlatforms?: Platform[];
   gameTitle: string;
 }) => {
-  const { userReview, getReviews, removeReview, message, isLoading } =
-    useRatings();
-  const [activeTab, setActiveTab] = useState<1 | 2>(1);
+  const {
+    isReviewModalOpen,
+    setIsReviewModalOpen,
+    userReview,
+    getReviews,
+    message,
+    isLoading,
+    reviewModalActiveView,
+    setReviewModalActiveView,
+    isReviewEditMode,
+  } = useRatings();
   const [allReviews, setAllReviews] = useState<Review[] | null>(null);
-  const [isReviewEditMode, setIsReviewEditMode] = useState(false);
 
   const messageColor =
     message?.type !== "error"
@@ -1291,7 +1299,6 @@ const RatingsModal = ({
     flexDirection: "column",
     alignItems: "center",
     animation: "fade-in 0.3s",
-    overflowY: "auto",
     gap: 4,
   });
 
@@ -1307,10 +1314,10 @@ const RatingsModal = ({
     loadAllReviews();
   }, [loadAllReviews]);
 
-  if (!isOpen) return null;
+  if (!isReviewModalOpen) return null;
 
   return (
-    !!isOpen && (
+    isReviewModalOpen && (
       <>
         <div
           className={`header ${css({
@@ -1322,6 +1329,7 @@ const RatingsModal = ({
             left: { base: 0, sm: "50%" },
             transform: { base: "none", sm: "translate(-50%, -50%)" },
             boxShadow: "0 0 24px rgba(0,0,0,0.35)",
+            borderBottom: "none",
             animation: "fade-in 0.2s",
             zIndex: { base: 999, sm: 998 },
           })}`}
@@ -1329,7 +1337,6 @@ const RatingsModal = ({
           <div
             className={css({
               display: "flex",
-              flexShrink: 0,
               w: "full",
               alignItems: "center",
             })}
@@ -1337,24 +1344,26 @@ const RatingsModal = ({
             {tabs.map((tab) => (
               <span
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as 1 | 2)}
-                className={`${activeTab === tab.id ? "modal" : ""} 
+                onClick={() => setReviewModalActiveView(tab.id as 1 | 2)}
+                className={`${reviewModalActiveView === tab.id ? "modal" : ""} 
                   ${css({
                     position: "relative",
-                    py: 4,
+                    display: "flex",
+                    h: "50px",
                     px: 6,
                     color: "{colors.primary}",
                     fontSize: 14,
                     textTransform: "uppercase",
+                    alignItems: "center",
                     boxShadow:
-                      activeTab === tab.id
+                      reviewModalActiveView === tab.id
                         ? "0 0px 12px rgba(0,0,0,0.35)"
                         : "none",
                     cursor: "pointer",
                   })}`}
               >
                 {tab.name}
-                {!!(activeTab === tab.id) && (
+                {!!(reviewModalActiveView === tab.id) && (
                   <div
                     className={`modal ${css({
                       position: "absolute",
@@ -1372,7 +1381,7 @@ const RatingsModal = ({
             ))}
             <RxCross2
               size={24}
-              onClick={() => setIsOpen(false)}
+              onClick={() => setIsReviewModalOpen(false)}
               className={css({
                 position: "absolute",
                 right: 4,
@@ -1383,100 +1392,99 @@ const RatingsModal = ({
           </div>
           <div
             className={`modal ${css({
-              h: "full",
-              p: 6,
+              h: "calc(100% - 50px)",
+              py: 6,
               boxShadow: "0 0 24px rgba(0,0,0,0.35)",
               textAlign: "center",
             })}`}
           >
-            {isLoading ? (
-              <CircleLoader />
-            ) : (
-              <>
-                {!!(activeTab === 1) && (
-                  <div className={tabContentStyle}>
-                    {userId ? (
-                      <>
-                        {userReview && !isReviewEditMode ? (
-                          <>
-                            <div>My review for {gameTitle}</div>
-                            <ReviewBlock
-                              review={userReview}
-                              ownReview={true}
-                              removeReview={removeReview}
-                              setEditMode={setIsReviewEditMode}
-                            />
-                          </>
-                        ) : (
-                          <>
-                            <div className={css({ mb: 4 })}>
-                              {isReviewEditMode ? "Update" : "Add"} review for{" "}
-                              {gameTitle}
+            <div className={css({ h: "full", px: 6, overflowY: "auto" })}>
+              {isLoading ? (
+                <CircleLoader />
+              ) : (
+                <>
+                  {reviewModalActiveView === 1 && (
+                    <div className={tabContentStyle}>
+                      {userId ? (
+                        <>
+                          {userReview && !isReviewEditMode ? (
+                            <>
+                              <div>My review for {gameTitle}</div>
+                              <ReviewBlock
+                                review={userReview}
+                                myReviewTab={true}
+                              />
+                            </>
+                          ) : (
+                            <>
+                              <div className={css({ mb: 4 })}>
+                                {isReviewEditMode ? "Update" : "Add"} review for{" "}
+                                {gameTitle}
+                              </div>
+                              <AddReviewForm
+                                gameTitle={gameTitle}
+                                gamePlatforms={gamePlatforms}
+                              />
+                            </>
+                          )}
+                          {!!(message && message.text) && (
+                            <div
+                              className={css({
+                                display: "flex",
+                                gap: 2,
+                                animation: "fade-in 0.3s",
+                                color: messageColor,
+                              })}
+                            >
+                              <MdErrorOutline size={24} /> {message.text}
                             </div>
-                            <AddReviewForm
-                              gameTitle={gameTitle}
-                              gamePlatforms={gamePlatforms}
-                              setEditMode={setIsReviewEditMode}
-                            />
-                          </>
-                        )}
-                        {!!(message && message.text) && (
-                          <div
+                          )}
+                        </>
+                      ) : (
+                        <>
+                          <Link
+                            href="/signin"
                             className={css({
-                              display: "flex",
-                              gap: 2,
-                              animation: "fade-in 0.3s",
-                              color: messageColor,
+                              color: "var(--colors-primary)",
+                              fontWeight: 500,
                             })}
                           >
-                            <MdErrorOutline size={24} /> {message.text}
-                          </div>
-                        )}
-                      </>
-                    ) : (
-                      <>
-                        <Link
-                          href="/signin"
-                          className={css({
-                            color: "var(--colors-primary)",
-                            fontWeight: 500,
-                          })}
-                        >
-                          Sign in
-                        </Link>{" "}
-                        to be able to rate games
-                      </>
-                    )}
-                  </div>
-                )}
-                {!!(activeTab === 2) && (
-                  <div className={tabContentStyle}>
-                    <div
-                      className={css({
-                        textWrap: "balance",
-                      })}
-                    >
-                      All reviews for {gameTitle}
+                            Sign in
+                          </Link>{" "}
+                          to be able to rate games
+                        </>
+                      )}
                     </div>
-                    {allReviews && allReviews.length ? (
-                      allReviews.map((review) => (
-                        <ReviewBlock key={review.id} review={review} />
-                      ))
-                    ) : (
-                      <>
-                        <span>
-                          There are no reviews for this game from other users
-                        </span>
-                        <TbMoodCry size={60} />
-                      </>
-                    )}
-                  </div>
-                )}
-              </>
-            )}
+                  )}
+                  {reviewModalActiveView === 2 && (
+                    <div className={tabContentStyle}>
+                      <div
+                        className={css({
+                          textWrap: "balance",
+                        })}
+                      >
+                        All reviews for {gameTitle}
+                      </div>
+                      {allReviews && allReviews.length ? (
+                        allReviews.map((review) => (
+                          <ReviewBlock key={review.id} review={review} />
+                        ))
+                      ) : (
+                        <>
+                          <span>
+                            There are no reviews for this game from other users
+                          </span>
+                          <TbMoodCry size={60} />
+                        </>
+                      )}
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
           </div>
         </div>
-        <Overlay isOpen={true} setIsOpen={setIsOpen} />
+        <Overlay isOpen={true} setIsOpen={setIsReviewModalOpen} />
       </>
     )
   );
@@ -1484,17 +1492,19 @@ const RatingsModal = ({
 
 const ReviewBlock = ({
   review,
-  ownReview,
+  myReviewTab,
   showGameTitle,
-  removeReview,
-  setEditMode,
 }: {
   review: Review;
-  ownReview?: boolean;
+  myReviewTab?: boolean;
   showGameTitle?: boolean;
-  removeReview?: () => void;
-  setEditMode?: (val: boolean) => void;
 }) => {
+  const {
+    userReview,
+    removeReview,
+    setReviewModalActiveView,
+    setIsReviewEditMode,
+  } = useRatings();
   const labelClass = css({ fontSize: 14, opacity: 0.7 });
   const formattedDate = new Date(review.updated_at).toLocaleDateString(
     "en-GB",
@@ -1505,6 +1515,7 @@ const ReviewBlock = ({
     }
   );
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const isUserReview = userReview?.id === review.id;
 
   return (
     <>
@@ -1521,7 +1532,15 @@ const ReviewBlock = ({
         })}`}
       >
         <div className={css({ mb: 2 })}>
-          {!ownReview && <b>{review.profiles.username}</b>}{" "}
+          {!myReviewTab && (
+            <b
+              className={css({
+                color: !myReviewTab && isUserReview ? "{colors.primary}" : "",
+              })}
+            >
+              {review.profiles.username}
+            </b>
+          )}{" "}
           <i className={labelClass}>{formattedDate}</i>{" "}
         </div>
         <div>
@@ -1549,9 +1568,15 @@ const ReviewBlock = ({
         <div>
           <span className={labelClass}>Comment:</span> {review.comment}
         </div>
-        {!!ownReview && removeReview && setEditMode && (
+        {isUserReview && (
           <div>
-            <span onClick={() => setEditMode(true)} className="link">
+            <span
+              onClick={() => {
+                setReviewModalActiveView(1);
+                setIsReviewEditMode(true);
+              }}
+              className="link"
+            >
               edit
             </span>
             <span
@@ -1584,13 +1609,12 @@ const ReviewBlock = ({
 const AddReviewForm = ({
   gameTitle,
   gamePlatforms,
-  setEditMode,
 }: {
   gameTitle: string;
   gamePlatforms?: Platform[];
-  setEditMode: (val: boolean) => void;
 }) => {
-  const { userReview, addReview, updateReview } = useRatings();
+  const { userReview, addReview, updateReview, setIsReviewEditMode } =
+    useRatings();
   const [rating, setRating] = useState(0);
   const [text, setText] = useState("");
 
@@ -1601,7 +1625,7 @@ const AddReviewForm = ({
         formData.get("platform") as string,
         formData.get("comment") as string
       );
-      setEditMode(false);
+      setIsReviewEditMode(false);
     } else {
       addReview(
         Number(formData.get("rating")),
@@ -1685,7 +1709,10 @@ const AddReviewForm = ({
           {userReview ? "Update review" : "Add review"}
         </Button>
         {!!userReview && (
-          <Button className="secondary" onClick={() => setEditMode(false)}>
+          <Button
+            className="secondary"
+            onClick={() => setIsReviewEditMode(false)}
+          >
             Cancel
           </Button>
         )}

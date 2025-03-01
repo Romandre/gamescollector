@@ -142,6 +142,7 @@ const ListView = () => {
                 <div className={css({ fontSize: 20, mb: 2 })}>{game.name}</div>
                 <StarsRating
                   rating={game.total_rating}
+                  size={18}
                   className={css({
                     ml: 1,
                     scale: 1.1,

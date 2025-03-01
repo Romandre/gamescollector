@@ -13,7 +13,7 @@ import type { AverageRating, ComplexMessage, Review } from "@/types";
 
 interface RatingsContextType {
   userReview?: Review;
-  getReviews: (target: "user" | "all") => Promise<Review[]>;
+  getReviews: (target: "user" | "other" | "all") => Promise<Review[]>;
   addReview: (
     rating: number,
     platform: string,
@@ -29,6 +29,12 @@ interface RatingsContextType {
   getAverageGameRating: () => Promise<AverageRating | null>;
   message: ComplexMessage | null;
   isLoading: boolean;
+  isReviewModalOpen: boolean;
+  setIsReviewModalOpen: (val: boolean) => void;
+  reviewModalActiveView: 1 | 2;
+  setReviewModalActiveView: (val: 1 | 2) => void;
+  isReviewEditMode: boolean;
+  setIsReviewEditMode: (val: boolean) => void;
 }
 
 const RatingsContext = createContext<RatingsContextType | undefined>(undefined);
@@ -46,6 +52,9 @@ export const RatingsProvider = ({
   const [userReview, setUserReview] = useState<Review | undefined>();
   const [message, setMessage] = useState<ComplexMessage | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [reviewModalActiveView, setReviewModalActiveView] = useState<1 | 2>(1);
+  const [isReviewEditMode, setIsReviewEditMode] = useState(false);
 
   const getReview = useCallback(async () => {
     if (!userId || !gameId) return undefined;
@@ -83,7 +92,7 @@ export const RatingsProvider = ({
   }, [checkUserReview]);
 
   const getReviews = useCallback(
-    async (target: "user" | "all") => {
+    async (target: "user" | "other" | "all") => {
       if (!gameId && target !== "user") return [];
       setIsLoading(true);
 
@@ -92,7 +101,7 @@ export const RatingsProvider = ({
 
         if (target === "user") {
           query = query.eq("user_id", userId);
-        } else if (target === "all" && userId) {
+        } else if (target === "other" && userId) {
           query = query.neq("user_id", userId);
         }
 
@@ -103,6 +112,16 @@ export const RatingsProvider = ({
         const { data, error } = await query;
 
         if (error) throw error;
+
+        if (data.length > 1) {
+          const dataSortedByDate = data.sort(
+            (a, b) =>
+              new Date(b.updated_at).getTime() -
+              new Date(a.updated_at).getTime()
+          );
+          return dataSortedByDate;
+        }
+
         return data;
       } catch (error) {
         setMessage({
@@ -282,6 +301,12 @@ export const RatingsProvider = ({
         getAverageGameRating,
         message,
         isLoading,
+        isReviewModalOpen,
+        setIsReviewModalOpen,
+        reviewModalActiveView,
+        setReviewModalActiveView,
+        isReviewEditMode,
+        setIsReviewEditMode,
       }}
     >
       {children}

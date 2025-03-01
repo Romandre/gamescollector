@@ -119,7 +119,7 @@ export function GameCard({
               platforms={game.platforms}
               className={css({ display: "flex", color: "#FFFFFF" })}
             />
-            <StarsRating rating={game.total_rating} />
+            <StarsRating rating={game.total_rating} size={18} />
           </div>
         )}
       </Link>
