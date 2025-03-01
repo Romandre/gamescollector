@@ -1358,6 +1358,7 @@ const RatingsModal = ({
                       reviewModalActiveView === tab.id
                         ? "0 0px 12px rgba(0,0,0,0.35)"
                         : "none",
+                    opacity: reviewModalActiveView === tab.id ? 1 : 0.7,
                     cursor: "pointer",
                   })}`}
               >
@@ -1470,9 +1471,7 @@ const RatingsModal = ({
                         ))
                       ) : (
                         <>
-                          <span>
-                            There are no reviews for this game from other users
-                          </span>
+                          <span>There are no reviews for this game yet</span>
                           <TbMoodCry size={60} />
                         </>
                       )}

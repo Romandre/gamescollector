@@ -73,7 +73,7 @@ export function ReviewBlock({
           <div>
             <span className={labelClass}>Game:</span>{" "}
             <Link
-              href={`game/${review.game_id}`}
+              href={`/game/${review.game_id}`}
               className={css({
                 color: "{colors.primary}",
                 fontWeight: 500,
