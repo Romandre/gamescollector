@@ -21,6 +21,8 @@ import { Game, ReleaseDate } from "@/types";
 
 // Styles
 import { css } from "../../styled-system/css";
+import { RatingsProvider } from "@/context";
+import { ReviewsList } from "./blocks/ReviewsList";
 
 const timeLeftUntil = (now: number, unixTimestamp: number) => {
   const targetTime = unixTimestamp * 1000;
@@ -170,6 +172,7 @@ export function HomePage({
     <div
       className={css({
         animation: "fade-in 0.8s",
+        mb: 8,
       })}
     >
       <PageBackground randomImgNumber={randomImgNumber} />
@@ -213,7 +216,8 @@ export function HomePage({
           {user ? (
             <>
               <div className={css({ mb: 12 })}>
-                Browse, find, track, share, like, save and comment games!
+                Browse games, explore games info, write reviews and create your
+                personal collection!
               </div>
               <div>
                 Check the{" "}
@@ -227,7 +231,7 @@ export function HomePage({
                 >
                   games list
                 </Link>{" "}
-                and start creating your own games collection!
+                to start, or check what&apos;s tranding below!
               </div>
             </>
           ) : (
@@ -301,6 +305,20 @@ export function HomePage({
             <PannelLoader count={gamePannelsLimit} />
           )}
         </PannelGrid>
+        <PannelGrid
+          title="Recent comments"
+          gridClass={css({
+            gridTemplateColumns: {
+              base: "1fr",
+              md: "1fr 1fr",
+              lg: "1fr 1fr 1fr",
+            },
+          })}
+        >
+          <RatingsProvider>
+            <ReviewsList forWho="all" />
+          </RatingsProvider>
+        </PannelGrid>
       </div>
     </div>
   );
@@ -341,10 +359,12 @@ const PageBackground = ({ randomImgNumber }: { randomImgNumber?: number }) => {
 const PannelGrid = ({
   title,
   link,
+  gridClass,
   children,
 }: {
   title: string;
-  link: string;
+  link?: string;
+  gridClass?: string;
   children: ReactNode;
 }) => {
   return (
@@ -357,28 +377,30 @@ const PannelGrid = ({
         })}
       >
         {title}
-        <Link href={link}>
-          <span
-            className={css({
-              pt: 2,
-              float: "right",
-              textTransform: "capitalize",
-              fontSize: 16,
-              color: "var(--colors-primary)",
-              cursor: "pointer",
-            })}
-          >
-            See more
-          </span>
-        </Link>
+        {!!link && (
+          <Link href={link}>
+            <span
+              className={css({
+                pt: 2,
+                float: "right",
+                textTransform: "capitalize",
+                fontSize: 16,
+                color: "var(--colors-primary)",
+                cursor: "pointer",
+              })}
+            >
+              See more
+            </span>
+          </Link>
+        )}
       </SectionTitle>
       <div
-        className={css({
+        className={`${css({
           display: "grid",
           gridTemplateColumns: { base: "1fr", md: "1fr 1fr" },
           justifyContent: "center",
           gap: { base: 5, md: 4, xl: 6 },
-        })}
+        })} ${gridClass}`}
       >
         {children}
       </div>

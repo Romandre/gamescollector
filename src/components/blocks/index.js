@@ -12,3 +12,4 @@ export * from "./ToggleFavourite";
 export * from "./MenuLink";
 export * from "./Collection";
 export * from "./SecondaryNavigation";
+export * from "./ReviewBlock";

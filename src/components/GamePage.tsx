@@ -2,11 +2,10 @@
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 
 // Components
-import { GameCard, StarsRating, ToggleFavourite } from "./blocks";
+import { GameCard, ReviewBlock, ToggleFavourite } from "./blocks";
 import {
   Button,
   CircleLoader,
-  DialogPrompt,
   Grid,
   Overlay,
   SectionTitle,
@@ -26,6 +25,7 @@ import { useQuery } from "@tanstack/react-query";
 
 // Utils
 import { getGames } from "@/utils/getGames";
+import { isGameReleased } from "@/utils/isGameReleased";
 
 // Types
 import type {
@@ -68,7 +68,6 @@ import { IoLogoGooglePlaystore, IoStarOutline, IoStar } from "react-icons/io5";
 import { RxCross2 } from "react-icons/rx";
 import { TbMoodCry } from "react-icons/tb";
 import { MdErrorOutline } from "react-icons/md";
-import { isGameReleased } from "@/utils/isGameReleased";
 
 const fields =
   "fields *, screenshots.*, cover.url, release_dates.*, release_dates.status.*, platforms.*, genres.*, age_ratings.*, dlcs.*, dlcs.cover.*, expansions.*, expansions.cover.*, ports.*, ports.cover.*, remakes.*, remakes.cover.*, remasters.*, remasters.cover.*, involved_companies.*, involved_companies.company.*, parent_game.*, parent_game.cover.*, websites.*, videos.*;";
@@ -1327,7 +1326,7 @@ const RatingsModal = ({
             h: { base: "full", sm: "80%" },
             top: { base: 0, sm: "50%" },
             left: { base: 0, sm: "50%" },
-            transform: { base: "none", sm: "translate(-50%, -50%)" },
+            transform: { base: "none", sm: "translate(-50%, -46%)" },
             boxShadow: "0 0 24px rgba(0,0,0,0.35)",
             borderBottom: "none",
             animation: "fade-in 0.2s",
@@ -1487,122 +1486,6 @@ const RatingsModal = ({
         <Overlay isOpen={true} setIsOpen={setIsReviewModalOpen} />
       </>
     )
-  );
-};
-
-const ReviewBlock = ({
-  review,
-  myReviewTab,
-  showGameTitle,
-}: {
-  review: Review;
-  myReviewTab?: boolean;
-  showGameTitle?: boolean;
-}) => {
-  const {
-    userReview,
-    removeReview,
-    setReviewModalActiveView,
-    setIsReviewEditMode,
-  } = useRatings();
-  const labelClass = css({ fontSize: 14, opacity: 0.7 });
-  const formattedDate = new Date(review.updated_at).toLocaleDateString(
-    "en-GB",
-    {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-    }
-  );
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const isUserReview = userReview?.id === review.id;
-
-  return (
-    <>
-      <div
-        className={`tile ${css({
-          position: "relative",
-          display: "flex",
-          flexDirection: "column",
-          w: "full",
-          p: 4,
-          textAlign: "left",
-          gap: 2,
-          zIndex: 1,
-        })}`}
-      >
-        <div className={css({ mb: 2 })}>
-          {!myReviewTab && (
-            <b
-              className={css({
-                color: !myReviewTab && isUserReview ? "{colors.primary}" : "",
-              })}
-            >
-              {review.profiles.username}
-            </b>
-          )}{" "}
-          <i className={labelClass}>{formattedDate}</i>{" "}
-        </div>
-        <div>
-          <StarsRating rating={review.rating * 10} size={21} />
-          <span className={labelClass}>({review.rating}/10)</span>
-        </div>
-        {!!showGameTitle && (
-          <div>
-            <span className={labelClass}>Game:</span>{" "}
-            <Link
-              href={`game/${review.game_id}`}
-              className={css({
-                color: "{colors.primary}",
-                fontWeight: 500,
-                opacity: 0.9,
-              })}
-            >
-              {review.game_title}
-            </Link>
-          </div>
-        )}
-        <div>
-          <span className={labelClass}>Platform:</span> {review.platform}
-        </div>
-        <div>
-          <span className={labelClass}>Comment:</span> {review.comment}
-        </div>
-        {isUserReview && (
-          <div>
-            <span
-              onClick={() => {
-                setReviewModalActiveView(1);
-                setIsReviewEditMode(true);
-              }}
-              className="link"
-            >
-              edit
-            </span>
-            <span
-              onClick={() => setIsDialogOpen(true)}
-              className={`link ${css({ ml: 4 })}`}
-            >
-              remove
-            </span>
-          </div>
-        )}
-      </div>
-      {isDialogOpen && removeReview && (
-        <>
-          <DialogPrompt
-            message="Do you really want to remove this review?"
-            onConfirm={() => removeReview()}
-            onClose={() => setIsDialogOpen(false)}
-          />
-          <Overlay
-            isOpen={isDialogOpen}
-            setIsOpen={setIsDialogOpen}
-            overflowControl={false}
-          />
-        </>
-      )}
-    </>
   );
 };
 

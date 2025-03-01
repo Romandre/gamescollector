@@ -93,11 +93,14 @@ export const RatingsProvider = ({
 
   const getReviews = useCallback(
     async (target: "user" | "other" | "all") => {
-      if (!gameId && target !== "user") return [];
+      if (!userId && target === "user") return [];
       setIsLoading(true);
 
       try {
-        let query = supabase.from("ratings").select("*, profiles(username)");
+        let query = supabase
+          .from("ratings")
+          .select("*, profiles(username)")
+          .order("created_at", { ascending: false });
 
         if (target === "user") {
           query = query.eq("user_id", userId);

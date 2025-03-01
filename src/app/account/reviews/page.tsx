@@ -6,6 +6,11 @@ import { Layout, TwoColumnsLayout, AccountNavigation } from "@/components";
 
 // HOC
 import { withAuth, WithAuthProps } from "@/hoc/withAuth";
+import { RatingsProvider } from "@/context";
+import { ReviewsList } from "@/components/blocks/ReviewsList";
+
+// Styles
+import { css } from "../../../../styled-system/css";
 
 export const metadata: Metadata = {
   title: "My reviews",
@@ -18,7 +23,23 @@ function ReviewsRoute({ user }: WithAuthProps) {
     <Layout>
       <TwoColumnsLayout breakpoint="md">
         <AccountNavigation />
-        <div>Reviews are not ready yet...</div>
+        <RatingsProvider userId={user?.id}>
+          <div
+            className={css({
+              display: "grid",
+              my: { base: 1, md: 4 },
+              gridTemplateColumns: {
+                base: "1fr",
+                md: "1fr 1fr",
+                xl: "1fr 1fr 1fr",
+              },
+              justifyContent: "center",
+              gap: { base: 3, xl: 4 },
+            })}
+          >
+            <ReviewsList forWho="user" />
+          </div>
+        </RatingsProvider>
       </TwoColumnsLayout>
     </Layout>
   );
