@@ -855,7 +855,7 @@ const ColumnMain = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
         </Section>
       )}
       {!!game?.franchises?.length && (
-        <Section title="Franchases">
+        <Section title="Games in franchise">
           <Franchises franchises={game.franchises} gridClass={gridClass} />
         </Section>
       )}
