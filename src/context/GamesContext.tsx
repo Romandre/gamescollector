@@ -16,6 +16,7 @@ import { useQuery } from "@tanstack/react-query";
 
 // Utils
 import { getGames } from "@/utils/getGames";
+import { containsNumber, getSearchVariants } from "@/utils/handleNumbers";
 
 // Types
 import { Game, Filters, FilterInputs, FilterTypes } from "@/types";
@@ -55,10 +56,10 @@ type GamesContextType = {
 const GamesContext = createContext<GamesContextType | undefined>(undefined);
 
 const fields =
-  "fields *, genres.name, platforms.name, release_dates.*, cover.url;";
+  "fields *, genres.name, platforms.name, release_dates.*, cover.url, alternative_names.*;";
 const sortingOptions = [
   "sort hypes desc;",
-  "sort first_release_date asc;",
+  "sort first_release_date desc;",
   "sort total_rating desc;",
   "sort name asc;",
 ];
@@ -140,7 +141,17 @@ export const GamesProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleSearch = (value: string) => {
-    const searchFilter = value ? `name ~ *"${value}"*` : "";
+    let searchFilter = value
+      ? `(alternative_names.name ~ *"${value}"* | name ~ *"${value}"*)`
+      : "";
+
+    if (value && containsNumber(value)) {
+      const variants = getSearchVariants(value);
+      searchFilter = variants
+        .map((v) => `(alternative_names.name ~ *"${v}"* | name ~ *"${v}"*)`)
+        .join(" | ");
+    }
+
     handleFilter("search", searchFilter);
     setSearch(value);
   };

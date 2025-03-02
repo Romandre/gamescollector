@@ -19,22 +19,56 @@ import { css } from "../../../styled-system/css";
 export function SearchInput({ className }: { className: string }) {
   const { search, handleSearch } = useGamesContext();
   const [value, setValue] = useState(search);
+  const trimmedValue = value.trim();
+  const isNewSearchValue = trimmedValue && trimmedValue !== search;
   const pathname = usePathname();
+
+  const searchIconStyle = isNewSearchValue
+    ? css({
+        width: "30px",
+        h: "30px",
+        px: "5px",
+        color: "#FFFFFF",
+        bg: "var(--colors-primary)",
+        borderRadius: "8px",
+        opacity: 0.9,
+        transition: "background 0.3s, color 0.3s",
+        cursor: "pointer",
+      })
+    : "";
 
   const handleChange = (value: string) => {
     setValue(value);
   };
 
-  const searchGames = (e: KeyboardEvent) => {
-    const trimmedValue = value.trim();
+  const searchGames = () => {
+    if (isNewSearchValue) {
+      window.scrollTo(0, 0);
+      handleSearch(trimmedValue);
+    }
+    if (pathname !== "/browse") redirect("/browse");
+  };
+
+  const searchGamesWithEnter = (e: KeyboardEvent) => {
     if (e.key === "Enter") {
-      if (search !== trimmedValue) {
-        window.scrollTo(0, 0);
-        handleSearch(trimmedValue);
-      }
-      if (pathname !== "/browse") redirect("/browse");
+      searchGames();
     }
   };
+
+  /* 
+  * Life-search
+  *
+  useEffect(() => {
+    const trimmed = value.trim();
+
+    if (trimmed.length > 2) {
+      const timeout = setTimeout(() => handleSearch(trimmed), 300);
+      return () => clearTimeout(timeout);
+    } else if (trimmed === "") {
+      handleSearch("");
+    }
+  }, [value, handleSearch]);
+  */
 
   return (
     <div className={css({ position: "relative", w: "full", h: "full" })}>
@@ -42,10 +76,10 @@ export function SearchInput({ className }: { className: string }) {
         value={value}
         className={className}
         onChange={handleChange}
-        onKeyUp={searchGames}
+        onKeyUp={searchGamesWithEnter}
         placeholder="Search by game name"
       >
-        <IoSearch />
+        <IoSearch onClick={searchGames} className={searchIconStyle} />
       </Input>
       {!!value.length && (
         <RxCross2

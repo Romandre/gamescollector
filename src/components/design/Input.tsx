@@ -34,8 +34,12 @@ export function Input({
         <div
           className={css({
             position: "absolute",
-            top: "52%",
-            left: 3,
+            display: "flex",
+            top: "51%",
+            h: "full",
+            w: "40px",
+            justifyContent: "center",
+            alignItems: "center",
             transform: "translateY(-50%)",
             fontSize: 20,
             color: "#AAAAAA",
