@@ -64,7 +64,7 @@ const sortingOptions = [
   "sort name asc;",
 ];
 const limit = 60;
-const dlcFilter = "category != (1,2)";
+const dlcFilter = "category != (1,2,5,13)";
 const filtersInMenu = {
   year: "",
   genre: "",
@@ -147,9 +147,12 @@ export const GamesProvider = ({ children }: { children: ReactNode }) => {
 
     if (value && containsNumber(value)) {
       const variants = getSearchVariants(value);
-      searchFilter = variants
-        .map((v) => `(alternative_names.name ~ *"${v}"* | name ~ *"${v}"*)`)
-        .join(" | ");
+      searchFilter =
+        "(" +
+        variants
+          .map((v) => `(alternative_names.name ~ *"${v}"* | name ~ *"${v}"*)`)
+          .join(" | ") +
+        ")";
     }
 
     handleFilter("search", searchFilter);

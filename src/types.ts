@@ -18,13 +18,14 @@ export type Game = {
   storyline?: string;
   total_rating?: number;
   total_rating_count?: number;
-  category?: number; // e.g., Main game, DLC, Expansion
+  category?: number;
   dlcs?: Game[];
   expansions?: Game[];
   ports?: Game[];
   remakes?: Game[];
   remasters?: Game[];
   parent_game?: Game;
+  franchises: Franchise[];
   url: string;
 };
 
@@ -45,8 +46,8 @@ export type Genre = {
 
 export type AgeRating = {
   id: number;
-  category: number; // e.g., PEGI or ESRB
-  rating: number; // Rating value (e.g., 3, 7, 12, 16, 18)
+  category: number;
+  rating: number;
 };
 
 export type Company = {
@@ -63,7 +64,7 @@ export type InvolvedCompany = {
 
 export type ReleaseDate = {
   id: number;
-  human: string; // e.g., "2024-12-01"
+  human: string;
   platform: number;
   status: GameStatus;
   region: number;
@@ -76,8 +77,16 @@ export type Screenshot = {
 
 export type Website = {
   id: number;
-  category: number; // Category of the website (e.g., official, social)
+  category: number;
   url: string;
+};
+
+export type Franchise = {
+  id: number;
+  created_at: number;
+  games: Game[];
+  name: string;
+  slug: string;
 };
 
 export type GameStatus = {

@@ -1,7 +1,7 @@
 // Components
 import { supabaseClient } from "@/utils/supabase/server";
 import { SearchInput } from "../design";
-import { HeaderActions } from "./HeaderActions";
+import { HeaderActions } from "../blocks";
 import Link from "next/link";
 import Image from "next/image";
 

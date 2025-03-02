@@ -18,7 +18,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 // Contexts
-import { useRatings } from "@/context";
+import { useGamesContext, useRatings } from "@/context";
 
 // Hooks
 import { useQuery } from "@tanstack/react-query";
@@ -37,6 +37,7 @@ import type {
   Screenshot,
   Website,
   AverageRating,
+  Franchise,
 } from "@/types";
 import { User } from "@supabase/supabase-js";
 
@@ -70,14 +71,23 @@ import { TbMoodCry } from "react-icons/tb";
 import { MdErrorOutline } from "react-icons/md";
 
 const fields =
-  "fields *, screenshots.*, cover.url, release_dates.*, release_dates.status.*, platforms.*, genres.*, age_ratings.*, dlcs.*, dlcs.cover.*, expansions.*, expansions.cover.*, ports.*, ports.cover.*, remakes.*, remakes.cover.*, remasters.*, remasters.cover.*, involved_companies.*, involved_companies.company.*, parent_game.*, parent_game.cover.*, websites.*, videos.*;";
+  "fields *, screenshots.*, cover.url, release_dates.*, release_dates.status.*, platforms.*, genres.*, age_ratings.*, dlcs.*, dlcs.cover.*, expansions.*, expansions.cover.*, ports.*, ports.cover.*, remakes.*, remakes.cover.*, remasters.*, remasters.cover.*, involved_companies.*, involved_companies.company.*, parent_game.*, parent_game.cover.*, websites.*, videos.*, franchises.*, franchises.games.*, franchises.games.cover.*;";
 
-const bages = [
+const badges = [
   { id: 1, name: "DLC" },
   { id: 2, name: "Expansion" },
+  { id: 3, name: "Bundle" },
+  { id: 4, name: "Standalone Expansion" },
+  { id: 5, name: "Mod" },
+  { id: 6, name: "Episode" },
+  { id: 7, name: "Season" },
   { id: 8, name: "Remake" },
   { id: 9, name: "Remaster" },
+  { id: 10, name: "Expanded Game" },
   { id: 11, name: "Port" },
+  { id: 12, name: "Fork" },
+  { id: 13, name: "Pack" },
+  { id: 14, name: "Update" },
 ];
 
 const regions = [
@@ -138,13 +148,13 @@ export function GamePage({ id, user }: { id: string; user: User | null }) {
           px: { base: 0, xl: 6 },
           gridTemplateAreas: {
             base: `
-            "cover"
-            "title"
-            "platforms"
-            "main"
-            "left"
-            "right"
-            `,
+              "cover"
+              "title"
+              "platforms"
+              "main"
+              "left"
+              "right"
+              `,
             sm: `
               "cover title"
               "cover platforms"
@@ -181,7 +191,7 @@ export function GamePage({ id, user }: { id: string; user: User | null }) {
             userId={userId}
             cover={game?.cover}
             isReleased={isReleased}
-            bage={game?.category}
+            badge={game?.category}
             isLoaded={isGameLoaded}
           />
         </div>
@@ -199,7 +209,6 @@ export function GamePage({ id, user }: { id: string; user: User | null }) {
         <div className={css({ gridArea: "left" })}>
           <ColumnLeft game={game} isLoaded={isGameLoaded} />
         </div>
-
         <div className={css({ gridArea: "main" })}>
           <ColumnMain game={game} isLoaded={isGameLoaded} />
         </div>
@@ -275,14 +284,14 @@ const Cover = ({
   userId,
   cover,
   isReleased,
-  bage,
+  badge,
   isLoaded,
 }: {
   gameId: string;
   userId: string;
   cover: Cover | undefined;
   isReleased: boolean;
-  bage?: number;
+  badge?: number;
   isLoaded: boolean;
 }) => {
   return isLoaded ? (
@@ -321,7 +330,7 @@ const Cover = ({
             loading="lazy"
           />
         )}
-        {bages.some((item) => item.id === bage) && (
+        {badges.some((item) => item.id === badge) && (
           <div
             className={css({
               position: "absolute",
@@ -336,7 +345,7 @@ const Cover = ({
               boxShadow: "1px 1px 5px 2px rgba(0,0,0,0.5)",
             })}
           >
-            {bages.find((item) => item.id === bage)?.name}
+            {badges.find((item) => item.id === badge)?.name}
           </div>
         )}
       </div>
@@ -759,16 +768,17 @@ const ColumnLeft = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
 };
 
 const ColumnMain = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
-  const gridClass = grid({
-    w: "100%",
-    columns: { base: 2, sm: 3, md: 4, lg: 5, xl: 4, "2xl": 5 },
-    gap: 1.5,
-  });
   const dlcs = game?.dlcs;
   const expansions = game?.expansions;
   const combined =
     dlcs?.length && expansions?.length && dlcs.concat(expansions);
   const allDlcs = combined || dlcs || expansions || [];
+
+  const gridClass = grid({
+    w: "100%",
+    columns: { base: 2, sm: 3, md: 4, lg: 5, xl: 4, "2xl": 5 },
+    gap: 1.5,
+  });
 
   return isLoaded ? (
     <>
@@ -842,6 +852,11 @@ const ColumnMain = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
       {!!game?.screenshots?.length && (
         <Section title="Screenshots">
           <Screenshots screenshots={game.screenshots} />
+        </Section>
+      )}
+      {!!game?.franchises?.length && (
+        <Section title="Franchases">
+          <Franchises franchises={game.franchises} gridClass={gridClass} />
         </Section>
       )}
     </>
@@ -934,12 +949,12 @@ const Section = ({
   return (
     <>
       {title && <SectionTitle className={titleStyle}>{title}</SectionTitle>}
-      <SectionText type={type}>{children}</SectionText>
+      <SectionContent type={type}>{children}</SectionContent>
     </>
   );
 };
 
-const SectionText = ({
+const SectionContent = ({
   type,
   children,
 }: {
@@ -1254,6 +1269,80 @@ const ToggleRating = ({ isReleased }: { isReleased: boolean }) => {
       )}
     </div>
   );
+};
+
+const Franchises = ({
+  franchises,
+  gridClass,
+}: {
+  franchises: Franchise[];
+  gridClass: string;
+}) => {
+  const { handleSearch } = useGamesContext();
+
+  return franchises.map((franchise: Franchise) => (
+    <div key={franchise.id} className={css({ display: "block" })}>
+      {franchises.length > 1 && (
+        <div
+          className={css({
+            display: "flex",
+            w: "full",
+            mb: 2,
+            alignItems: "center",
+            gap: 4,
+          })}
+        >
+          <span
+            className={css({
+              w: 6,
+              h: "1px",
+              bgColor: "{colors.primary}",
+            })}
+          />
+          <span className={css({ flexShrink: 0 })}>{franchise.name}</span>
+          <span
+            className={css({
+              w: "full",
+              h: "1px",
+              bgColor: "{colors.primary}",
+            })}
+          />
+        </div>
+      )}
+      <Grid className={gridClass}>
+        {franchise.games.slice(0, 9).map((game: Game) => (
+          <GameCard key={game.id} game={game} showHints={false} />
+        ))}
+        {franchise.games.length > 10 && (
+          <Link
+            href={"/browse"}
+            onClick={() => handleSearch(franchise.name)}
+            className={css({
+              display: "flex",
+              h: { sm: 12, md: "full" },
+              gridColumn: { sm: "1 / 4", md: "unset" },
+              justifyContent: "center",
+              alignItems: "center",
+              fontSize: 14,
+              textTransform: "uppercase",
+              color: "{colors.primary}",
+              bgColor: "var(--skeleton-base-color)",
+              borderRadius: "8px",
+              cursor: "pointer",
+              _focus: {
+                opacity: { base: 0.6 },
+              },
+              _active: {
+                opacity: { base: 0.6 },
+              },
+            })}
+          >
+            Show more...
+          </Link>
+        )}
+      </Grid>
+    </div>
+  ));
 };
 
 // Ratings (reviews) modal

@@ -1,3 +1,4 @@
+export * from "./HeaderActions";
 export * from "./AccountForm";
 export * from "./AccountNavigation";
 export * from "./GameTrendsNavigation";
