@@ -19,7 +19,7 @@ export function HeaderMenu() {
         left: 0,
         right: 0,
         w: "full",
-        animation: "fade-in 0.3s",
+        animation: "fade-in 0.4s",
       })}`}
     >
       <div

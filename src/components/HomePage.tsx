@@ -1,5 +1,5 @@
 "use client";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode } from "react";
 
 // Components
 import { PlatformsIcons, StarsRating } from "./blocks";
@@ -17,43 +17,13 @@ import { getTimestampTwoMonthsAgo } from "@/utils/yearsArray";
 
 // Types
 import { type User } from "@supabase/supabase-js";
-import { Game, ReleaseDate } from "@/types";
+import { Game } from "@/types";
 
 // Styles
 import { css } from "../../styled-system/css";
 import { RatingsProvider } from "@/context";
 import { ReviewsList } from "./blocks/ReviewsList";
-
-const timeLeftUntil = (now: number, unixTimestamp: number) => {
-  const targetTime = unixTimestamp * 1000;
-  const timeDifference = targetTime - now;
-
-  if (timeDifference <= 0) {
-    return;
-  }
-
-  //const seconds = Math.floor(timeDifference / 1000) % 60;
-  const minutes = Math.floor(timeDifference / (1000 * 60)) % 60;
-  const hours = Math.floor(timeDifference / (1000 * 60 * 60)) % 24;
-  const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-
-  return (
-    <>
-      {formatTimestamp(targetTime)}
-      <div
-        className={css({
-          display: "flex",
-          alignItems: "center",
-          gap: 1,
-        })}
-      >
-        {formattedTime(days, "days")}
-        {formattedTime(hours, "hours")}
-        {formattedTime(minutes, "minutes")}
-      </div>
-    </>
-  );
-};
+import { useCountdown } from "@/hooks";
 
 const formattedTime = (number: number, time: string) => {
   const numberDigits = number.toString().split("");
@@ -408,8 +378,9 @@ const PannelGrid = ({
   );
 };
 
-const GamePannel = ({ game }: { game: Game; timer?: boolean }) => {
+const GamePannel = ({ game }: { game: Game }) => {
   const gameDescription = game.storyline || game.summary;
+  const releaseDate = game.first_release_date;
 
   return (
     <Link
@@ -465,13 +436,14 @@ const GamePannel = ({ game }: { game: Game; timer?: boolean }) => {
             backgroundRepeat: "no-repeat",
             backgroundPosition: "40% 0%",
             filter: "blur(50px)",
-            transform: "scale(3)",
+            transform: "translate3d(0, 0, 0) scale(3)",
+            willChange: "transform, filter",
             zIndex: 0,
           })}
           style={{
             backgroundImage: `url("https:${game.cover?.url.replace("t_thumb", "t_cover_big_2x")}")`,
           }}
-        />
+        ></div>
       </div>
       <div
         className={css({
@@ -482,7 +454,7 @@ const GamePannel = ({ game }: { game: Game; timer?: boolean }) => {
           py: 3,
           px: 4,
           color: "{colors.text.dark}",
-          maskImage: !game.first_release_date
+          maskImage: !releaseDate
             ? "linear-gradient(to top, transparent 0, 14%, white 20%)"
             : "",
           zIndex: 1,
@@ -500,13 +472,11 @@ const GamePannel = ({ game }: { game: Game; timer?: boolean }) => {
           {game.name}
         </div>
         <PlatformsIcons platforms={game.platforms} className={css({ mt: 5 })} />
-        <GameReleaseBlock
-          firstReleaseDate={game.first_release_date!}
-          releaseDates={game.release_dates!}
-        />
+        {!!releaseDate && <CountdownDisplay timestamp={releaseDate} />}
         {!!gameDescription && (
           <div
             className={css({
+              mt: 4,
               fontFamily: "var(--font-exo-2)",
               fontSize: 14,
             })}
@@ -526,36 +496,6 @@ const GamePannel = ({ game }: { game: Game; timer?: boolean }) => {
   );
 };
 
-const GameReleaseBlock = ({
-  firstReleaseDate,
-  releaseDates,
-}: {
-  firstReleaseDate: number;
-  releaseDates: ReleaseDate[];
-}) => {
-  const [currentTime, setCurrentTime] = useState(Date.now());
-  const timeLeftGrid = firstReleaseDate ? (
-    timeLeftUntil(currentTime, firstReleaseDate)
-  ) : releaseDates ? (
-    <div className={css({ my: 4 })}>
-      Planned release: <b>{releaseDates?.[0].human}</b>
-    </div>
-  ) : (
-    ""
-  );
-
-  useEffect(() => {
-    if (firstReleaseDate) {
-      const timerId = setInterval(() => {
-        setCurrentTime(Date.now());
-      }, 1000);
-      return () => clearInterval(timerId);
-    }
-  }, [firstReleaseDate]);
-
-  return timeLeftGrid;
-};
-
 const PannelLoader = ({ count }: { count: number }) => {
   return (
     <>
@@ -563,5 +503,22 @@ const PannelLoader = ({ count }: { count: number }) => {
         <Skeleton key={index} className={css({ aspectRatio: 5 / 3 })} />
       ))}
     </>
+  );
+};
+
+const CountdownDisplay = ({ timestamp }: { timestamp: number }) => {
+  const timeLeft = useCountdown(timestamp);
+
+  if (timeLeft.expired) return <p>Release time reached!</p>;
+
+  return (
+    <div>
+      {formatTimestamp(timestamp)}
+      <div className={css({ display: "flex", alignItems: "center", gap: 1 })}>
+        {formattedTime(timeLeft.days, "days")}
+        {formattedTime(timeLeft.hours, "hours")}
+        {formattedTime(timeLeft.minutes, "minutes")}
+      </div>
+    </div>
   );
 };

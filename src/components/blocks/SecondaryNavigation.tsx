@@ -33,7 +33,6 @@ export function SecondaryNavigation({
         flexDirection: { base: "row", md: "column" },
         pr: { base: 0, md: 4 },
         gap: { base: 1, md: 5 },
-        animation: "fade-in 0.3s",
       })}
     >
       <div className={css({ display: { base: "none", md: "block" } })}>
