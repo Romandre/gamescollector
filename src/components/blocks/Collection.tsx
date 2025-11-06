@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 
 // Components
 import { Grid } from "../design";
@@ -28,9 +28,11 @@ export function Collection({ user }: { user: User | null }) {
     user?.id
   );
 
-  const gameIds = favourites?.map((item) => item.game_id).join(",");
-  const query = `fields *, genres.name, platforms.name, release_dates.*, cover.url; where id = (${gameIds});`;
-  const { data: gamesFromApi, isLoading: apiIsLoading /* isError, error */ } =
+  const gameIds = useMemo(() => {
+    return favourites?.map((item) => item.game_id).join(",") || null;
+  }, [favourites]);
+  const query = `fields *, genres.name, platforms.name, release_dates.*, cover.url; limit 500; where id = (${gameIds}); `;
+  const { data: gamesFromApi, isLoading: apiIsLoading /*, isError, error */ } =
     useQuery({
       queryKey: ["game", gameIds],
       queryFn: () => getGames(query),
@@ -40,19 +42,25 @@ export function Collection({ user }: { user: User | null }) {
   const isLoading = apiIsLoading || isCollectionLoading;
 
   const formCollection = useCallback(async () => {
-    const favourites = await getCollection();
-    if (favourites.length) {
-      setFavourites(favourites);
+    try {
+      const favourites = await getCollection();
+      if (favourites?.length) {
+        setFavourites(favourites);
+      } else {
+        setFavourites([]);
+      }
+    } catch (error) {
+      console.error("Error fetching collection:", error);
     }
   }, [getCollection]);
 
   useEffect(() => {
-    formCollection();
-  }, [formCollection]);
+    if (!favourites?.length) formCollection();
+  }, [formCollection, favourites?.length]);
 
   useEffect(() => {
-    if (gamesFromApi) setGames(gamesFromApi.games);
-  }, [gamesFromApi]);
+    if (gamesFromApi?.games) setGames(gamesFromApi.games);
+  }, [gamesFromApi?.games]);
 
   return (
     <div className={css({ animation: "fade-in 0.4s", mt: { base: 0, md: 2 } })}>
