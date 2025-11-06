@@ -21,7 +21,7 @@ export const getTwitchToken = async () => {
   const token = response.data.access_token;
   const tokenExpiry = Date.now() + response.data.expires_in * 1000;
 
-  // For dev purposes
+  // For test purposes
   // console.log("token: ", token);
 
   setCache(TWITCH_TOKEN_KEY, token, tokenExpiry);

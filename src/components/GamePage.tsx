@@ -431,7 +431,7 @@ const Title = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
       className={css({
         position: "relative",
         mt: { base: 1, md: 20, lg: 24, "2xl": 28 },
-        mb: { base: 2, md: 8 },
+        mb: { base: 2, md: 10 },
       })}
     >
       <div
@@ -1389,12 +1389,15 @@ const RatingsModal = ({
   });
 
   const loadAllReviews = useCallback(async () => {
-    if (!userId || !gameId) return;
+    if (!gameId) return;
 
-    const [all] = await Promise.all([getReviews("all")]);
-
-    setAllReviews(all);
-  }, [getReviews, userId, gameId]);
+    try {
+      const all = await getReviews("all");
+      setAllReviews(all);
+    } catch (error) {
+      console.error("Failed to load all reviews:", error);
+    }
+  }, [getReviews, gameId]);
 
   useEffect(() => {
     loadAllReviews();
@@ -1446,6 +1449,13 @@ const RatingsModal = ({
                         ? "0 0px 12px rgba(0,0,0,0.35)"
                         : "none",
                     opacity: reviewModalActiveView === tab.id ? 1 : 0.7,
+                    borderTop:
+                      reviewModalActiveView === tab.id
+                        ? {
+                            base: "3px solid var(--colors-primary)",
+                            sm: "2px solid var(--colors-primary)",
+                          }
+                        : "none",
                     cursor: "pointer",
                   })}`}
               >
@@ -1528,7 +1538,7 @@ const RatingsModal = ({
                           )}
                         </>
                       ) : (
-                        <>
+                        <span>
                           <Link
                             href="/signin"
                             className={css({
@@ -1539,7 +1549,7 @@ const RatingsModal = ({
                             Sign in
                           </Link>{" "}
                           to be able to rate games
-                        </>
+                        </span>
                       )}
                     </div>
                   )}
@@ -1550,7 +1560,7 @@ const RatingsModal = ({
                           textWrap: "balance",
                         })}
                       >
-                        All reviews for {gameTitle}
+                        All reviews for <i>{gameTitle}</i>
                       </div>
                       {allReviews && allReviews.length ? (
                         allReviews.map((review) => (

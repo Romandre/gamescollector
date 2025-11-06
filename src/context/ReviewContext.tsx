@@ -93,7 +93,8 @@ export const RatingsProvider = ({
 
   const getReviews = useCallback(
     async (target: "user" | "other" | "all") => {
-      if (!userId && target === "user") return [];
+      if (target === "user" && !userId) return [];
+
       setIsLoading(true);
 
       try {
