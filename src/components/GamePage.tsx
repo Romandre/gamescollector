@@ -609,7 +609,7 @@ const ColumnLeft = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
             const {
               human: date,
               platform: platformId,
-              region,
+              release_region: region,
               status,
             } = release;
 
@@ -999,11 +999,9 @@ const WebsiteLinks = ({ links }: { links: Website[] }) => {
   return (
     !!links?.length &&
     links
-      ?.sort((a, b) => a.category - b.category)
+      ?.sort((a, b) => a.type - b.type)
       .map((link) => {
-        const website = websites.find(
-          (website) => website.id === link.category
-        );
+        const website = websites.find((website) => website.id === link.type);
 
         return (
           !!website && (

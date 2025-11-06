@@ -67,7 +67,7 @@ export type ReleaseDate = {
   human: string;
   platform: number;
   status: GameStatus;
-  region: number;
+  release_region: number;
 };
 
 export type Screenshot = {
@@ -77,7 +77,7 @@ export type Screenshot = {
 
 export type Website = {
   id: number;
-  category: number;
+  type: number;
   url: string;
 };
 
