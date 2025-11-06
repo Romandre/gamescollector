@@ -64,7 +64,7 @@ const sortingOptions = [
   "sort name asc;",
 ];
 const limit = 60;
-const dlcFilter = "category != (1,2,5,13)";
+const dlcFilter = "game_type != (1,2,5,13)";
 const filtersInMenu = {
   year: "",
   genre: "",
