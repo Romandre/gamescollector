@@ -1127,30 +1127,44 @@ const ImagesFullView = ({
             position: "fixed",
             display: "block",
             w: { base: "full", md: "80%" },
+            h: "auto",
+            maxH: "86vh",
             top: "50%",
             left: "50%",
-            transform: "translate(-50%, -48%)",
-            opacity: isTransitioning ? 0 : 1, // For fading effect
-            transition: "opacity .15s ease-in-out",
+            aspectRatio: "16/10",
+            bg: "rgba(80,80,80,0.1)",
+            transform: {
+              base: "translate(-50%, -50%)",
+              sm: "translate(-50%, -42%)",
+              lg: "translate(-50%, -48%)",
+            },
             zIndex: 998,
           })}
         >
-          <GalleryChevron
-            direction="back"
-            onClick={() => handleImageClick("prev")}
-          />
           <Image
             src={`https:${viewedImage.url.replace("t_thumb", "t_screenshot_huge_2x")}`}
             alt={viewedImage.id}
-            width={500}
-            height={500}
-            className={css({ w: "full", h: "full" })}
+            fill
+            style={{
+              objectFit: "contain",
+              objectPosition: "center",
+            }}
+            className={css({
+              opacity: isTransitioning ? 0 : 1,
+              transition: "opacity .15s ease-in-out",
+            })}
             onClick={() => handleImageClick("next")}
             onLoadingComplete={() => setIsTransitioning(false)}
             priority
           />
           <GalleryChevron
+            direction="back"
+            hasShadow={true}
+            onClick={() => handleImageClick("prev")}
+          />
+          <GalleryChevron
             direction="forth"
+            hasShadow={true}
             onClick={() => handleImageClick("next")}
           />
         </div>
@@ -1162,12 +1176,19 @@ const ImagesFullView = ({
 
 const GalleryChevron = ({
   direction,
+  hasShadow,
   onClick,
 }: {
   direction: "back" | "forth";
+  hasShadow?: boolean;
   onClick: () => void;
 }) => {
   const isLeftChevron = direction === "back";
+  const chevronStyle = css({
+    color: "white",
+    fontSize: { base: 24, md: 22 },
+    filter: hasShadow ? "drop-shadow(0px 0px 2px rgb(0 0 0 / 1))" : "none",
+  });
 
   return (
     <div
@@ -1195,7 +1216,11 @@ const GalleryChevron = ({
           bg: "rgba(255,255,255,.2)",
         })}
       >
-        {isLeftChevron ? <FaChevronLeft /> : <FaChevronRight />}
+        {isLeftChevron ? (
+          <FaChevronLeft className={chevronStyle} />
+        ) : (
+          <FaChevronRight className={chevronStyle} />
+        )}
       </div>
     </div>
   );
