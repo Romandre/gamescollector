@@ -18,7 +18,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 // Contexts
-import { useGamesContext, useRatings } from "@/context";
+import { useCommonContext, useGamesContext, useRatings } from "@/context";
 
 // Hooks
 import { useQuery } from "@tanstack/react-query";
@@ -294,6 +294,8 @@ const Cover = ({
   badge?: number;
   isLoaded: boolean;
 }) => {
+  const { handlePrevousLinkOnSignin } = useCommonContext();
+
   return isLoaded ? (
     <div
       className={css({
@@ -378,6 +380,7 @@ const Cover = ({
           <>
             <Link
               href="/signin"
+              onClick={handlePrevousLinkOnSignin}
               className={css({
                 color: "var(--colors-primary)",
                 fontWeight: 500,
@@ -1395,6 +1398,7 @@ const RatingsModal = ({
     setReviewModalActiveView,
     isReviewEditMode,
   } = useRatings();
+  const { handlePrevousLinkOnSignin } = useCommonContext();
   const [allReviews, setAllReviews] = useState<Review[] | null>(null);
 
   const messageColor =
@@ -1566,6 +1570,7 @@ const RatingsModal = ({
                         <span>
                           <Link
                             href="/signin"
+                            onClick={handlePrevousLinkOnSignin}
                             className={css({
                               color: "var(--colors-primary)",
                               fontWeight: 500,

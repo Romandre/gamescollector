@@ -25,17 +25,16 @@ export const MenuLink = ({
   children: ReactNode;
 }) => {
   const pathname = usePathname();
-  const { setLinkBeforeLogin } = useCommonContext();
-
-  const handleRedirect = () => {
-    if (!pathname.includes("sign") && link === "/signin")
-      setLinkBeforeLogin(pathname);
-  };
+  const { handlePrevousLinkOnSignin } = useCommonContext();
 
   return (
     <Link
       href={link}
-      onClick={handleRedirect}
+      onClick={() => {
+        if (link === "/signin") {
+          handlePrevousLinkOnSignin();
+        }
+      }}
       className={css({
         display: {
           base: onlyDesktop ? "none" : "flex",
