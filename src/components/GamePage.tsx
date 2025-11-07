@@ -1135,7 +1135,7 @@ const ImagesFullView = ({
             top: "50%",
             left: "50%",
             aspectRatio: "16/10",
-            bg: "rgba(80,80,80,0.1)",
+            bg: "rgba(100,100,100,0.2)",
             transform: {
               base: "translate(-50%, -50%)",
               sm: "translate(-50%, -42%)",
