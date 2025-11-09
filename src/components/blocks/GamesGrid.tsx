@@ -145,13 +145,14 @@ const ListView = () => {
                   size={18}
                   className={css({
                     ml: 1,
+                    my: 1,
                     scale: 1.1,
                     justifySelf: "baseline",
                   })}
                 />
                 <PlatformsIcons
                   platforms={game.platforms}
-                  className={css({ mt: 4 })}
+                  className={css({ mt: 3 })}
                 />
                 {!!game.genres && (
                   <div

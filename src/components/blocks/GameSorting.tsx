@@ -121,24 +121,6 @@ export function GameSorting() {
                 gap: { base: 2, xl: 3 },
               })}
             >
-              <HiViewList
-                className={css({
-                  fontSize: 24,
-                  opacity: 0.8,
-                  color: view === "list-min" ? "var(--colors-primary)" : "",
-                  cursor: "pointer",
-                })}
-                onClick={() => toggleView("list-min")}
-              />
-              <MdViewList
-                className={css({
-                  fontSize: 28,
-                  opacity: 0.8,
-                  color: view === "list" ? "var(--colors-primary)" : "",
-                  cursor: "pointer",
-                })}
-                onClick={() => toggleView("list")}
-              />
               <TfiLayoutGrid3Alt
                 className={css({
                   fontSize: 20,
@@ -147,6 +129,24 @@ export function GameSorting() {
                   cursor: "pointer",
                 })}
                 onClick={() => toggleView("grid")}
+              />
+              <MdViewList
+                className={css({
+                  fontSize: 29,
+                  opacity: 0.8,
+                  color: view === "list" ? "var(--colors-primary)" : "",
+                  cursor: "pointer",
+                })}
+                onClick={() => toggleView("list")}
+              />
+              <HiViewList
+                className={css({
+                  fontSize: 25,
+                  opacity: 0.8,
+                  color: view === "list-min" ? "var(--colors-primary)" : "",
+                  cursor: "pointer",
+                })}
+                onClick={() => toggleView("list-min")}
               />
             </div>
           </>
