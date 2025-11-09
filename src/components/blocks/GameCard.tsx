@@ -1,5 +1,5 @@
 // Components
-import { PlatformsIcons, StarsRating } from "./";
+import { PlatformIcons, StarsRating } from "./";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -115,7 +115,7 @@ export function GameCard({
             >
               {game.name}
             </div> */}
-            <PlatformsIcons
+            <PlatformIcons
               platforms={game.platforms}
               className={css({ display: "flex", color: "#FFFFFF" })}
             />

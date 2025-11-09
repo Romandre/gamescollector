@@ -16,7 +16,7 @@ import { Platform } from "@/types";
 // Styles
 import { css } from "../../../styled-system/css";
 
-export const PlatformsIcons = ({
+export const PlatformIcons = ({
   platforms,
   className,
 }: {

@@ -2,7 +2,7 @@
 import { ReactNode } from "react";
 
 // Components
-import { PlatformsIcons, StarsRating } from "./blocks";
+import { PlatformIcons, StarsRating } from "./blocks";
 import { Button, SectionTitle } from "./design";
 import Image from "next/image";
 import Link from "next/link";
@@ -474,7 +474,7 @@ const GamePannel = ({ game }: { game: Game }) => {
         >
           {game.name}
         </div>
-        <PlatformsIcons platforms={game.platforms} className={css({ mt: 5 })} />
+        <PlatformIcons platforms={game.platforms} className={css({ mt: 5 })} />
         {!!releaseDate && <CountdownDisplay timestamp={releaseDate} />}
         {!!gameDescription && (
           <div

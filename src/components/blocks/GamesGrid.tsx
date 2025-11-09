@@ -2,7 +2,7 @@
 import { InView } from "react-intersection-observer";
 
 // Components
-import { GameCard, GameSorting, PlatformsIcons, StarsRating } from "./";
+import { GameCard, GameSorting, PlatformIcons, StarsRating } from "./";
 import { Grid, Tiles } from "../design";
 import Image from "next/image";
 import Link from "next/link";
@@ -150,7 +150,7 @@ const ListView = () => {
                     justifySelf: "baseline",
                   })}
                 />
-                <PlatformsIcons
+                <PlatformIcons
                   platforms={game.platforms}
                   className={css({ mt: 3 })}
                 />
