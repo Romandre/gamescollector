@@ -5,6 +5,7 @@ import {
   ReactNode,
   SetStateAction,
   useContext,
+  useEffect,
   useState,
 } from "react";
 
@@ -14,7 +15,7 @@ import { usePathname } from "next/navigation";
 interface CommonContextType {
   linkBeforeLogin: string;
   setLinkBeforeLogin: (value: SetStateAction<string>) => void;
-  handlePrevousLinkOnSignin: () => void;
+  handlePrevousLinkOnSignin: (link?: string) => void;
 }
 
 const CommonContext = createContext<CommonContextType | undefined>(undefined);
@@ -23,9 +24,16 @@ export function CommonProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [linkBeforeLogin, setLinkBeforeLogin] = useState("/");
 
-  const handlePrevousLinkOnSignin = () => {
-    if (!pathname.includes("sign")) setLinkBeforeLogin(pathname);
+  const handlePrevousLinkOnSignin = (link?: string) => {
+    if (link) setLinkBeforeLogin(link);
+    else if (!pathname.includes("sign")) setLinkBeforeLogin(pathname);
   };
+
+  useEffect(() => {
+    if (pathname.includes("collection")) {
+      setLinkBeforeLogin("/collection");
+    }
+  }, [pathname]);
 
   const contextValue = {
     linkBeforeLogin,

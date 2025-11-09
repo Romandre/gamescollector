@@ -380,7 +380,7 @@ const Cover = ({
           <>
             <Link
               href="/signin"
-              onClick={handlePrevousLinkOnSignin}
+              onClick={() => handlePrevousLinkOnSignin()}
               className={css({
                 color: "var(--colors-primary)",
                 fontWeight: 500,
@@ -1570,7 +1570,7 @@ const RatingsModal = ({
                         <span>
                           <Link
                             href="/signin"
-                            onClick={handlePrevousLinkOnSignin}
+                            onClick={() => handlePrevousLinkOnSignin()}
                             className={css({
                               color: "var(--colors-primary)",
                               fontWeight: 500,
