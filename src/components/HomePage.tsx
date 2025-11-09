@@ -315,7 +315,7 @@ const PageBackground = ({ randomImgNumber }: { randomImgNumber?: number }) => {
           height="200"
           style={{ objectFit: "cover", width: "100%", height: "100%" }}
           className={css({
-            filter: "blur(1px) contrast (90%)",
+            filter: "blur(1.5px) contrast(90%)",
             scale: "1.01",
             objectPosition: "center 15%",
             animation: "fade-in .8s ease-in",
