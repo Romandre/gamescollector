@@ -305,7 +305,10 @@ const PageBackground = ({ randomImgNumber }: { randomImgNumber?: number }) => {
           w: "100%",
           h: "600px",
           overflow: "hidden",
-          maskImage: "linear-gradient(to top, transparent 2%, 35%, white 55%)",
+          maskImage: {
+            base: "linear-gradient(to top, transparent 2%, 40%, white 60%)",
+            md: "linear-gradient(to top, transparent 2%, 35%, white 55%)",
+          },
         })}
       >
         <Image
