@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 };
 
 async function HomeRoute({ user }: WithAuthProps) {
-  const randomImgNumber = Math.ceil(Math.random() * 3);
+  const randomImgNumber = Math.ceil(Math.random() * 4);
 
   return (
     <Layout>
