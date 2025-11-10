@@ -1,5 +1,5 @@
 "use client";
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 
 // Components
 import { PlatformIcons, StarsRating } from "./blocks";
@@ -295,6 +295,8 @@ export function HomePage({
 }
 
 const PageBackground = ({ randomImgNumber }: { randomImgNumber?: number }) => {
+  const [isLoaded, setIsLoaded] = useState(false);
+
   return (
     randomImgNumber && (
       <div
@@ -309,6 +311,8 @@ const PageBackground = ({ randomImgNumber }: { randomImgNumber?: number }) => {
             base: "linear-gradient(to top, transparent 2%, 40%, white 60%)",
             md: "linear-gradient(to top, transparent 2%, 35%, white 55%)",
           },
+          opacity: isLoaded ? 1 : 0,
+          transition: "opacity 0.8s ease-in-out",
         })}
       >
         <Image
@@ -321,8 +325,8 @@ const PageBackground = ({ randomImgNumber }: { randomImgNumber?: number }) => {
             filter: "blur(1.5px) contrast(90%)",
             scale: "1.01",
             objectPosition: "center 15%",
-            animation: "fade-in .8s ease-in",
           })}
+          onLoadingComplete={() => setIsLoaded(true)}
         />
       </div>
     )

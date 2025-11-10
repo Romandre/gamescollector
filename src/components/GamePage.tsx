@@ -230,7 +230,7 @@ export function GamePage({ id, user }: { id: string; user: User | null }) {
 }
 
 const PageBackground = ({ images }: { images: Screenshot[] }) => {
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const randomImg = useMemo(
     () => images[Math.floor(Math.random() * images.length)],
     [images]
@@ -252,6 +252,8 @@ const PageBackground = ({ images }: { images: Screenshot[] }) => {
             xl: "720px",
             "2xl": "800px",
           },
+          opacity: isLoading ? 0 : 1,
+          transition: "opacity 1s ease-in-out",
           overflow: "hidden",
         })}
       >
@@ -267,11 +269,9 @@ const PageBackground = ({ images }: { images: Screenshot[] }) => {
               sm: "linear-gradient(to top, transparent 6%, 45%, white 56%)",
             },
             filter: "blur(1.5px)",
-            opacity: loading ? 0 : 1,
-            transition: "opacity 1.2s",
             scale: "1.01",
           })}
-          onLoad={() => setLoading(false)}
+          onLoad={() => setIsLoading(false)}
           priority
         />
       </div>
