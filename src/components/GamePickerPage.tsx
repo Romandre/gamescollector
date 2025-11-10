@@ -102,12 +102,13 @@ export function GamePickerPage() {
 
   return (
     <>
-      <h2
+      <div
         className={css({
-          fontSize: 46,
+          fontSize: { base: 42, xs: 46 },
           fontWeight: "bold",
-          my: 6,
+          my: 8,
           textAlign: "center",
+          textWrap: "balance",
         })}
       >
         AI Game Picker{" "}
@@ -121,45 +122,70 @@ export function GamePickerPage() {
         >
           beta
         </span>
-      </h2>
+      </div>
       <div
         className={css({
           display: "flex",
-          fontSize: 18,
+          flexDirection: { base: "column", md: "row" },
+          gap: { base: 4, md: 0 },
+          fontSize: { base: 16, xs: 18 },
           alignItems: "center",
           justifyContent: "center",
           my: 6,
         })}
       >
-        Suggest me
-        <Dropdown
-          value={filters.genre ? genreOptions.indexOf(filters.genre) : 0}
-          isFilter={false}
-          options={genreOptions}
-          onSelect={(option) => {
-            setFilters({ ...filters, genre: option });
-          }}
-        />
-        games for
-        <Dropdown
-          value={
-            filters.platform ? platformOptions.indexOf(filters.platform) : 0
-          }
-          isFilter={false}
-          options={platformOptions}
-          onSelect={(option) => {
-            setFilters({ ...filters, platform: option });
-          }}
-        />
-        that are
-        <Dropdown
-          value={filters.mood ? moodOptions.indexOf(filters.mood) : 0}
-          isFilter={false}
-          options={moodOptions}
-          onSelect={(option) => {
-            setFilters({ ...filters, mood: option });
-          }}
-        />
+        <span
+          className={css({
+            display: "flex",
+            justifyContent: "center",
+            mr: 1,
+          })}
+        >
+          Suggest me
+          <Dropdown
+            value={filters.genre ? genreOptions.indexOf(filters.genre) : 0}
+            isFilter={false}
+            options={genreOptions}
+            onSelect={(option) => {
+              setFilters({ ...filters, genre: option });
+            }}
+          />
+          games{" "}
+        </span>
+        <span
+          className={css({
+            display: "flex",
+            justifyContent: "center",
+          })}
+        >
+          for
+          <Dropdown
+            value={
+              filters.platform ? platformOptions.indexOf(filters.platform) : 0
+            }
+            isFilter={false}
+            options={platformOptions}
+            onSelect={(option) => {
+              setFilters({ ...filters, platform: option });
+            }}
+          />
+        </span>{" "}
+        <span
+          className={css({
+            display: "flex",
+            justifyContent: "center",
+          })}
+        >
+          that are
+          <Dropdown
+            value={filters.mood ? moodOptions.indexOf(filters.mood) : 0}
+            isFilter={false}
+            options={moodOptions}
+            onSelect={(option) => {
+              setFilters({ ...filters, mood: option });
+            }}
+          />
+        </span>
       </div>
       <div
         className={css({

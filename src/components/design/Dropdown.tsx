@@ -92,7 +92,9 @@ export function Dropdown({
           className={`tile ${css({
             position: "absolute",
             top: 8,
-            right: { base: 0, md: "unset" },
+            right: isFilter ? { base: 0, md: "unset" } : "unset",
+            left: isFilter ? "unset" : "50%",
+            transform: isFilter ? "unset" : "translateX(-50%)",
             minW: "160px",
             py: 2,
             borderRadius: 6,
