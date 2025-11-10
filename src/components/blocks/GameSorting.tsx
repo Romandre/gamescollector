@@ -86,6 +86,7 @@ export function GameSorting() {
           <>
             <Dropdown
               value={sorting}
+              label="Sort by:"
               options={sortingOptions}
               onSelect={(option) => {
                 handleSorting(sortingOptions.indexOf(option));

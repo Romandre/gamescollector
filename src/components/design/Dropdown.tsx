@@ -8,11 +8,13 @@ export function Dropdown({
   value,
   options,
   onSelect,
-  label = "Sort by",
+  isFilter = true,
+  label = "",
 }: {
   value?: number;
   options: string[];
   onSelect: (option: string) => void;
+  isFilter?: boolean;
   label?: string;
 }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -45,7 +47,7 @@ export function Dropdown({
       ref={dropdownRef}
       className={css({
         position: "relative",
-        display: "flex",
+        display: isFilter ? "flex" : "inline-flex",
       })}
     >
       <p
@@ -68,7 +70,7 @@ export function Dropdown({
           className={css({
             display: "inline-block",
             verticalAlign: "bottom",
-            w: "108px",
+            w: isFilter ? "108px" : "auto",
             px: 2,
             color: "var(--colors-primary)",
             textOverflow: "ellipsis",
@@ -78,11 +80,12 @@ export function Dropdown({
         >
           {value ? options[value].toUpperCase() : options[0].toUpperCase()}
         </span>
-        {isOpen ? (
-          <IoChevronUp className={css({ float: "right" })} />
-        ) : (
-          <IoChevronDown className={css({ float: "right" })} />
-        )}
+        {isFilter &&
+          (isOpen ? (
+            <IoChevronUp className={css({ float: "right" })} />
+          ) : (
+            <IoChevronDown className={css({ float: "right" })} />
+          ))}
       </div>
       {isOpen && (
         <ul
@@ -102,7 +105,7 @@ export function Dropdown({
           {options.map((option, index) => (
             <li
               key={index}
-              className={`dropdown-item ${css({ py: 1, px: 4, textTransform: "capitalize" })}`}
+              className={`dropdown-item ${css({ py: 1, px: 4, textTransform: "capitalize", _hover: { opacity: 0.9, color: "var(--colors-primary)" } })}`}
               onClick={() => handleOptionClick(option)}
             >
               {option}
