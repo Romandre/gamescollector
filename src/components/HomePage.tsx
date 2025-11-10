@@ -312,7 +312,7 @@ const PageBackground = ({ randomImgNumber }: { randomImgNumber?: number }) => {
             md: "linear-gradient(to top, transparent 2%, 35%, white 55%)",
           },
           opacity: isLoaded ? 1 : 0,
-          transition: "opacity 0.8s ease-in-out",
+          transition: "opacity 1.2s ease-in-out",
         })}
       >
         <Image
