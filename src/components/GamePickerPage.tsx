@@ -104,24 +104,35 @@ export function GamePickerPage() {
     <>
       <div
         className={css({
-          fontSize: { base: 42, xs: 46 },
+          fontSize: { base: 42, xs: 52, sm: 62 },
           fontWeight: "bold",
-          my: 8,
+          mt: 16,
           textAlign: "center",
           textWrap: "balance",
         })}
       >
-        AI Game Picker{" "}
+        AI Game Picker
         <span
           className={css({
-            verticalAlign: "super",
-            fontSize: 18,
+            ml: 2,
+            verticalAlign: { base: "16px", xs: "20px", sm: "24px" },
+            fontSize: 16,
             fontStyle: "italic",
-            opacity: 0.7,
+            opacity: 0.6,
           })}
         >
           beta
         </span>
+      </div>
+      <div
+        className={css({
+          fontSize: { base: 18, xs: 20, sm: 22 },
+          mt: 6,
+          textAlign: "center",
+          textWrap: "balance",
+        })}
+      >
+        Let the AI pick the perfect game for you
       </div>
       <div
         className={css({
@@ -131,60 +142,94 @@ export function GamePickerPage() {
           fontSize: { base: 16, xs: 18 },
           alignItems: "center",
           justifyContent: "center",
-          my: 6,
+          mt: 20,
+          mb: 6,
         })}
       >
         <span
           className={css({
             display: "flex",
+            alignItems: "center",
             justifyContent: "center",
             mr: 1,
           })}
         >
           Suggest me
-          <Dropdown
-            value={filters.genre ? genreOptions.indexOf(filters.genre) : 0}
-            isFilter={false}
-            options={genreOptions}
-            onSelect={(option) => {
-              setFilters({ ...filters, genre: option });
-            }}
-          />
+          <span
+            className={css({
+              display: "flex",
+              mx: 3,
+              p: 2,
+              border: "1px solid var(--colors-primary)",
+              borderRadius: 6,
+            })}
+          >
+            <Dropdown
+              value={filters.genre ? genreOptions.indexOf(filters.genre) : 0}
+              isFilter={false}
+              options={genreOptions}
+              onSelect={(option) => {
+                setFilters({ ...filters, genre: option });
+              }}
+            />
+          </span>
           games{" "}
         </span>
         <span
           className={css({
             display: "flex",
+            alignItems: "center",
             justifyContent: "center",
           })}
         >
           for
-          <Dropdown
-            value={
-              filters.platform ? platformOptions.indexOf(filters.platform) : 0
-            }
-            isFilter={false}
-            options={platformOptions}
-            onSelect={(option) => {
-              setFilters({ ...filters, platform: option });
-            }}
-          />
+          <span
+            className={css({
+              display: "flex",
+              mx: 3,
+              p: 2,
+              border: "1px solid var(--colors-primary)",
+              borderRadius: 6,
+            })}
+          >
+            <Dropdown
+              value={
+                filters.platform ? platformOptions.indexOf(filters.platform) : 0
+              }
+              isFilter={false}
+              options={platformOptions}
+              onSelect={(option) => {
+                setFilters({ ...filters, platform: option });
+              }}
+            />
+          </span>
         </span>{" "}
         <span
           className={css({
             display: "flex",
+            alignItems: "center",
             justifyContent: "center",
           })}
         >
           that are
-          <Dropdown
-            value={filters.mood ? moodOptions.indexOf(filters.mood) : 0}
-            isFilter={false}
-            options={moodOptions}
-            onSelect={(option) => {
-              setFilters({ ...filters, mood: option });
-            }}
-          />
+          <span
+            className={css({
+              display: "flex",
+              mx: 3,
+              p: 2,
+              border: "1px solid var(--colors-primary)",
+              borderRadius: 6,
+            })}
+          >
+            <Dropdown
+              value={filters.mood ? moodOptions.indexOf(filters.mood) : 0}
+              isFilter={false}
+              options={moodOptions}
+              onSelect={(option) => {
+                setFilters({ ...filters, mood: option });
+              }}
+            />
+          </span>
         </span>
       </div>
       <div
@@ -192,7 +237,7 @@ export function GamePickerPage() {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          my: 6,
+          my: 8,
         })}
       >
         {isLoading ? (
@@ -203,7 +248,7 @@ export function GamePickerPage() {
             onClick={() => handleSubmit()}
             className={css({ w: 200 })}
           >
-            Get Suggestions
+            Get Suggestions <span className={css({ fontSize: 18 })}>✨</span>
           </Button>
         )}
       </div>
