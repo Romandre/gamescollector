@@ -2,6 +2,9 @@
   "name": "games-collector",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "scripts": {
     "prepare": "panda codegen",
     "dev": "rm -rf .next && next dev",
