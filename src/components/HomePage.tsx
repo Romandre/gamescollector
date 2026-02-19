@@ -63,12 +63,31 @@ const formattedTime = (number: number, time: string) => {
         <b>
           <span
             className={css({
+              display: "inline-flex",
+              flexDirection: "column",
+              gap: "6px",
               fontSize: 18,
               animation: "release-countdown 1.8s infinite",
+              transform: "translateY(-6px)",
+              "--dot-size": "3.5px",
+              _before: {
+                content: '""',
+                display: "block",
+                width: "var(--dot-size)",
+                height: "var(--dot-size)",
+                backgroundColor: "currentColor",
+                borderRadius: "50%",
+              },
+              _after: {
+                content: '""',
+                display: "block",
+                width: "var(--dot-size)",
+                height: "var(--dot-size)",
+                backgroundColor: "currentColor",
+                borderRadius: "50%",
+              },
             })}
-          >
-            :
-          </span>
+          />
         </b>
       )}
     </>
@@ -76,7 +95,7 @@ const formattedTime = (number: number, time: string) => {
 };
 
 function formatTimestamp(timestamp: number) {
-  const date = new Date(timestamp);
+  const date = new Date(timestamp * 1000);
   const day = date.getDate();
   const month = date.toLocaleString("en-EN", { month: "long" });
   const year = date.getFullYear();
@@ -389,6 +408,8 @@ const GamePannel = ({ game }: { game: Game }) => {
   const gameDescription = game.storyline || game.summary;
   const releaseDate = game.first_release_date;
 
+  console.log(game);
+
   return (
     <Link
       href={`/game/${game.id}`}
@@ -486,6 +507,7 @@ const GamePannel = ({ game }: { game: Game }) => {
               mt: 4,
               fontFamily: "var(--font-exo-2)",
               fontSize: 14,
+              textShadow: "1px 1px 1px rgba(0,0,0,0.6)",
             })}
           >
             {gameDescription}
