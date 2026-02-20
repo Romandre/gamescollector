@@ -461,15 +461,15 @@ const GamePannel = ({ game }: { game: Game }) => {
             position: "absolute",
             w: "full",
             h: "full",
+            backgroundSize: "260%",
             backgroundRepeat: "no-repeat",
             backgroundPosition: "40% 0%",
             filter: "blur(50px)",
-            transform: "translate3d(0, 0, 0) scale(3)",
-            willChange: "transform, filter",
+            scale: 2,
             zIndex: 0,
           })}
           style={{
-            backgroundImage: `url("https:${game.cover?.url.replace("t_thumb", "t_cover_big_2x")}")`,
+            backgroundImage: `url("https:${game.cover?.url.replace("t_thumb", "t_cover_big")}")`,
           }}
         ></div>
       </div>
