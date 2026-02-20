@@ -63,10 +63,9 @@ export function GameCard({
               src="/no-image.jpg"
               alt="no-image"
               fill
-              className={css({
-                objectFit: "cover",
+              className={`no-image ${css({
                 aspectRatio: "3/4",
-              })}
+              })}`}
             ></Image>
           )}
         </div>

@@ -233,7 +233,7 @@ const PageBackground = ({ images }: { images: Screenshot[] }) => {
   const [isLoading, setIsLoading] = useState(true);
   const randomImg = useMemo(
     () => images[Math.floor(Math.random() * images.length)],
-    [images]
+    [images],
   );
 
   return (
@@ -328,6 +328,7 @@ const Cover = ({
             alt="no-image"
             fill
             style={{ objectFit: "cover", animation: "fade-in 0.8s" }}
+            className="no-image"
             sizes="(max-width: 700px) 100vw, 700px"
             loading="lazy"
           />
@@ -653,7 +654,7 @@ const ColumnLeft = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
       : [];
   const genres = game?.genres?.map((genre) => genre.name);
   const ageRatingValue = game?.age_ratings?.find(
-    (rating) => rating.category === 2
+    (rating) => rating.category === 2,
   )?.rating;
   const ageRating = () => {
     if (ageRatingValue === 5) return 18;
@@ -731,7 +732,8 @@ const ColumnLeft = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
                             {date.regions
                               .map(
                                 (region) =>
-                                  regions.find((reg) => reg.id === region)?.name
+                                  regions.find((reg) => reg.id === region)
+                                    ?.name,
                               )
                               .join(", ")}
                           </i>
@@ -742,7 +744,7 @@ const ColumnLeft = ({ game, isLoaded }: { game: Game; isLoaded: boolean }) => {
                       <i>{(date.platforms.sort() as string[]).join(", ")}</i>
                     </p>
                   </div>
-                )
+                ),
             )}
         </Section>
       )}
@@ -1632,7 +1634,7 @@ const AddReviewForm = ({
       updateReview(
         Number(formData.get("rating")),
         formData.get("platform") as string,
-        formData.get("comment") as string
+        formData.get("comment") as string,
       );
       setIsReviewEditMode(false);
     } else {
@@ -1640,7 +1642,7 @@ const AddReviewForm = ({
         Number(formData.get("rating")),
         formData.get("platform") as string,
         formData.get("comment") as string,
-        gameTitle as string
+        gameTitle as string,
       );
     }
   };
@@ -1745,7 +1747,7 @@ const PlatformSelect = ({
   const handleInputChange = (val: string) => {
     setPlatform(val);
     const filteredOptions = platformNames.filter((option) =>
-      option.includes(val)
+      option.includes(val),
     );
 
     if (!val.trim()) setIsOpen(false);

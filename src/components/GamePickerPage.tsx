@@ -89,7 +89,7 @@ export function GamePickerPage() {
         "/api/ai",
         {
           params: filters,
-        }
+        },
       );
 
       setResult(res.data.suggestions);

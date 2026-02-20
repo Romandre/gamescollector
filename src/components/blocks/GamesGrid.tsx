@@ -122,9 +122,9 @@ const ListView = () => {
                     fill
                     style={{ objectFit: "cover", animation: "fade-in 0.8s" }}
                     sizes="(max-width: 700px) 100vw, 700px"
-                    className={css({
+                    className={`no-image ${css({
                       height: "100vh",
-                    })}
+                    })}`}
                     loading="lazy"
                   />
                 )}

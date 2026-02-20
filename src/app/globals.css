@@ -168,3 +168,12 @@ select:-webkit-autofill:focus {
     transform: translateY(-40px);
   }
 }
+
+.no-image {
+  object-fit: cover;
+  filter: invert(90%);
+  transition: filter 0.3s;
+}
+[data-theme="dark"] .no-image {
+  filter: invert(0%);
+}
